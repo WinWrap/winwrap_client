@@ -1,0 +1,51 @@
+﻿var ww = ww || {};
+
+(function () {
+
+    class CommitRebase {
+        constructor() {
+            this.ActiveDoc = null;
+        }
+
+        Read(notification) {
+            ww.EditorCode.editor().setValue(notification.files[0].code);
+            this.ActiveDoc = new ww.Doc(ww.Attach.AllocatedID, notification.revision, ww.EditorCode);
+        }
+
+        CommitDone(revision) {
+            this.ActiveDoc.CommitDone(revision);
+        }
+
+        Rebase(notification) {
+            var serverCommit = new ww.Commit(notification.by_id, notification.for_id, false);
+            serverCommit.Revision = notification.revision;
+            notification.edits.forEach(function (edit) {
+                serverCommit.AppendEdit(new ww.Edit(edit.index, edit.delete, edit.insert));
+            });
+            this.ActiveDoc.Rebase(serverCommit);
+        }
+
+        GetCommitRequest() {
+            let request = null;
+            if (this.ActiveDoc.Commit(false)) {
+                var commit = this.ActiveDoc.CurrentCommit;
+                var edits = [];
+                commit.Edits.Edits().forEach(function (edit) {
+                    edits.push({ "index": edit.Index, "delete": edit.DeleteCount, "insert": edit.Insert });
+                });
+                request = {
+                    //"id": this.ActiveDoc.SyncId, // xxx not needed
+                    command: "?commit",
+                    target: ww.InputMacro.GetValue(),
+                    doc_revision: this.ActiveDoc.Revision,
+                    revision: commit.Revision,
+                    edits: edits
+                };
+            }
+            return request;
+        }
+    }
+
+    ww.CommitRebase = new CommitRebase();
+
+})();

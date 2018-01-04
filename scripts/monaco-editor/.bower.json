@@ -1,0 +1,28 @@
+{
+  "name": "monaco-editor",
+  "description": "A browser based code editor",
+  "main": "",
+  "authors": [
+    "[object Object]"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ultra2/monaco-editor",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "version": "1.0.0",
+  "_release": "1.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.0",
+    "commit": "a7f0fa7cd57edbbcd554c6fb77cbcd578670b4e5"
+  },
+  "_source": "https://github.com/ultra2/monaco-editor.git",
+  "_target": "v1.0.0",
+  "_originalSource": "monaco-editor-minified",
+  "_direct": true
+}

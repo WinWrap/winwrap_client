@@ -1,0 +1,17 @@
+{
+  "name": "monaco-editor",
+  "description": "A browser based code editor",
+  "main": "",
+  "authors": [
+    "[object Object]"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ultra2/monaco-editor",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
