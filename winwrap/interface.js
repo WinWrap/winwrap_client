@@ -96,7 +96,7 @@ ww.InterfaceJS = function () {
         async ExecuteAsync() {
             let request = {
                 command: "?new", kind: "Macro",
-                project: "", has_main: true, names: ["\\a.bas"] // xxx
+                project: "", has_main: true, names: ["\\sample1.bas"] // xxx
             };
             let result = await new ww.AjaxPost().SendAsync(request, ["!new"]).catch(err => {
                 console.log("interface.js ButtonNew ExecuteAsync !new ", err);

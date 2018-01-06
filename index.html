@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>WinWrap Client</title>
+    <link rel="stylesheet" href="scripts/font-awesome/css/fontawesome-all.min.css">
     <link rel="stylesheet" href="scripts/jquery-ui.css">
     <link rel="stylesheet" href="winwrap/style.css">
     <script src="scripts/jquery.js"></script>
@@ -27,20 +28,30 @@
     <script src="winwrap/ww-doc.js"></script>
     <script src="winwrap/ww-edit.js"></script>
     <script src="winwrap/ww-edits.js"></script>
+    <script>
+        // https://jqueryui.com/tooltip/
+        $(function () {
+            $(document).tooltip();
+        });
+    </script>
 </head>
 <body>
     <div id="buttons">
         <fieldset>
-            <a class="ui-button ui-widget ui-corner-all" href="https://www.winwrap.com/" target="_blank">WinWrap&copy;</a>
-            <input id="inputmacro" class="ui-autocomplete-input ui-widget ui-corner-all">
-            <button id="buttonrun" class="ui-button ui-widget ui-corner-all">Run</button>
-            <button id="buttoninto" class="ui-button ui-widget ui-corner-all">In</button>
-            <button id="buttonover" class="ui-button ui-widget ui-corner-all">Over</button>
-            <button id="buttonout" class="ui-button ui-widget ui-corner-all">Out</button>
-            <button id="buttonend" class="ui-button ui-widget ui-corner-all">End</button>
-            <button id="buttonnew" class="ui-button ui-widget ui-corner-all">New</button>
-            <button id="buttonsave" class="ui-button ui-widget ui-corner-all">Save</button>
-            <button id="buttonwatch" class="ui-button ui-widget ui-corner-all">Watch</button>
+            <!-- link to news article and added title= -->
+            <a class="ui-button ui-widget ui-corner-all" title="More information about web based editing" href="https://www.winwrap.com/web2/news/web-based-editing" target="_blank">WinWrap&copy;</a>
+            <!-- added title= -->
+            <input id="inputmacro" class="ui-autocomplete-input ui-widget ui-corner-all" title="Open a macro" />
+            <!-- rearranged to more closely match WinWrap Directors' toolbar -->
+            <button id="buttonrun" class="ui-button ui-widget ui-corner-all" style="border:0px" title="Start or resume the current macro"><i class="fas fa-play"></i></button>
+            <button id="buttonpause" class="ui-button ui-widget ui-corner-all" style="border:0px" title="Pause the current macro (can resume)"><i class="fas fa-pause"></i></button>
+            <button id="buttonend" class="ui-button ui-widget ui-corner-all" style="border:0px" title="End the current macro (can't resume)"><i class="fas fa-stop"></i></button>
+            <button id="buttoninto" class="ui-button ui-widget ui-corner-all" style="border:0px" title="Step into"><i class="fas fa-angle-down fa-lg"></i></button>
+            <button id="buttonover" class="ui-button ui-widget ui-corner-all" style="border:0px" title="Step over"><i class="fas fa-angle-double-down fa-lg"></i></button>
+            <button id="buttonout" class="ui-button ui-widget ui-corner-all" style="border:0px" title="Step out"><i class="fas fa-angle-double-left fa-lg"></i></button>
+            <button id="buttonnew" class="ui-button ui-widget ui-corner-all" style="border:0px" title="Create a new macro"><i class="fas fa-file"></i></button>
+            <button id="buttonsave" class="ui-button ui-widget ui-corner-all" style="border:0px" title="Save the macro"><i class="fas fa-save"></i></button>
+            <button id="buttonwatch" class="ui-button ui-widget ui-corner-all" style="border:0px" title="Cycle immediate and watch visiblity"><i class="fas fa-window-restore"></i></button>
         </fieldset>
     </div>
     <div id="immediateeditor" style="border:1px solid grey; display:none"></div>
