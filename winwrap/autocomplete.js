@@ -4,7 +4,7 @@
 
     class AutoComplete {
         constructor() {
-            this.autotypes_ = autotypes();
+            this.autotypes_ = autotypes;
             /*this.autoTypes_ = [ // xxx match documentation, MonacoTypes or such
                 "Method", // MC_METHOD
                 "Property", // MC_PROPERTY
@@ -58,29 +58,28 @@
                 }
             });
         }
-        autotypes() {
-            return [ // xxx match documentation, MonacoTypes or such
-                "Method", // MC_METHOD
-                "Property", // MC_PROPERTY
-                "Property", // MC_DEFAULTPROPERTY
-                "Reference", // MC_EVENT
-                "Value", // MC_CONSTANT
-                "Enum", // MC_ENUM
-                "Unit", // MC_BUILTINTYPE
-                "Class", // MC_CLASS
-                "Module", // MC_MODULE
-                "Color", // MC_RECORD
-                "Interface", // MC_INTERFACE
-                "Function", // MC_DELEGATE
-                "Color", // MC_PREDECLAREDID
-                "Color", // MC_LIBRARY
-                "Reference", // MC_NAMESPACE
-                "Snippet", // MC_SPECIAL
-                "Color", // MC_CERTKEY
-                "Color"  // MC_EXTEND
-            ];
-        }
     }
+
+    let autotypes = [ // xxx match documentation, MonacoTypes or such
+            "Method", // MC_METHOD
+            "Property", // MC_PROPERTY
+            "Property", // MC_DEFAULTPROPERTY
+            "Reference", // MC_EVENT
+            "Value", // MC_CONSTANT
+            "Enum", // MC_ENUM
+            "Unit", // MC_BUILTINTYPE
+            "Class", // MC_CLASS
+            "Module", // MC_MODULE
+            "Color", // MC_RECORD
+            "Interface", // MC_INTERFACE
+            "Function", // MC_DELEGATE
+            "Color", // MC_PREDECLAREDID
+            "Color", // MC_LIBRARY
+            "Reference", // MC_NAMESPACE
+            "Snippet", // MC_SPECIAL
+            "Color", // MC_CERTKEY
+            "Color"  // MC_EXTEND
+        ];
 
     ww.AutoComplete = new AutoComplete();
 
