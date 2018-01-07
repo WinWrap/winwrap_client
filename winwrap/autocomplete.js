@@ -4,7 +4,7 @@
 
     class AutoComplete {
         constructor() {
-            this.autotypes_ = autotypes;
+            this.autoTypes_ = autotypes;
             /*this.autoTypes_ = [ // xxx match documentation, MonacoTypes or such
                 "Method", // MC_METHOD
                 "Property", // MC_PROPERTY
