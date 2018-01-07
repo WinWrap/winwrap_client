@@ -6,13 +6,11 @@
         constructor() {
             this.autoTypes_ = autotypes;
             this.re_auto = new RegExp([
-                /\s/,       // space
+                /\s/,       // space, or /Imports\s|As\s|Of\s/ etc.
                 /^\'#/,     // '#
                 /\./        // member
             ].map(r => r.source).join('|'));
-            //xlet match = textUntilPosition.match(/As\s\w+|\w\.\w+|\=\s\w+$/); // = CallersLine (global)
-            //xlet match = textUntilPosition.match(/(\s|Imports\s|As\s|^\'#|\.)$/); // Of\s
-            //this.re_auto = new RegExp(/(\s|^\'#|\.)$/); // Of\s
+            // ? = CallersLine (global)
         }
         Register() {
             monaco.languages.registerCompletionItemProvider('vb', {
