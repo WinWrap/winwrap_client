@@ -17,7 +17,7 @@
                 /\s/        // space
                 , /^\'#/     // '#
                 , /\./       // member
-            ].map(r => r.source).join('|'));
+            ].map(r => r.source).join('|');
             this.re_auto = new RegExp(s);
         }
         Register() {
