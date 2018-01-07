@@ -7,7 +7,18 @@
             this.autoTypes_ = autotypes;
             //xlet match = textUntilPosition.match(/As\s\w+|\w\.\w+|\=\s\w+$/); // = CallersLine (global)
             //xlet match = textUntilPosition.match(/(\s|Imports\s|As\s|^\'#|\.)$/); // Of\s
-            this.re_auto = new RegExp(/(\s|^\'#|\.)$/); // Of\s
+            //this.re_auto = new RegExp(/(\s|^\'#|\.)$/); // Of\s
+            /*this.re_auto = new RegExp([
+                /\s/        // space
+                , /^\'#/     // '#
+                , /\./       // member
+            ].map(r => r.source).join('|'));*/
+            let s = [
+                /\s/        // space
+                , /^\'#/     // '#
+                , /\./       // member
+            ].map(r => r.source).join('|'));
+            this.re_auto = new RegExp(s);
         }
         Register() {
             monaco.languages.registerCompletionItemProvider('vb', {
