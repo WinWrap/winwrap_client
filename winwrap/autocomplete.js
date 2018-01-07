@@ -46,7 +46,9 @@
                     let textUntilPosition = ww.EditorCode.textUntilPosition(model, position);
                     //let match = textUntilPosition.match(/As\s\w+|\w\.\w+|\=\s\w+$/); // = CallersLine (global)
                     //let match = textUntilPosition.match(/(\s|Imports\s|As\s|^\'#|\.)$/); // Of\s
-                    let match = textUntilPosition.match(/(\s|^\'#|\.)$/); // Of\s
+                    let re_auto = new RegExp(/(\s|^\'#|\.)$/);
+                    let match = textUntilPosition.match(re_auto);
+                    //let match = textUntilPosition.match(/(\s|^\'#|\.)$/); // Of\s
                     //match = true;
                     if (match) {
                         await ww.AutoAuto.SendAsync(model, position);
