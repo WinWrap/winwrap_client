@@ -47,7 +47,8 @@
             }
             return [
                 { command: "?read", target: this.GetValue() },
-                { command: "?breaks", target: this.GetValue() }
+                { command: "?breaks", target: this.GetValue() },
+                { command: "?state", target: this.GetValue() }
             ];
         }
         async ReadAsync(name) {

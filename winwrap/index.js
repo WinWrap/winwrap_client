@@ -24,16 +24,18 @@ $(function () {
         let apiurl = `http://${serverip}/winwrap/`;
         //console.log({ apiurl: apiurl });
         ww.Attach = new ww.AttachPrototype(apiurl);
-        ww.Ajax = new ww.AjaxPrototype({ enablepolling: false }); // () for default
+        ww.Ajax = new ww.AjaxPrototype(); // ({ enablepolling: false }); // () for default
 
-        $("#buttonrun").text("loading");
+        var text = $("#buttonui").text();
+        $("#buttonui").text("loading");
         attachServerAsync().then(data => {
             ww.Interface.Initialize();
             ww.AutoComplete.Register();
             ww.SignatureHelp.Register();
-            $("#buttonrun").text("Run");
+            $("#buttonui").text(text);
             ww.Test = new ww.TestPrototype(ww.EditorCode);
             ww.Ajax.StartPolling();
+            ww.Notifications.NeedState();
         }); // now UI is initialized
     });
 
