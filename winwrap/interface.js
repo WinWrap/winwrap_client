@@ -15,20 +15,57 @@ ww.InterfaceJS = function () {
             ww.ButtonInto.Initialize();
             ww.ButtonOver.Initialize();
             ww.ButtonOut.Initialize();
+            ww.ButtonPause.Initialize();
             ww.ButtonEnd.Initialize();
             ww.ButtonWatch.Initialize();
             ww.WinWrapVersion.Initialize();
+        }
+        SetState(response) {
+            var fCanRun = response.is_idle || response.is_stopped;
+            var fCanStep = fCanRun || response.macro_loaded && response.is_stopped;
+            var fCanPause = response.is_active || !response.design_mode;
+            var fCanEnd = !response.is_idle;
+            var fCanEval = response.macro_loaded && response.is_stopped;
+
+            ww.ButtonSave.Enabled(true);
+            ww.ButtonRun.Enabled(fCanRun);
+            ww.ButtonNew.Enabled(!response.macro_loaded);
+            ww.ButtonPause.Enabled(fCanPause);
+            ww.ButtonEnd.Enabled(fCanEnd);
+            ww.ButtonInto.Enabled(fCanStep);
+            ww.ButtonOver.Enabled(fCanStep && fCanEnd);
+            ww.ButtonOut.Enabled(fCanStep && fCanEnd);
+            ww.ButtonWatch.Enabled(true);
         }
     }
 
     ww.Interface = new Interface();
 
+    class Button_Helper {
+        constructor(buttonid, clickhandler) {
+            this.button_ = $(buttonid);
+            this.button_.click(clickhandler);
+            this.Enabled(false);
+        }
+        Enabled(enable) {
+            var html = this.button_.html();
+            if (enable) {
+                html = html.replace(' fa-inverse', '');
+            } else if (html.indexOf(' fa-inverse') < 0) {
+                html = html.replace('">', ' fa-inverse">');
+            }
+            this.button_.html(html);
+        }
+        IsEnabled() {
+            return this.button_.html().indexOf(' fa-inverse') < 0;
+        }
+    }
+
     class ButtonSave {
         constructor() {
-            this.button_ = $("#buttonsave");
         }
         Initialize() {
-            this.button_.click(() => {
+            this.button_ = new Button_Helper("#buttonsave", () => {
                 let code = ww.EditorCode.editor().getValue();
                 let name = ww.InputMacro.Name;
                 let newname = ww.InputMacro.GetValue();
@@ -40,6 +77,9 @@ ww.InterfaceJS = function () {
             requests.push({ command: "?write", target: name, new_name: newname });
             let result = ww.Ajax.SendProcess(requests);
             return result;
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
         }
         /*as*ync UpdateSave(code, name, newname) { // xxx not tested
             let result = a*wait ww.Request.Send([
@@ -54,31 +94,22 @@ ww.InterfaceJS = function () {
 
     class ButtonRun {
         constructor() {
-
-        }
-        SetValue(text) {
-            $("#buttonrun").text(text);
-            /*setTimeout(function () {
-                $("#buttonrun").text(text);
-            }, 100);*/ // xxx
         }
         Initialize() {
-            $("#buttonrun").click(() => {
-                if ($("#buttonrun").text() === "Run") { // xxx use commit
-                    let requests = [
-                        {
-                            command: "?update", target: ww.InputMacro.GetValue(), code: ww.EditorCode.editor().getValue()
-                        },
-                        {
-                            command: "run", target: ww.InputMacro.GetValue()
-                        }
-                    ];
-                    ww.Ajax.SendProcess(requests);
-                } else {
-                    let request = { command: "pause" };
-                    ww.Ajax.SendProcess(request);
-                }
+            this.button_ = new Button_Helper("#buttonrun", () => {
+                let requests = [
+                    {
+                        command: "?update", target: ww.InputMacro.GetValue(), code: ww.EditorCode.editor().getValue()
+                    },
+                    {
+                        command: "run", target: ww.InputMacro.GetValue()
+                    }
+                ];
+                ww.Ajax.SendProcess(requests);
             });
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
         }
     }
 
@@ -86,17 +117,16 @@ ww.InterfaceJS = function () {
 
     class ButtonNew {
         constructor() {
-
         }
         Initialize() {
-            $("#buttonnew").click(() => {
+            this.button_ = new Button_Helper("#buttonnew", () => {
                 this.ExecuteAsync(); // xxx
             });
         }
         async ExecuteAsync() {
             let request = {
                 command: "?new", kind: "Macro",
-                project: "", has_main: true, names: ["\\a.bas"] // xxx
+                project: "", has_main: true, names: ["\\sample1.bas"] // xxx
             };
             let result = await new ww.AjaxPost().SendAsync(request, ["!new"]).catch(err => {
                 console.log("interface.js ButtonNew ExecuteAsync !new ", err);
@@ -110,19 +140,36 @@ ww.InterfaceJS = function () {
             ww.CommitRebase.Read(readresponse);
             return result;
         }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
+        }
     }
 
     ww.ButtonNew = new ButtonNew();
 
     class ButtonInto {
         constructor() {
-
         }
         Initialize() {
-            $("#buttoninto").click(() => {
-                let request = { command: "into", target: ww.InputMacro.GetValue() };
-                ww.Ajax.SendProcess(request);
+            this.button_ = new Button_Helper("#buttoninto", () => {
+                if (!ww.ButtonEnd.IsEnabled()) {
+                    let requests = [
+                        {
+                            command: "?update", target: ww.InputMacro.GetValue(), code: ww.EditorCode.editor().getValue()
+                        },
+                        {
+                            command: "into", target: ww.InputMacro.GetValue()
+                        }
+                    ];
+                    ww.Ajax.SendProcess(requests);
+                } else {
+                    let request = { command: "into", target: ww.InputMacro.GetValue() };
+                    ww.Ajax.SendProcess(request);
+                }
             });
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
         }
     }
 
@@ -130,13 +177,15 @@ ww.InterfaceJS = function () {
 
     class ButtonOver {
         constructor() {
-
         }
         Initialize() {
-            $("#buttonover").click(() => {
+            this.button_ = new Button_Helper("#buttonover", () => {
                 let request = { command: "over", target: ww.InputMacro.GetValue() };
                 ww.Ajax.SendProcess(request);
             });
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
         }
     }
 
@@ -144,27 +193,50 @@ ww.InterfaceJS = function () {
 
     class ButtonOut {
         constructor() {
-
         }
         Initialize() {
-            $("#buttonout").click(() => {
+            this.button_ = new Button_Helper("#buttonout", () => {
                 let request = { command: "out", target: ww.InputMacro.GetValue() };
                 ww.Ajax.SendProcess(request);
             });
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
         }
     }
 
     ww.ButtonOut = new ButtonOut();
 
-    class ButtonEnd {
+    class ButtonPause {
         constructor() {
-
         }
         Initialize() {
-            $("#buttonend").click(() => {
+            this.button_ = new Button_Helper("#buttonpause", () => {
+                let request = { command: "pause", target: ww.InputMacro.GetValue() };
+                ww.Ajax.SendProcess(request);
+            });
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
+        }
+    }
+
+    ww.ButtonPause = new ButtonPause();
+
+    class ButtonEnd {
+        constructor() {
+        }
+        Initialize() {
+            this.button_ = new Button_Helper("#buttonend", () => {
                 let request = { command: "end", target: ww.InputMacro.GetValue() };
                 ww.Ajax.SendProcess(request);
             });
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
+        }
+        IsEnabled() {
+            return this.button_.IsEnabled();
         }
     }
 
@@ -172,10 +244,9 @@ ww.InterfaceJS = function () {
 
     class ButtonWatch {
         constructor() {
-
         }
         Initialize() {
-            $("#buttonwatch").click(() => { // xxx
+            this.button_ = new Button_Helper("#buttonwatch", () => { // xxx
                 let immediateShowing = ww.EditorImmediate.showing();
                 let watchShowing = ww.EditorWatch.showing();
                 if (!immediateShowing && !watchShowing) {
@@ -193,19 +264,24 @@ ww.InterfaceJS = function () {
                 }
             });
         }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
+        }
     }
 
     ww.ButtonWatch = new ButtonWatch();
 
     class WinWrapVersion {
-        constructor() { }
+        constructor() {
+            this.button_ = $("#winwrapversion");
+        }
         Initialize() {
-            $("#winwrapversion").click(() => {
+            this.button_.click(() => {
                 ww.Test001.Run();
             });
         }
         SetValue(version) {
-            $("#winwrapversion").text(version);
+            this.button_.text(version);
         }
     }
 

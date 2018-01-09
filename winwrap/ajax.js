@@ -87,6 +87,8 @@
         constructor({ enablepolling = true } = { enablepolling: true }) {
             this.enablepolling = enablepolling;
             this.Tid = undefined; // int inuse, null suspended
+            this.needstatus = false;
+            this.pendingRequests = [];
         }
         StartPolling() { // stop during autocomplete and signaturehelp
             if (this.enablepolling) {
@@ -100,22 +102,25 @@
             }
         }
         Pollfn() {
-            //let request = { command: "refresh" };
-            //ww.Ajax.Send(request).then(notifications => { // xxx not this.Send ?
-            // let thisx = this; // fails because Pollfn() called multiple times?
-            new ww.AjaxPost().Send().then(notifications => {
-                if (notifications.length >= 1) {
-                    ww.Ajax.ProcessNotifications(notifications);
-                }
-            });
+            ww.Ajax.Pollfn_();
         }
-        SendProcess(request = []) {
+        Pollfn_() {
+            // set this for the singleton
+            var requests = this.pendingRequests;
+            if (requests.length > 0)
+                this.pendingRequests = [];
+
+            ww.Ajax.SendProcess(requests, false);
+        }
+        SendProcess(request = [], pollaftersend = true) {
             return new ww.AjaxPost().Send(request).then(notifications => {
                 if (notifications.length >= 1) { // xxx start polling here ?
                     ww.Ajax.ProcessNotifications(notifications);
                 }
-                setTimeout(this.Pollfn, 100);
-                setTimeout(this.Pollfn, 500);
+                if (pollaftersend && !this.enablepolling) {
+                    setTimeout(this.Pollfn, 100);
+                    setTimeout(this.Pollfn, 500);
+                }
             });
             //return result; // xxx
         }
@@ -133,6 +138,9 @@
                     ww.Responses.Process(notification);
                 }
             });
+        }
+        PushPendingRequest(request) {
+            this.pendingRequests.push(request);
         }
     }
 

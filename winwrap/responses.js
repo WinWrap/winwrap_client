@@ -28,6 +28,10 @@
                     break;
                 case "!read": // response
                     ww.CommitRebase.Read(response);
+                    ww.Notifications.SendStateRequest();
+                    break;
+                case "!state": // response
+                    ww.Interface.SetState(response);
                     break;
                 case "!watch": // response
                     let watchResults = response.results.map(item => {
