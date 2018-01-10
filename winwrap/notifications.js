@@ -15,7 +15,7 @@
                 case "!notify_Begin": // a notify -1 // notification
                     //ww.EditorImmediate.show(); // moved to !nofity_MacroBegin
                     //ww.ButtonRun.SetValue("Pause");
-                    this.NeedState();
+                    ww.Interface.SetState(notification);
                     break;
                 case "!notify_debugprint": // notification
                     ww.EditorImmediate.appendText(notification.text);
@@ -27,7 +27,7 @@
                     break;
                 case "!notify_End": // notification
                     ww.EditorImmediate.hide();
-                    this.NeedState();
+                    ww.Interface.SetState(notification);
                     break;
                 case "!notify_MacroBegin": // notification
                     ww.EditorImmediate.show();
@@ -48,12 +48,12 @@
                         let request = { command: "?watch", watches: watches };
                         ww.Ajax.PushPendingRequest(request);
                     }
-                    this.NeedState();
+                    ww.Interface.SetState(notification);
                     break;
                 case "!notify_Resume": // notification
                     ww.BreaksPause.clearPause();
                     ww.DebugDecorate.display();
-                    this.NeedState();
+                    ww.Interface.SetState(notification);
                     break;
                 case "!rebase": // notification
                     ww.CommitRebase.Rebase(notification);
@@ -73,10 +73,6 @@
                     this.processNotification(notification); // "Expected ;" error forEach
                 } while (this.Queue.length > 0);
             }
-        }
-        NeedState() {
-            let request = { command: "?state", target: ww.InputMacro.GetValue() };
-            ww.Ajax.PushPendingRequest(request);
         }
     }
 

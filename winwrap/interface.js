@@ -9,32 +9,26 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             ww.InputMacro.Initialize();
-            ww.ButtonSave.Initialize();
             ww.ButtonRun.Initialize();
-            ww.ButtonNew.Initialize();
+            ww.ButtonPause.Initialize();
+            ww.ButtonEnd.Initialize();
             ww.ButtonInto.Initialize();
             ww.ButtonOver.Initialize();
             ww.ButtonOut.Initialize();
-            ww.ButtonPause.Initialize();
-            ww.ButtonEnd.Initialize();
+            ww.ButtonNew.Initialize();
+            ww.ButtonSave.Initialize();
             ww.ButtonWatch.Initialize();
             ww.WinWrapVersion.Initialize();
         }
         SetState(response) {
-            var fCanRun = response.is_idle || response.is_stopped;
-            var fCanStep = fCanRun || response.macro_loaded && response.is_stopped;
-            var fCanPause = response.is_active || !response.design_mode;
-            var fCanEnd = !response.is_idle;
-            var fCanEval = response.macro_loaded && response.is_stopped;
-
-            ww.ButtonSave.Enabled(true);
-            ww.ButtonRun.Enabled(fCanRun);
+            ww.ButtonRun.Enabled(response.commands.run);
+            ww.ButtonPause.Enabled(response.commands.pause);
+            ww.ButtonEnd.Enabled(response.commands.end);
+            ww.ButtonInto.Enabled(response.commands.into);
+            ww.ButtonOver.Enabled(response.commands.over);
+            ww.ButtonOut.Enabled(response.commands.out);
             ww.ButtonNew.Enabled(!response.macro_loaded);
-            ww.ButtonPause.Enabled(fCanPause);
-            ww.ButtonEnd.Enabled(fCanEnd);
-            ww.ButtonInto.Enabled(fCanStep);
-            ww.ButtonOver.Enabled(fCanStep && fCanEnd);
-            ww.ButtonOut.Enabled(fCanStep && fCanEnd);
+            ww.ButtonSave.Enabled(true);
             ww.ButtonWatch.Enabled(true);
         }
     }
