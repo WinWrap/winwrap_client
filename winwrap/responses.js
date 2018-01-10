@@ -28,7 +28,8 @@
                     break;
                 case "!read": // response
                     ww.CommitRebase.Read(response);
-                    ww.Notifications.SendStateRequest();
+                    let request = { command: "?state", target: response.files[0].name };
+                    ww.Ajax.PushPendingRequest(request);
                     break;
                 case "!state": // response
                     ww.Interface.SetState(response);

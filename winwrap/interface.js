@@ -132,8 +132,6 @@ ww.InterfaceJS = function () {
             });
             let readresponse = result.find(o => o.response === "!read");
             ww.CommitRebase.Read(readresponse);
-            let stateresponse = result.find(o => o.response === "!state");
-            ww.Interface.SetState(stateresponse);
             return result;
         }
         Enabled(enable) {
