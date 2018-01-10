@@ -118,8 +118,8 @@
                     ww.Ajax.ProcessNotifications(notifications);
                 }
                 if (pollaftersend && !this.enablepolling) {
-                    setTimeout(this.Pollfn, 100);
-                    setTimeout(this.Pollfn, 500);
+                    //setTimeout(this.Pollfn, 100);
+                    //setTimeout(this.Pollfn, 500);
                 }
             });
             //return result; // xxx
