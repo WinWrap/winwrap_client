@@ -46,7 +46,7 @@
                 if (this.isallresults(results, expected)) {
                     break;
                 }
-                await this.Wait(25);
+                await this.Wait(100);
             }
             console.log({
                 request: this.valuesmsg(requests, "command"),
