@@ -35,7 +35,6 @@ $(function () {
             $("#buttonui").text(text);
             ww.Test = new ww.TestPrototype(ww.EditorCode);
             ww.Ajax.StartPolling();
-            ww.Notifications.NeedState();
         }); // now UI is initialized
     });
 
