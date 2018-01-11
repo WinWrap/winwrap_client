@@ -21,6 +21,8 @@ ww.InterfaceJS = function () {
             ww.WinWrapVersion.Initialize();
         }
         SetState(response) {
+            // editor should be
+            // ww.EditorCode.editor."readonly" = response.commands.run || response.commands.pause;
             ww.ButtonRun.Enabled(response.commands.run);
             ww.ButtonPause.Enabled(response.commands.pause);
             ww.ButtonEnd.Enabled(response.commands.end);
@@ -67,10 +69,8 @@ ww.InterfaceJS = function () {
             });
         }
         Save(code, name, newname) { // xxx don't need code - abstraction?
-            let requests = [].concat(ww.CommitRebase.GetCommitRequest());
-            requests.push({ command: "?write", target: name, new_name: newname });
-            let result = ww.Ajax.PushPendingRequest(requests);
-            return result;
+            ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
+            ww.Ajax.PushPendingRequest({ command: "?write", target: name, new_name: newname });
         }
         Enabled(enable) {
             this.button_.Enabled(enable);
@@ -91,15 +91,8 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             this.button_ = new Button_Helper("#buttonrun", () => {
-                let requests = [
-                    {
-                        command: "?update", target: ww.InputMacro.GetValue(), code: ww.EditorCode.editor().getValue()
-                    },
-                    {
-                        command: "run", target: ww.InputMacro.GetValue()
-                    }
-                ];
-                ww.Ajax.PushPendingRequest(requests);
+                ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
+                ww.Ajax.PushPendingRequest({ command: "run", target: ww.InputMacro.GetValue() });
             });
         }
         Enabled(enable) {
@@ -145,20 +138,8 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             this.button_ = new Button_Helper("#buttoninto", () => {
-                if (!ww.ButtonEnd.IsEnabled()) {
-                    let requests = [
-                        {
-                            command: "?update", target: ww.InputMacro.GetValue(), code: ww.EditorCode.editor().getValue()
-                        },
-                        {
-                            command: "into", target: ww.InputMacro.GetValue()
-                        }
-                    ];
-                    ww.Ajax.PushPendingRequest(requests);
-                } else {
-                    let request = { command: "into", target: ww.InputMacro.GetValue() };
-                    ww.Ajax.PushPendingRequest(request);
-                }
+                ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
+                ww.Ajax.PushPendingRequest({ command: "into", target: ww.InputMacro.GetValue() });
             });
         }
         Enabled(enable) {
@@ -173,8 +154,8 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             this.button_ = new Button_Helper("#buttonover", () => {
-                let request = { command: "over", target: ww.InputMacro.GetValue() };
-                ww.Ajax.PushPendingRequest(request);
+                ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
+                ww.Ajax.PushPendingRequest({ command: "over", target: ww.InputMacro.GetValue() });
             });
         }
         Enabled(enable) {
@@ -189,8 +170,7 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             this.button_ = new Button_Helper("#buttonout", () => {
-                let request = { command: "out", target: ww.InputMacro.GetValue() };
-                ww.Ajax.PushPendingRequest(request);
+                ww.Ajax.PushPendingRequest({ command: "out", target: ww.InputMacro.GetValue() });
             });
         }
         Enabled(enable) {
@@ -205,8 +185,7 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             this.button_ = new Button_Helper("#buttonpause", () => {
-                let request = { command: "pause", target: ww.InputMacro.GetValue() };
-                ww.Ajax.PushPendingRequest(request);
+                ww.Ajax.PushPendingRequest({ command: "pause", target: ww.InputMacro.GetValue() });
             });
         }
         Enabled(enable) {
@@ -221,8 +200,7 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             this.button_ = new Button_Helper("#buttonend", () => {
-                let request = { command: "end", target: ww.InputMacro.GetValue() };
-                ww.Ajax.PushPendingRequest(request);
+                ww.Ajax.PushPendingRequest({ command: "end", target: ww.InputMacro.GetValue() });
             });
         }
         Enabled(enable) {
