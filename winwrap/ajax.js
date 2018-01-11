@@ -24,7 +24,7 @@
                 $.ajax(options).done(resolve).fail(reject);
             });
         }
-        Send(request) {
+        async SendIDAsync(request) {
             let requests = [].concat(request).filter(x => x);
             requests = requests.map(item => {
                 item.datetime = new Date().toLocaleString();
@@ -34,13 +34,14 @@
             });
             let url = ww.Attach.API + "poll/" + ww.Attach.AllocatedID;
             //let url = "http://localhost:5000/winwrap/poll/" + ww.Attach.AllocatedID;
-            return this.Post(url, requests);
+            let result = await this.Post(url, requests);
+            return result;
         }
         async SendAsync(requests, expected) {
             let results = [];
             let start = new Date().getTime();
             for (var trys = 1; trys < 10; trys++) { // xxx
-                let result = await this.Send(trys === 1 ? requests : undefined);
+                let result = await this.SendIDAsync(trys === 1 ? requests : undefined);
                 var elapsed = new Date().getTime() - start;
                 results.push(...result);
                 if (this.isallresults(results, expected)) {
