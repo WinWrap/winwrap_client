@@ -29,7 +29,7 @@
             });
             // wait for !rebase - instead of racing the polling against the next prototype keystroke
             let result = await new ww.AjaxPost().SendAsync(requests, expected).catch(err => {
-                console.log("autoauto.js SendAsync ", err);
+                console.log("ERROR autoauto.js SendAsync ", err);
             });
             ww.Ajax.ProcessNotifications(result);
             if (ww.Ajax.Tid !== undefined) {

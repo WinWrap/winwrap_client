@@ -15,7 +15,7 @@
         async ExecuteAsync() {
             let request = { command: "?attach", version: "10.40.001", unique_name: this.ClientID };
             let result = await new ww.AjaxPost().SendAsync(request, ["!attach"]).catch(err => {
-                console.log("attach.js ExecuteAsync ", err);
+                console.log("ERROR attach.js ExecuteAsync ", err);
             });
             let attach = result.find(o => o.response === "!attach");
             ww.WinWrapVersion.SetValue(attach.version);

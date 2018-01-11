@@ -42,13 +42,13 @@ $(function () {
         //var name = arguments.callee.name; // removed in ES5 strict mode
         //console.log(name);
         let result = await ww.Attach.ExecuteAsync().catch(err => {
-            console.log("index.js Attach.ExecuteAsync ", err);
+            console.log("ERROR index.js Attach.ExecuteAsync ", err);
         });
         result = await ww.InputMacro.OpenDialogAsync().catch(err => {
-            console.log("index.js InputMacro.OpenDialogAsync ", err);
+            console.log("ERROR index.js InputMacro.OpenDialogAsync ", err);
         });
         result = await ww.ButtonNew.ExecuteAsync().catch(err => {
-            console.log("index.js ButtonNew.ExecuteAsync ", err);
+            console.log("ERROR index.js ButtonNew.ExecuteAsync ", err);
         });
         return result;
     }

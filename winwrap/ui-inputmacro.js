@@ -60,7 +60,7 @@
                 command: "?opendialog", dir: "", root_dir: "", exts: "bas|"
             };
             let result = await new ww.AjaxPost().SendAsync(request, ["!opendialog"]).catch(err => {
-                console.log("ui-inputmacro.js OpenDialogAsync ", err);
+                console.log("ERROR ui-inputmacro.js OpenDialogAsync ", err);
             });
             let opendialogresponse = result.find(o => o.response === "!opendialog");
             this.macros_ = opendialogresponse.names.map(item => item.name);
