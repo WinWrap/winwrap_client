@@ -24,7 +24,7 @@ $(function () {
         let apiurl = `http://${serverip}/winwrap/`;
         //console.log({ apiurl: apiurl });
         ww.Attach = new ww.AttachPrototype(apiurl);
-        ww.Ajax = new ww.AjaxPrototype(); // ({ enablepolling: false }); // () for default
+        ww.Ajax = new ww.AjaxPrototype({ enablepolling: false }); // ({ enablepolling: false }); // () for default
 
         var text = $("#buttonui").text();
         $("#buttonui").text("loading");
