@@ -127,6 +127,12 @@
         ProcessNotifications(notifications) { // in this singleton by convenience
             notifications.forEach(notification => {
                 if (notification.id === -1) {
+                    if (notification.response === "!new") { // xxx id -1
+                        ww.Responses.Process(notification);
+                    }
+                    if (notification.response === "!attach") {
+                        return; // ignored
+                    }
                     ww.Notifications.Process(notification);
                 } else {
                     ww.Responses.Process(notification);
@@ -134,12 +140,7 @@
             });
         }
         PushPendingRequest(request) {
-            if (Array.isArray(request)) {
-                this.pendingRequests.push(...request);
-            }
-            else {
-                this.pendingRequests.push(request);
-            }              
+            this.pendingRequests.push(request);
         }
     }
 

@@ -21,7 +21,7 @@
                     break;
                 case "!new": // response xxx (id is -1)
                     let newRequests = ww.InputMacro.ReadRequests(response.name);
-                    ww.Ajax.PushPendingRequest(newRequests);
+                    ww.Ajax.SendProcess(newRequests);
                     break;
                 case "!opendialog": // anonymous fn in InputMacro // response
                     ww.InputMacro.macros_ = response.names.map(item => item.name); // xxx
