@@ -12,9 +12,8 @@
                     ww.BreaksPause.setBreak(notification); // xxx
                     ww.DebugDecorate.display();
                     break;
-                case "!notify_Begin": // a notify -1 // notification
-                    //ww.EditorImmediate.show(); // moved to !nofity_MacroBegin
-                    //ww.ButtonRun.SetValue("Pause");
+                case "!notify_Begin": // notification
+                    ww.EditorImmediate.show();
                     ww.Interface.SetState(notification);
                     break;
                 case "!notify_debugprint": // notification
@@ -26,17 +25,15 @@
                     }, 100);*/ // xxx
                     break;
                 case "!notify_End": // notification
+                    ww.BreaksPause.clearPause();
                     ww.EditorImmediate.hide();
                     ww.Interface.SetState(notification);
                     break;
                 case "!notify_MacroBegin": // notification
-                    ww.EditorImmediate.show();
                     break;
                 case "!notify_MacroEnd": // notification
-                    ww.BreaksPause.clearPause();
-                    ww.DebugDecorate.display();
                     break;
-                case "!notify_Pause": // notification - causes request/response(s) xxx
+                case "!notify_Pause": // notification
                     ww.BreaksPause.setPause(notification);
                     ww.DebugDecorate.display();
                     let name = notification.stack[0].name;
@@ -45,8 +42,7 @@
                     }
                     let watches = ww.EditorWatch.editor().getValue().trim().split(/[\r]?\n/).filter(el => { return el !== ""; });
                     if (watches.length >= 1) { // xxx
-                        let request = { command: "?watch", watches: watches };
-                        ww.Ajax.PushPendingRequest(request);
+                        ww.Ajax.PushPendingRequest({ command: "?watch", watches: watches });
                     }
                     ww.Interface.SetState(notification);
                     break;
