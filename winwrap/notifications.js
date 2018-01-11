@@ -12,8 +12,9 @@
                     ww.BreaksPause.setBreak(notification); // xxx
                     ww.DebugDecorate.display();
                     break;
-                case "!notify_Begin": // notification
-                    ww.EditorImmediate.show();
+                case "!notify_Begin": // a notify -1 // notification
+                    //ww.EditorImmediate.show(); // moved to !nofity_MacroBegin
+                    //ww.ButtonRun.SetValue("Pause");
                     ww.Interface.SetState(notification);
                     break;
                 case "!notify_debugprint": // notification
@@ -25,13 +26,15 @@
                     }, 100);*/ // xxx
                     break;
                 case "!notify_End": // notification
-                    ww.BreaksPause.clearPause();
                     ww.EditorImmediate.hide();
                     ww.Interface.SetState(notification);
                     break;
                 case "!notify_MacroBegin": // notification
+                    ww.EditorImmediate.show();
                     break;
                 case "!notify_MacroEnd": // notification
+                    ww.BreaksPause.clearPause();
+                    ww.DebugDecorate.display();
                     break;
                 case "!notify_Pause": // notification - causes request/response(s) xxx
                     ww.BreaksPause.setPause(notification);
