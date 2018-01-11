@@ -116,12 +116,12 @@ ww.InterfaceJS = function () {
                 project: "", has_main: true, names: ["\\sample1.bas"] // xxx
             };
             let result = await new ww.AjaxPost().SendAsync(request, ["!new"]).catch(err => {
-                console.log("interface.js ButtonNew ExecuteAsync !new ", err);
+                console.log("ERROR interface.js ButtonNew ExecuteAsync !new ", err);
             });
             let newresponse = result.find(o => o.response === "!new");
             let requests = ww.InputMacro.ReadRequests(newresponse.name);
             result = await new ww.AjaxPost().SendAsync(requests, ["!read"]).catch(err => {
-                console.log("interface.js ButtonNew ExecuteAsync !read ", err);
+                console.log("ERROR interface.js ButtonNew ExecuteAsync !read ", err);
             });
             ww.Ajax.ProcessNotifications(result);
             return result;
