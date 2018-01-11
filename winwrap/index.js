@@ -44,11 +44,11 @@ $(function () {
         let result = await ww.Attach.ExecuteAsync().catch(err => {
             console.log("index.js Attach.ExecuteAsync ", err);
         });
-        result = await ww.ButtonNew.ExecuteAsync().catch(err => {
-            console.log("index.js ButtonNew.ExecuteAsync ", err);
-        });
         result = await ww.InputMacro.OpenDialogAsync().catch(err => {
             console.log("index.js InputMacro.OpenDialogAsync ", err);
+        });
+        result = await ww.ButtonNew.ExecuteAsync().catch(err => {
+            console.log("index.js ButtonNew.ExecuteAsync ", err);
         });
         return result;
     }
