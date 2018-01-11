@@ -34,8 +34,7 @@
             });
             let url = ww.Attach.API + "poll/" + ww.Attach.AllocatedID;
             //let url = "http://localhost:5000/winwrap/poll/" + ww.Attach.AllocatedID;
-            let result = this.Post(url, requests);
-            return result;
+            return this.Post(url, requests);
         }
         async SendAsync(requests, expected) {
             let results = [];
