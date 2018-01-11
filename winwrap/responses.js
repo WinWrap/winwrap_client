@@ -20,14 +20,16 @@
                     ww.CommitRebase.CommitDone(response.revision);
                     break;
                 case "!new": // response xxx (id is -1)
-                    ww.Ajax.PushPendingRequest(ww.InputMacro.ReadRequests(response.name));
+                    let newRequests = ww.InputMacro.ReadRequests(response.name);
+                    ww.Ajax.PushPendingRequest(newRequests);
                     break;
                 case "!opendialog": // anonymous fn in InputMacro // response
                     ww.InputMacro.macros_ = response.names.map(item => item.name); // xxx
                     break;
                 case "!read": // response
                     ww.CommitRebase.Read(response);
-                    ww.Ajax.PushPendingRequest({ command: "?state", target: response.files[0].name });
+                    let request = { command: "?state", target: response.files[0].name };
+                    ww.Ajax.PushPendingRequest(request);
                     break;
                 case "!state": // response
                     ww.Interface.SetState(response);

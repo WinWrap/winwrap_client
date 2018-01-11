@@ -33,7 +33,7 @@
                     break;
                 case "!notify_MacroEnd": // notification
                     break;
-                case "!notify_Pause": // notification
+                case "!notify_Pause": // notification - causes request/response(s) xxx
                     ww.BreaksPause.setPause(notification);
                     ww.DebugDecorate.display();
                     let name = notification.stack[0].name;
@@ -42,7 +42,8 @@
                     }
                     let watches = ww.EditorWatch.editor().getValue().trim().split(/[\r]?\n/).filter(el => { return el !== ""; });
                     if (watches.length >= 1) { // xxx
-                        ww.Ajax.PushPendingRequest({ command: "?watch", watches: watches });
+                        let request = { command: "?watch", watches: watches };
+                        ww.Ajax.PushPendingRequest(request);
                     }
                     ww.Interface.SetState(notification);
                     break;

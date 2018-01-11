@@ -134,13 +134,11 @@
             });
         }
         PushPendingRequest(request) {
-            if (request) {
-                if (Array.isArray(request)) {
-                    this.pendingRequests.push(...request);
-                }
-                else {
-                    this.pendingRequests.push(request);
-                }
+            if (Array.isArray(request)) {
+                this.pendingRequests.push(...request);
+            }
+            else {
+                this.pendingRequests.push(request);
             }              
         }
     }
