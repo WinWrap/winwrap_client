@@ -86,19 +86,19 @@
         // https://medium.com/dailyjs/named-and-optional-arguments-in-javascript-using-es6-destructuring-292a683d5b4e
         constructor({ enablepolling = true } = { enablepolling: true }) {
             this.enablepolling = enablepolling;
-            this.Tid = undefined; // int inuse, null suspended
+            this.Tid = null;// not waiting to poll
             this.needstatus = false;
             this.pendingRequests = [];
         }
         StartPolling() { // stop during autocomplete and signaturehelp
-            if (this.enablepolling) {
-                this.Tid = setTimeout(this.Pollfn, 100);
+            if (this.Tid == null && this.enablepolling) {
+                this.Tid = setTimeout(this.Pollfn, 100); // waiting to poll
             }
         }
         StopPolling() {
-            if (this.Tid !== null) {
+            if (this.Tid != null) {
                 clearTimeout(this.Tid);
-                this.Tid = null;
+                this.Tid = null; // not waiting to poll
             }
         }
         Pollfn() {
@@ -106,6 +106,7 @@
         }
         Pollfn_() {
             // set this for the singleton
+            this.Tid = null; // not waiting to poll
             var requests = this.pendingRequests;
             if (requests.length > 0)
                 this.pendingRequests = [];
@@ -113,15 +114,16 @@
             ww.Ajax.SendProcess(requests, false);
         }
         SendProcess(request = []) {
+            console.log("Ajax.SendProcess: " + this.valuesmsg(request, "command"));
             return new ww.AjaxPost().Send(request).then(notifications => {
+                console.log("Ajax.SendProcess: " + this.valuesmsg(notifications, "response"));
                 if (notifications.length >= 1) { // xxx start polling here ?
                     ww.Ajax.ProcessNotifications(notifications);
                 }
                 if (this.enablepolling) {
-                    setTimeout(this.Pollfn, 100);
+                    this.StartPolling();
                 }
             });
-            //return result; // xxx
         }
         ProcessNotifications(notifications) { // in this singleton by convenience
             notifications.forEach(notification => {
@@ -141,6 +143,13 @@
                     this.pendingRequests.push(request);
                 }
             }
+        }
+        valuesmsg(data, key) {
+            let xdata = [].concat(data).filter(item => {
+                return item !== null && item !== undefined;
+            });
+            let datas = xdata.map(o => o[key]);
+            return datas.toString();
         }
     }
 

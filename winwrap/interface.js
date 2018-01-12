@@ -32,6 +32,8 @@ ww.InterfaceJS = function () {
             ww.ButtonNew.Enabled(!response.macro_loaded);
             ww.ButtonSave.Enabled(true);
             ww.ButtonWatch.Enabled(true);
+            // update current line
+            ww.BreaksPause.setPause(response);
         }
     }
 
@@ -75,13 +77,6 @@ ww.InterfaceJS = function () {
         Enabled(enable) {
             this.button_.Enabled(enable);
         }
-        /*as*ync UpdateSave(code, name, newname) { // xxx not tested
-            let result = a*wait ww.Request.Send([
-                { command: "?update", target: name, code: code },
-                { command: "?write", target: name, new_name: newname }
-            ]);
-            return result;
-        }*/
     }
 
     ww.ButtonSave = new ButtonSave();
@@ -107,24 +102,8 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             this.button_ = new Button_Helper("#buttonnew", () => {
-                this.ExecuteAsync(); // xxx
+                ww.Ajax.PushPendingRequest({ command: "?new", kind: "Macro", has_main: true, names: [] });
             });
-        }
-        async ExecuteAsync() {
-            let request = {
-                command: "?new", kind: "Macro",
-                project: "", has_main: true, names: ["\\sample1.bas"] // xxx
-            };
-            let result = await new ww.AjaxPost().SendAsync(request, ["!new"]).catch(err => {
-                console.log("ERROR interface.js ButtonNew ExecuteAsync !new ", err);
-            });
-            let newresponse = result.find(o => o.response === "!new");
-            let requests = ww.InputMacro.ReadRequests(newresponse.name);
-            result = await new ww.AjaxPost().SendAsync(requests, ["!read"]).catch(err => {
-                console.log("ERROR interface.js ButtonNew ExecuteAsync !read ", err);
-            });
-            ww.Ajax.ProcessNotifications(result);
-            return result;
         }
         Enabled(enable) {
             this.button_.Enabled(enable);

@@ -5,7 +5,7 @@
     class BreaksPause {
         constructor() {
             this.breaks = [];
-            this.pause = null;
+            this.stack = [];
         }
         getBreaks(target) {
             let breaks = this.breaks;
@@ -14,13 +14,10 @@
             });
             return breaks;
         }
-        /*getPause() {
-            return this.pause;
-        }*/
         getPauseLine(name) {
             let line = null;
-            if (this.pause !== null) {
-                let stack0 = this.pause.stack[0];
+            if (this.stack.length > 0) {
+                let stack0 = this.stack[0];
                 if (stack0.name === name) {
                     line = stack0.linenum;
                 }
@@ -48,6 +45,7 @@
                 });
             });
             this.breaks = breaks;
+            ww.DebugDecorate.display();
         }
         isBreak(macro, aline) {
             let breaks = this.breaks;
@@ -58,10 +56,14 @@
             return abreak !== undefined;
         }
         setPause(notification) {
-            this.pause = notification;
-        }
-        clearPause() {
-            this.pause = null;
+            if (notification.response !== "!state") {
+                if (notification.stack !== undefined) {
+                    this.stack = notification.stack;
+                } else {
+                    this.stack = [];
+                }
+                ww.DebugDecorate.display();
+            }
         }
     }
 

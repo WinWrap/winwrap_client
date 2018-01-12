@@ -14,23 +14,26 @@
                     break;
                 case "!breaks": // response
                     ww.BreaksPause.setBreaks(response);
-                    ww.DebugDecorate.display();
                     break;
                 case "!commit":
                     ww.CommitRebase.CommitDone(response.revision);
                     break;
-                case "!new": // response xxx (id is -1)
-                    ww.Ajax.PushPendingRequest(ww.InputMacro.ReadRequests(response.name));
+                case "!new": // response
+                    ww.Ajax.PushPendingRequest({ command: "?read", target: response.name });
                     break;
-                case "!opendialog": // anonymous fn in InputMacro // response
-                    ww.InputMacro.macros_ = response.names.map(item => item.name); // xxx
+                case "!opendialog": // response
+                    ww.InputMacro.SetValues(response.names.map(item => item.name));
                     break;
                 case "!read": // response
                     ww.CommitRebase.Read(response);
+                    ww.Ajax.PushPendingRequest({ command: "?breaks", target: response.files[0].name });
                     ww.Ajax.PushPendingRequest({ command: "?state", target: response.files[0].name });
                     break;
                 case "!state": // response
                     ww.Interface.SetState(response);
+                    break;
+                case "!stack": // response
+                    ww.BreaksPause.setPause(response);
                     break;
                 case "!watch": // response
                     let watchResults = response.results.map(item => {

@@ -9,7 +9,7 @@
         processNotification(notification) {
             switch (notification.response.toLowerCase()) { // each case => one requests
                 case "!break": // notification
-                    ww.BreaksPause.setBreak(notification); // xxx
+                    ww.BreaksPause.setBreak(notification);
                     ww.DebugDecorate.display();
                     break;
                 case "!notify_begin": // notification
@@ -28,8 +28,6 @@
                     }, 100);*/ // xxx
                     break;
                 case "!notify_end": // notification
-                    ww.BreaksPause.clearPause();
-                    ww.DebugDecorate.display();
                     ww.EditorImmediate.hide();
                     ww.Interface.SetState(notification);
                     break;
@@ -38,11 +36,8 @@
                 case "!notify_macroend": // notification
                     break;
                 case "!notify_pause": // notification
-                    ww.BreaksPause.setPause(notification);
-                    ww.DebugDecorate.display();
-                    let name = notification.stack[0].name;
-                    if (ww.InputMacro.GetValue() !== name) {
-                        ww.Ajax.PushPendingRequest(ww.InputMacro.ReadRequests(name));
+                    if (ww.InputMacro.GetValue() !== notification.file_name) {
+                        ww.Ajax.PushPendingRequest({ command: "?read", target: notification.file_name });
                     }
                     let watches = ww.EditorWatch.editor().getValue().trim().split(/[\r]?\n/).filter(el => { return el !== ""; });
                     if (watches.length >= 1) { // xxx
@@ -51,8 +46,6 @@
                     ww.Interface.SetState(notification);
                     break;
                 case "!notify_resume": // notification
-                    ww.BreaksPause.clearPause();
-                    ww.DebugDecorate.display();
                     ww.Interface.SetState(notification);
                     break;
                 case "!rebase": // notification

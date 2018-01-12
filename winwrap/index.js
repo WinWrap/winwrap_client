@@ -35,22 +35,17 @@ $(function () {
             $("#buttonui").text(text);
             ww.Test = new ww.TestPrototype(ww.EditorCode);
             ww.Ajax.StartPolling();
+            ww.Ajax.PushPendingRequest({ command: "?opendialog", dir: "\\", exts: "wwd|bas" });
+            ww.Ajax.PushPendingRequest({ command: "?stack" });
         }); // now UI is initialized
     });
 
     async function attachServerAsync() {
         //var name = arguments.callee.name; // removed in ES5 strict mode
         //console.log(name);
-        let result = await ww.Attach.ExecuteAsync().catch(err => {
+        return await ww.Attach.ExecuteAsync().catch(err => {
             console.log("ERROR index.js Attach.ExecuteAsync ", err);
         });
-        result = await ww.InputMacro.OpenDialogAsync().catch(err => {
-            console.log("ERROR index.js InputMacro.OpenDialogAsync ", err);
-        });
-        result = await ww.ButtonNew.ExecuteAsync().catch(err => {
-            console.log("ERROR index.js ButtonNew.ExecuteAsync ", err);
-        });
-        return result;
     }
 
     function getSearchParams(k) {

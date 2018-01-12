@@ -5,20 +5,19 @@
     class InputMacro {
         constructor() {
             this.macros_ = []; // xxx Macros
-            this.Name = "";
         }
         GetValue() {
             return $("#inputmacro").val();
         }
-        UpdateMacroListRequest() {
-            let request = {
-                command: "?opendialog", dir: "",
-                //root_dir: "C:\\Users\\edwbe\\Documents\\WinWrapThread", exts: "bas|xml" // xxx
-                //root_dir: "C:\\Users\\Public\\Documents\\WinWrapThread", exts: "bas|xml" // xxx
-                //root_dir: "C:\\Users\\winwrap\\Documents\\WinWrapThread", exts: "bas|xml" // xxx
-                root_dir: "\\WinWrapThread", exts: "bas|xml" // xxx
-            };
-            return request;
+        SetValues(values) {
+            this.macros_ = values;
+            if (values.find(item => item === "\\Sample1.bas")) {
+                $("#inputmacro").val("\\Sample1.bas");
+                ww.Ajax.PushPendingRequest({ command: "?read", target: this.GetValue() });
+            }
+            else {
+                ww.Ajax.PushPendingRequest({ command: "?new", names: [] });
+            }
         }
         Initialize() {
             $("#inputmacro").autocomplete({
@@ -32,39 +31,8 @@
                 }
             });
             $("#inputmacro").on("autocompleteselect", function (event, ui) {
-                ww.InputMacro.Read(ui.item.value);
+                ww.Ajax.PushPendingRequest({ command: "?read", target: ui.item.value });
             });
-        }
-        Read(name) { // xxx ?
-            let requests = this.ReadRequests(name);
-            let result = ww.Ajax.SendProcess(requests);
-            return result;
-        }
-        ReadRequests(name) { // xxx needed ?
-            if (name !== undefined) {
-                $("#inputmacro").val(name);
-                this.Name = name;
-            }
-            return [
-                { command: "?read", target: this.GetValue() },
-                { command: "?breaks", target: this.GetValue() }
-            ];
-        }
-        async ReadAsync(name) {
-            let requests = this.ReadRequests(name);
-            let result = await new ww.AjaxPost().Send(requests);
-            return result;
-        }
-        async OpenDialogAsync() {
-            let request = {
-                command: "?opendialog", dir: "", root_dir: "", exts: "bas|"
-            };
-            let result = await new ww.AjaxPost().SendAsync(request, ["!opendialog"]).catch(err => {
-                console.log("ERROR ui-inputmacro.js OpenDialogAsync ", err);
-            });
-            let opendialogresponse = result.find(o => o.response === "!opendialog");
-            this.macros_ = opendialogresponse.names.map(item => item.name);
-            return result;
         }
     }
 
