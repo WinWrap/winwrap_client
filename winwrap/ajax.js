@@ -92,7 +92,7 @@
         }
         StartPolling() { // stop during autocomplete and signaturehelp
             if (this.enablepolling) {
-                this.Tid = setTimeout(this.Pollfn, 250);
+                this.Tid = setTimeout(this.Pollfn, 100);
             }
         }
         StopPolling() {
@@ -118,7 +118,7 @@
                     ww.Ajax.ProcessNotifications(notifications);
                 }
                 if (this.enablepolling) {
-                    setTimeout(this.Pollfn, 250);
+                    setTimeout(this.Pollfn, 100);
                 }
             });
             //return result; // xxx
