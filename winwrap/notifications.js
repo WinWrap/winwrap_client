@@ -7,14 +7,17 @@
             this.Queue = [];
         }
         processNotification(notification) {
-            switch (notification.response) { // each case => one requests
+            switch (notification.response.toLowerCase()) { // each case => one requests
                 case "!break": // notification
                     ww.BreaksPause.setBreak(notification); // xxx
                     ww.DebugDecorate.display();
                     break;
-                case "!notify_Begin": // notification
+                case "!notify_begin": // notification
                     ww.EditorImmediate.show();
                     ww.Interface.SetState(notification);
+                    break;
+                case "!notify_debugclear": // notification
+                    // need a ww.EditorImmediate method to clear the immediate text
                     break;
                 case "!notify_debugprint": // notification
                     ww.EditorImmediate.appendText(notification.text);
@@ -24,17 +27,17 @@
                         ww.EditorImmediate.scrollToBottom();
                     }, 100);*/ // xxx
                     break;
-                case "!notify_End": // notification
+                case "!notify_end": // notification
                     ww.BreaksPause.clearPause();
                     ww.DebugDecorate.display();
                     ww.EditorImmediate.hide();
                     ww.Interface.SetState(notification);
                     break;
-                case "!notify_MacroBegin": // notification
+                case "!notify_macrobegin": // notification
                     break;
-                case "!notify_MacroEnd": // notification
+                case "!notify_macroend": // notification
                     break;
-                case "!notify_Pause": // notification
+                case "!notify_pause": // notification
                     ww.BreaksPause.setPause(notification);
                     ww.DebugDecorate.display();
                     let name = notification.stack[0].name;
@@ -47,7 +50,7 @@
                     }
                     ww.Interface.SetState(notification);
                     break;
-                case "!notify_Resume": // notification
+                case "!notify_resume": // notification
                     ww.BreaksPause.clearPause();
                     ww.DebugDecorate.display();
                     ww.Interface.SetState(notification);
