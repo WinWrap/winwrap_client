@@ -92,12 +92,12 @@
         }
         StartPolling() { // stop during autocomplete and signaturehelp
             if (this.enablepolling) {
-                this.Tid = setInterval(this.Pollfn, 250);
+                this.Tid = setTimeout(this.Pollfn, 250);
             }
         }
         StopPolling() {
             if (this.Tid !== null) {
-                clearInterval(this.Tid);
+                clearTimeout(this.Tid);
                 this.Tid = null;
             }
         }
@@ -112,14 +112,13 @@
 
             ww.Ajax.SendProcess(requests, false);
         }
-        SendProcess(request = [], pollaftersend = true) {
+        SendProcess(request = []) {
             return new ww.AjaxPost().Send(request).then(notifications => {
                 if (notifications.length >= 1) { // xxx start polling here ?
                     ww.Ajax.ProcessNotifications(notifications);
                 }
-                if (pollaftersend && !this.enablepolling) {
-                    setTimeout(this.Pollfn, 100);
-                    setTimeout(this.Pollfn, 500);
+                if (this.enablepolling) {
+                    setTimeout(this.Pollfn, 250);
                 }
             });
             //return result; // xxx

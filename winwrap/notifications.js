@@ -26,6 +26,7 @@
                     break;
                 case "!notify_End": // notification
                     ww.BreaksPause.clearPause();
+                    ww.DebugDecorate.display();
                     ww.EditorImmediate.hide();
                     ww.Interface.SetState(notification);
                     break;
