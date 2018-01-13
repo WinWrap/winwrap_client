@@ -114,10 +114,12 @@
             ww.Ajax.SendProcess(requests, false);
         }
         SendProcess(request = []) {
-            console.log("Ajax.SendProcess: " + this.valuesmsg(request, "command"));
+            if (request.length >= 1) {
+                console.log("Ajax.SendProcess> " + this.valuesmsg(request, "command"));
+            }
             return new ww.AjaxPost().Send(request).then(notifications => {
-                console.log("Ajax.SendProcess: " + this.valuesmsg(notifications, "response"));
                 if (notifications.length >= 1) { // xxx start polling here ?
+                    console.log("Ajax.SendProcess< " + this.valuesmsg(notifications, "response"));
                     ww.Ajax.ProcessNotifications(notifications);
                 }
                 if (this.enablepolling) {
