@@ -7,7 +7,7 @@
             this.Queue = [];
         }
         processNotification(notification) {
-            switch (notification.response.toLowerCase()) { // each case => one requests
+            switch (notification.response) { // each case => one requests
                 case "!break": // notification
                     ww.BreaksPause.setBreak(notification);
                     ww.DebugDecorate.display();
@@ -30,6 +30,18 @@
                 case "!notify_end": // notification
                     ww.EditorImmediate.hide();
                     ww.Interface.SetState(notification);
+                    break;
+                case "!notify_errorlog": // notification
+                    break;
+                case "!notify_errors": // notification
+                    alert(notification.error.macro_name + "@" + notification.error.line_num + ": " +
+                        notification.error.line + "\n" + notification.error.desc);
+                    if (ww.InputMacro.GetValue() !== notification.error.macro_name) {
+                        ww.Ajax.PushPendingRequest({ command: "?read", target: notification.error.macro_name });
+                    }
+                    // should highlight the error line in red and scroll to it
+                    // notification.error.line_num
+                    // notification.error.offset (index into the line where the error occurred, -1 for runtime error)
                     break;
                 case "!notify_macrobegin": // notification
                     break;
