@@ -4,9 +4,8 @@
 
     class Notifications { // singleton
         constructor() {
-            this.Queue = [];
         }
-        processNotification(notification) {
+        ProcessNotification(notification) {
             switch (notification.response) { // each case => one requests
                 case "!break": // notification
                     ww.BreaksPause.setBreak(notification);
@@ -65,18 +64,6 @@
                     break;
                 default:
                     break;
-            }
-        }
-        Process(notifications) {
-            if (notifications !== undefined) { // xxx
-                this.Queue = this.Queue.concat(notifications);
-            }
-            if (this.Queue.length >= 1) {
-                do {
-                    let notification = this.Queue.shift();
-                    notification.datetimeClient = new Date().toLocaleString();
-                    this.processNotification(notification); // "Expected ;" error forEach
-                } while (this.Queue.length > 0);
             }
         }
     }

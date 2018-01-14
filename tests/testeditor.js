@@ -20,10 +20,10 @@
             let macroname = "\\a2.bas";
             this.result_ = await ww.InputMacro.ReadAsync(macroname);
             let read = this.result_.find(o => o.response === "!read");
-            ww.CommitRebase.Read(read);
+            ww.CommitRebase.Read(read.files[0]);
             this.insertText(/^/, "'#");
             let commitRequest = ww.CommitRebase.GetCommitRequest();
-            this.result_ = await new ww.AjaxPost().Send(commitRequest);
+            this.result_ = await ww.Ajax.Send(commitRequest);
             ww.Browser.Log([commitRequest, this.result_]);
             this.result_ = await ww.InputMacro.ReadAsync(macroname);
             this.setCaret(/'#/);
