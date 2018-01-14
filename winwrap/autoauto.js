@@ -13,7 +13,7 @@
             ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
             let request = {
                 command: "?auto",
-                target: ww.InputMacro.GetValue(),
+                target: ww.CommitRebase.Name,
                 first: textUntilPosition.length - (position.column - 1),
                 offset: position.column - 1 // `${first}`
             };

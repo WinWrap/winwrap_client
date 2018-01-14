@@ -9,11 +9,13 @@
         GetValue() {
             return $("#inputmacro").val();
         }
+        SetValue(value) {
+            $("#inputmacro").val(value);
+        }
         SetValues(values) {
             this.macros_ = values;
             if (values.find(item => item === "\\Sample1.bas")) {
-                $("#inputmacro").val("\\Sample1.bas");
-                ww.Ajax.PushPendingRequest({ command: "?read", target: this.GetValue() });
+                ww.Ajax.PushPendingRequest({ command: "?read", target: "\\Sample1.bas" });
             }
             else {
                 ww.Ajax.PushPendingRequest({ command: "?new", names: [] });

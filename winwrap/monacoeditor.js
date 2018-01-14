@@ -40,11 +40,11 @@
             "bindOnMouseDown": function () {
                 editor_.onMouseDown(function (e) {
                     if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) { // xxx below
-                        let isBreak = ww.BreaksPause.isBreak(ww.InputMacro.GetValue(), e.target.position.lineNumber);
+                        let isBreak = ww.BreaksPause.isBreak(ww.CommitRebase.Name, e.target.position.lineNumber);
                         let doBreak = isBreak ? false : true;
                         let request = {
                             command: "break",
-                            target: ww.InputMacro.GetValue(),
+                            target: ww.CommitRebase.Name,
                             line: e.target.position.lineNumber,
                             on: doBreak
                         };

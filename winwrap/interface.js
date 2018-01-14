@@ -87,7 +87,7 @@ ww.InterfaceJS = function () {
         Initialize() {
             this.button_ = new Button_Helper("#buttonrun", () => {
                 ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
-                ww.Ajax.PushPendingRequest({ command: "run", target: ww.InputMacro.GetValue() });
+                ww.Ajax.PushPendingRequest({ command: "run", target: ww.CommitRebase.Name });
             });
         }
         Enabled(enable) {
@@ -118,7 +118,7 @@ ww.InterfaceJS = function () {
         Initialize() {
             this.button_ = new Button_Helper("#buttoninto", () => {
                 ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
-                ww.Ajax.PushPendingRequest({ command: "into", target: ww.InputMacro.GetValue() });
+                ww.Ajax.PushPendingRequest({ command: "into", target: ww.CommitRebase.Name });
             });
         }
         Enabled(enable) {
@@ -134,7 +134,7 @@ ww.InterfaceJS = function () {
         Initialize() {
             this.button_ = new Button_Helper("#buttonover", () => {
                 ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
-                ww.Ajax.PushPendingRequest({ command: "over", target: ww.InputMacro.GetValue() });
+                ww.Ajax.PushPendingRequest({ command: "over", target: ww.CommitRebase.Name });
             });
         }
         Enabled(enable) {
@@ -149,7 +149,7 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             this.button_ = new Button_Helper("#buttonout", () => {
-                ww.Ajax.PushPendingRequest({ command: "out", target: ww.InputMacro.GetValue() });
+                ww.Ajax.PushPendingRequest({ command: "out", target: ww.CommitRebase.Name });
             });
         }
         Enabled(enable) {
@@ -164,7 +164,7 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             this.button_ = new Button_Helper("#buttonpause", () => {
-                ww.Ajax.PushPendingRequest({ command: "pause", target: ww.InputMacro.GetValue() });
+                ww.Ajax.PushPendingRequest({ command: "pause", target: ww.CommitRebase.Name });
             });
         }
         Enabled(enable) {
@@ -179,7 +179,7 @@ ww.InterfaceJS = function () {
         }
         Initialize() {
             this.button_ = new Button_Helper("#buttonend", () => {
-                ww.Ajax.PushPendingRequest({ command: "end", target: ww.InputMacro.GetValue() });
+                ww.Ajax.PushPendingRequest({ command: "end", target: ww.CommitRebase.Name });
             });
         }
         Enabled(enable) {

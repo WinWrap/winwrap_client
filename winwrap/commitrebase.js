@@ -38,7 +38,7 @@
                 request = {
                     //"id": this.ActiveDoc.SyncId, // xxx not needed
                     command: "?commit",
-                    target: ww.InputMacro.GetValue(),
+                    target: ww.CommitRebase.Name,
                     doc_revision: this.ActiveDoc.Revision,
                     revision: commit.Revision,
                     edits: edits

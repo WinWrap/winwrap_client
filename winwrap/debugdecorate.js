@@ -36,7 +36,7 @@
         }
         display() {
             let decorations = [];
-            let target = ww.InputMacro.GetValue();
+            let target = ww.CommitRebase.Name;
             let breaksDecorations = this._breaksDecorations(target);
             Array.prototype.push.apply(decorations, breaksDecorations);
             let pauseDecoration = this._pauseDecoration(target);

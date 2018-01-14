@@ -23,6 +23,7 @@
                 case "!read": // response
                     // only read the first file
                     let file = response.files[0];
+                    ww.InputMacro.SetValue(file.name);
                     ww.CommitRebase.Read(file);
                     ww.Ajax.PushPendingRequest({ command: "?breaks", target: file.name });
                     ww.Ajax.PushPendingRequest({ command: "?state", target: file.name });

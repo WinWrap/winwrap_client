@@ -35,7 +35,7 @@
                 case "!notify_errors": // notification
                     alert(notification.error.macro_name + "@" + notification.error.line_num + ": " +
                         notification.error.line + "\n" + notification.error.desc);
-                    if (ww.InputMacro.GetValue() !== notification.error.macro_name) {
+                    if (ww.CommitRebase.Name !== notification.error.macro_name) {
                         ww.Ajax.PushPendingRequest({ command: "?read", target: notification.error.macro_name });
                     }
                     // should highlight the error line in red and scroll to it
@@ -47,7 +47,7 @@
                 case "!notify_macroend": // notification
                     break;
                 case "!notify_pause": // notification
-                    if (ww.InputMacro.GetValue() !== notification.file_name) {
+                    if (ww.CommitRebase.Name !== notification.file_name) {
                         ww.Ajax.PushPendingRequest({ command: "?read", target: notification.file_name });
                     }
                     let watches = ww.EditorWatch.editor().getValue().trim().split(/[\r]?\n/).filter(el => { return el !== ""; });
