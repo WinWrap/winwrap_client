@@ -35,19 +35,15 @@
             this.breaks = breaks;
         }
         setBreaks(notification) {
-            let breaks = this.breaks;
+            let breaks = [];
             let newBreaks = notification.breaks;
-            if (newBreaks === undefined) {
-                newBreaks = [];
+            if (newBreaks !== undefined) {
+                newBreaks.forEach(macroBreaks => {
+                    macroBreaks.lines.forEach(line => {
+                        breaks.push({ "target": macroBreaks.name, "line": line });
+                    });
+                });
             }
-            newBreaks.forEach(macroBreaks => {
-                breaks = breaks.filter(el => {
-                    return el.target !== notification.target;
-                });
-                macroBreaks.lines.forEach(line => {
-                    breaks.push({ "target": macroBreaks.name, "line": line });
-                });
-            });
             this.breaks = breaks;
             ww.DebugDecorate.display();
         }
