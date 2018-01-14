@@ -36,7 +36,11 @@
         }
         setBreaks(notification) {
             let breaks = this.breaks;
-            notification.breaks.forEach(macroBreaks => {
+            let newBreaks = notification.breaks;
+            if (newBreaks === undefined) {
+                newBreaks = [];
+            }
+            newBreaks.forEach(macroBreaks => {
                 breaks = breaks.filter(el => {
                     return el.target !== notification.target;
                 });
