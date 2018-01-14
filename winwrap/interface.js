@@ -55,28 +55,6 @@ ww.InterfaceJS = function () {
         }
     }
 
-    class ButtonSave {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttonsave", () => {
-                let code = ww.EditorCode.editor().getValue();
-                let name = ww.CommitRebase.Name;
-                let newname = ww.InputMacro.GetValue();
-                this.Save(code, name, newname);
-            });
-        }
-        Save(code, name, newname) { // xxx don't need code - abstraction?
-            ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
-            ww.Ajax.PushPendingRequest({ command: "?write", target: name, new_name: newname });
-        }
-        Enabled(enable) {
-            this.button_.Enabled(enable);
-        }
-    }
-
-    ww.ButtonSave = new ButtonSave();
-
     class ButtonRun {
         constructor() {
         }
@@ -92,21 +70,6 @@ ww.InterfaceJS = function () {
     }
 
     ww.ButtonRun = new ButtonRun();
-
-    class ButtonNew {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttonnew", () => {
-                ww.Ajax.PushPendingRequest({ command: "?new", kind: "Macro", has_main: true, names: [] });
-            });
-        }
-        Enabled(enable) {
-            this.button_.Enabled(enable);
-        }
-    }
-
-    ww.ButtonNew = new ButtonNew();
 
     class ButtonInto {
         constructor() {
@@ -187,6 +150,43 @@ ww.InterfaceJS = function () {
     }
 
     ww.ButtonEnd = new ButtonEnd();
+
+    class ButtonNew {
+        constructor() {
+        }
+        Initialize() {
+            this.button_ = new Button_Helper("#buttonnew", () => {
+                ww.Ajax.PushPendingRequest({ command: "?new", kind: "Macro", has_main: true, names: [] });
+            });
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
+        }
+    }
+
+    ww.ButtonNew = new ButtonNew();
+
+    class ButtonSave {
+        constructor() {
+        }
+        Initialize() {
+            this.button_ = new Button_Helper("#buttonsave", () => {
+                let code = ww.EditorCode.editor().getValue();
+                let name = ww.CommitRebase.Name;
+                let newname = ww.InputMacro.GetValue();
+                this.Save(code, name, newname);
+            });
+        }
+        Save(code, name, newname) { // xxx don't need code - abstraction?
+            ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
+            ww.Ajax.PushPendingRequest({ command: "?write", target: name, new_name: newname });
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
+        }
+    }
+
+    ww.ButtonSave = new ButtonSave();
 
     class ButtonWatch {
         constructor() {
