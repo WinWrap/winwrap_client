@@ -7,9 +7,9 @@
             this.ActiveDoc = null;
         }
 
-        Read(notification) {
-            ww.EditorCode.editor().setValue(notification.files[0].code);
-            this.ActiveDoc = new ww.Doc(ww.Attach.AllocatedID, notification.revision, ww.EditorCode);
+        Read(file) {
+            ww.EditorCode.editor().setValue(file.code);
+            this.ActiveDoc = new ww.Doc(ww.Attach.AllocatedID, file.revision, ww.EditorCode);
         }
 
         CommitDone(revision) {

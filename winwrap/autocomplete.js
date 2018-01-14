@@ -20,21 +20,25 @@
                     let match = textUntilPosition.match(this.re_auto); // limits traffic to server
                     if (match) {
                         await ww.AutoAuto.SendAsync(model, position);
-                        return ww.AutoComplete.createDependencyProposals(ww.AutoAuto.Response.members); // incomplete not used
+                        return ww.AutoComplete.createDependencyProposals(); // incomplete not used
                     }
                 }
             });
         }
-        createDependencyProposals(autoComplete) {
+        createDependencyProposals() {
             let deps = [];
-            for (let key in autoComplete) {
-                let itemKind = this.autoTypes_[autoComplete[key]];
-                let dep = {
-                    label: key,
-                    kind: monaco.languages.CompletionItemKind[itemKind],
-                    insertText: key
-                };
-                deps.push(dep);
+            let response = ww.AutoAuto.Response;
+            if (response != null && response.members !== undefined) {
+                let autoComplete = response.members;
+                for (let key in autoComplete) {
+                    let itemKind = this.autoTypes_[autoComplete[key]];
+                    let dep = {
+                        label: key,
+                        kind: monaco.languages.CompletionItemKind[itemKind],
+                        insertText: key
+                    };
+                    deps.push(dep);
+                }
             }
             return { isIncomplete: false, items: deps };
         }
