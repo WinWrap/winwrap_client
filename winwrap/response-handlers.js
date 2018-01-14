@@ -2,11 +2,7 @@
 
 (function () {
     class ResponseHandler {
-        constructor() {
-            this.response_ = null;
-            this.callback_ = null;
-        }
-        Initialize(response, callback) {
+        constructor(response, callback) {
             this.response_ = response;
             this.callback_ = callback;
         }
@@ -24,8 +20,7 @@
             this.handlers_ = [];
         }
         Register(response, callback) {
-            let handler = new ResponseHandler();
-            handler.Initialize(response, callback);
+            let handler = new ResponseHandler(response, callback);
             this.handlers_.push(handler);
             return handler;
         }

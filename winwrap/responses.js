@@ -40,6 +40,8 @@
                     }).join("\n");
                     ww.EditorWatch.editor().setValue(watchResults);
                     break;
+                case "!write": // response
+                    break;
                 default:
                     break;
             }

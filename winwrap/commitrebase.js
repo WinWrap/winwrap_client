@@ -4,10 +4,12 @@
 
     class CommitRebase {
         constructor() {
+            this.Name = null;
             this.ActiveDoc = null;
         }
 
         Read(file) {
+            this.Name = file.name;
             ww.EditorCode.editor().setValue(file.code);
             this.ActiveDoc = new ww.Doc(ww.Attach.AllocatedID, file.revision, ww.EditorCode);
         }

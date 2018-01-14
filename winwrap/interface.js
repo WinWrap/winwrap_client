@@ -65,7 +65,7 @@ ww.InterfaceJS = function () {
         Initialize() {
             this.button_ = new Button_Helper("#buttonsave", () => {
                 let code = ww.EditorCode.editor().getValue();
-                let name = ww.InputMacro.Name;
+                let name = ww.CommitRebase.Name;
                 let newname = ww.InputMacro.GetValue();
                 this.Save(code, name, newname);
             });
