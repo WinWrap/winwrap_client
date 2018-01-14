@@ -42,20 +42,16 @@ ww.InterfaceJS = function () {
     class Button_Helper {
         constructor(buttonid, clickhandler) {
             this.button_ = $(buttonid);
+            this.button_.button(); // make sure the button is initialized
             this.button_.click(clickhandler);
             this.Enabled(false);
         }
         Enabled(enable) {
-            var html = this.button_.html();
-            if (enable) {
-                html = html.replace(' fa-inverse', '');
-            } else if (html.indexOf(' fa-inverse') < 0) {
-                html = html.replace('">', ' fa-inverse">');
-            }
-            this.button_.html(html);
+            this.enabled_ = enable;
+            this.button_.button(enable ? "enable" : "disable");
         }
         IsEnabled() {
-            return this.button_.html().indexOf(' fa-inverse') < 0;
+            return this.enabled_;
         }
     }
 
