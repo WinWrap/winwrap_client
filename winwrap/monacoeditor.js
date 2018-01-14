@@ -48,7 +48,7 @@
                             line: e.target.position.lineNumber,
                             on: doBreak
                         };
-                        ww.Ajax.SendProcess(request);
+                        ww.Ajax.PushPendingRequest(request);
                     }
                 });
             },
