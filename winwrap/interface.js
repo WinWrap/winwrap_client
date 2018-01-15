@@ -1,9 +1,6 @@
-﻿var ww = ww || {};
+﻿define(function () {
 
-// Objects responding to and controlling WinWrap Edit interface html elements
-ww.InterfaceJS = function () {
-
-    class Interface {
+    class InterfacePrototype {
         constructor() {
 
         }
@@ -37,7 +34,7 @@ ww.InterfaceJS = function () {
         }
     }
 
-    ww.Interface = new Interface();
+    ww.InterfacePrototype = InterfacePrototype;
 
     class Button_Helper {
         constructor(buttonid, clickhandler) {
@@ -243,4 +240,4 @@ ww.InterfaceJS = function () {
 
     ww.Browser = new Browser();
 
-};
+});

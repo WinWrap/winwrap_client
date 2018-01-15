@@ -1,6 +1,4 @@
-var ww = ww || {};
-
-(function () {
+define(function () {
     class Edit {
         constructor(index, deletecount, insert) {
             this.Index = index;
@@ -236,4 +234,4 @@ var ww = ww || {};
         var insert = s1.substring(index, i1);
         return new Edit(index + offset, deletecount, insert);
     };
-})();
+});

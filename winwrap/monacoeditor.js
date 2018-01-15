@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     ww.MonacoEditor = function (container, height) { // class used for Code, Immediate, Watch editors
         let editor_;
@@ -91,7 +89,7 @@
         };
     };
 
-})();
+});
 
 /*ww.InitCode = function () { // not used, was for testing
     code1 = [

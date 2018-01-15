@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class CommitRebase {
         constructor() {
@@ -50,4 +48,4 @@
 
     ww.CommitRebase = new CommitRebase();
 
-})();
+});

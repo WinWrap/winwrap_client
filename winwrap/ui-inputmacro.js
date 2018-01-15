@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class InputMacro {
         constructor() {
@@ -40,4 +38,4 @@
 
     ww.InputMacro = new InputMacro();
 
-})();
+});

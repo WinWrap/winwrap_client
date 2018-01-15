@@ -1,0 +1,20 @@
+﻿define([
+    'ww/ajax',
+    'ww/attach',
+    'ww/autoauto',
+    'ww/autocomplete',
+    'ww/breakspause',
+    'ww/commitrebase',
+    'ww/debugdecorate',
+    'ww/interface',
+    'ww/monacoeditor',
+    'ww/notifications',
+    'ww/response-handlers',
+    'ww/responses',
+    'ww/signaturehelp',
+    'ww/ui-inputmacro',
+    'ww/ww-commit',
+    'ww/ww-doc',
+    'ww/ww-edit',
+    'ww/ww-edits'], function () {
+});

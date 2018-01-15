@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodelwithdecorations.html
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.imodeldeltadecoration.html
@@ -54,4 +52,4 @@
 
     ww.DebugDecorate = new DebugDecorate();
 
-})();
+});

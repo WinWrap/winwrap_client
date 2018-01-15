@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class SignatureHelp {
         constructor() {
@@ -68,4 +66,4 @@
         activeParameter: 0
     };*/
 
-})();
+});

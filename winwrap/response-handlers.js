@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
     class ResponseHandler {
         constructor(response, callback) {
             this.response_ = response;
@@ -44,4 +42,4 @@
 
     ww.ResponseHandlers = new ResponseHandlers();
 
-})();
+});

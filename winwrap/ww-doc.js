@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
     class Doc {
         constructor(sync_id, revision, editor) {
             this.SyncId = sync_id;
@@ -134,4 +132,4 @@
     }
 
     ww.Doc = Doc;
-})();
+});

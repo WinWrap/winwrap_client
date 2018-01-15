@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class AjaxPrototype { // singleton, but created in startup sequence
         // xxx es6 named paramaters not available Edge 41.16299.15.0
@@ -121,4 +119,4 @@
 
     ww.AjaxPrototype = AjaxPrototype;
 
-})();
+});

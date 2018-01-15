@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class BreaksPause {
         constructor() {
@@ -69,4 +67,4 @@
 
     ww.BreaksPause = new BreaksPause();
 
-})();
+});

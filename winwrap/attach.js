@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class AttachPrototype { // singleton, but created in index.js
         constructor(api) {
@@ -26,4 +24,4 @@
 
     ww.AttachPrototype = AttachPrototype;
 
-})();
+});

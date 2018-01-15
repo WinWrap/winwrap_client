@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
     class Commit {
         // by_sync_id: sync id that creates the commit (0 for server)
         // for_sync_id: sync id that caused the commit (never 0)
@@ -71,4 +69,4 @@
     }
 
     ww.Commit = Commit;
-})();
+});

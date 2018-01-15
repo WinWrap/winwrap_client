@@ -6,9 +6,9 @@
  *   but only one way ?
 */
 
-require.config({ paths: { 'vs': 'scripts/monaco-editor/min/vs' } });
+require.config({ paths: { 'vs': 'scripts/monaco-editor/min/vs', 'ww': 'winwrap' } });
 $(function () {
-    require(['vs/editor/editor.main'], function () {
+    require(['vs/editor/editor.main', 'ww/basic'], require => {
 
         console.log("winwrap_edit_client " + new Date().toString());
 
@@ -18,7 +18,7 @@ $(function () {
         let editorHeight = $(window).height() - $("#codeeditor").position().top - $("#version").height();
         ww.EditorCode = ww.MonacoEditor("codeeditor", editorHeight);
         ww.EditorCode.bindOnMouseDown();
-        ww.Inteface = ww.InterfaceJS(); // bind interface elements only when document ready
+        ww.Interface = new ww.InterfacePrototype(); // bind interface elements only when document ready
 
         let serverip = getSearchParams("serverip");
         let apiurl = `http://${serverip}/winwrap/`;

@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class AutoAuto {
         constructor() {
@@ -28,4 +26,4 @@
 
     ww.AutoAuto = new AutoAuto();
 
-})();
+});

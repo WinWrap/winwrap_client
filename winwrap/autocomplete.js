@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class AutoComplete {
         constructor() {
@@ -68,4 +66,4 @@
 
     ww.AutoComplete = new AutoComplete();
 
-})();
+});

@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class Notifications { // singleton
         constructor() {
@@ -70,4 +68,4 @@
 
     ww.Notifications = new Notifications();
 
-})();
+});
