@@ -6,9 +6,9 @@
  *   but only one way ?
 */
 
-require.config({ paths: { 'vs': 'scripts/monaco-editor/min/vs', 'ww': 'winwrap' } });
+require.config({ paths: { 'vs': 'scripts/monaco-editor/min/vs' } });
 $(function () {
-    require(['vs/editor/editor.main', 'ww/basic'], require => {
+    require(['vs/editor/editor.main', 'winwrap/basic'], require => {
 
         console.log("winwrap_edit_client " + new Date().toString());
 
