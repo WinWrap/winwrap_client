@@ -3,7 +3,8 @@
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodelwithdecorations.html
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.imodeldeltadecoration.html
     class DebugDecorate {
-        constructor() {
+        constructor(basic) {
+            this.Basic = basic;
             this.oldDecorations = "";
         }
         _breakDecoration(line) {
@@ -15,7 +16,7 @@
         _breaksDecorations(target) {
             let decorations = [];
             let this0 = this; // should not be necessary ? bug in Edge ?
-            let breaks = ww.BreaksPause.getBreaks(target);
+            let breaks = this.Basic.BreaksPause.getBreaks(target);
             breaks.forEach(function (abreak) {
                 let decoration = this0._breakDecoration(abreak.line);
                 decorations.push(decoration);
@@ -23,7 +24,7 @@
             return decorations;
         }
         _pauseDecoration(target) {
-            let line = ww.BreaksPause.getPauseLine(target);
+            let line = this.Basic.BreaksPause.getPauseLine(target);
             if (line === null) {
                 return null;
             }
@@ -34,7 +35,7 @@
         }
         display() {
             let decorations = [];
-            let target = ww.CommitRebase.Name;
+            let target = this.Basic.CommitRebase.Name;
             let breaksDecorations = this._breaksDecorations(target);
             Array.prototype.push.apply(decorations, breaksDecorations);
             let pauseDecoration = this._pauseDecoration(target);
@@ -42,14 +43,14 @@
                 decorations.push(pauseDecoration);
             }
             if (decorations.length >= 1) {
-                this.oldDecorations = ww.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
+                this.oldDecorations = this.Basic.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
             } else {
-                this.oldDecorations = ww.EditorCode.editor().deltaDecorations(this.oldDecorations,
+                this.oldDecorations = this.Basic.EditorCode.editor().deltaDecorations(this.oldDecorations,
                     [{ range: new monaco.Range(1, 1, 1, 1), options: {} }]);
             }
         }
     }
 
-    ww.DebugDecorate = new DebugDecorate();
+    ww.DebugDecorate = DebugDecorate;
 
 });

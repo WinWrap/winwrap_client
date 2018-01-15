@@ -1,7 +1,8 @@
 ﻿define(function () {
 
     class BreaksPause {
-        constructor() {
+        constructor(basic) {
+            this.Basic = basic;
             this.breaks = [];
             this.stack = [];
         }
@@ -43,7 +44,7 @@
                 });
             }
             this.breaks = breaks;
-            ww.DebugDecorate.display();
+            this.Basic.DebugDecorate.display();
         }
         isBreak(macro, aline) {
             let breaks = this.breaks;
@@ -60,11 +61,11 @@
                 } else {
                     this.stack = [];
                 }
-                ww.DebugDecorate.display();
+                this.Basic.DebugDecorate.display();
             }
         }
     }
 
-    ww.BreaksPause = new BreaksPause();
+    ww.BreaksPause = BreaksPause;
 
 });

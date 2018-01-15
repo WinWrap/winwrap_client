@@ -1,8 +1,8 @@
 ﻿define(function () {
 
     class SignatureHelp {
-        constructor() {
-
+        constructor(basic) {
+            this.Basic = basic;
         }
         createSignatureHelp(response) {
             if (!("prototypes" in response)) {
@@ -26,14 +26,15 @@
             return result;
         }
         Register() {
+            let basic = this.Basic; // can't pass this through closure to the lambdas below
             monaco.languages.registerSignatureHelpProvider('vb', {
                 signatureHelpTriggerCharacters: ['('],
                 provideSignatureHelp: async function (model, position) {
-                    let textUntilPosition = ww.EditorCode.textUntilPosition(model, position);
+                    let textUntilPosition = basic.EditorCode.textUntilPosition(model, position);
                     let match = textUntilPosition.match("[(]"); // was "("
                     if (match) { // was [{}]
-                        await ww.AutoAuto.SendAsync(model, position);
-                        return ww.SignatureHelp.createSignatureHelp(ww.AutoAuto.Response);
+                        await basic.AutoAuto.SendAsync(model, position);
+                        return basic.SignatureHelp.createSignatureHelp(basic.AutoAuto.Response);
                     }
                     return {};
                 }
@@ -41,7 +42,7 @@
         }
     }
 
-    ww.SignatureHelp = new SignatureHelp();
+    ww.SignatureHelp = SignatureHelp;
 
     /*let aprototypes = {
         signatures: [{

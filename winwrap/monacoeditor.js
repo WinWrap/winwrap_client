@@ -1,12 +1,13 @@
 ﻿define(function () {
 
-    ww.MonacoEditor = function (container, height) { // class used for Code, Immediate, Watch editors
+    ww.MonacoEditor = function (basic, container, height) { // class used for Code, Immediate, Watch editors
+        let basic_ = basic;
         let editor_;
-        let container_ = container;
+        let $_ = basic.LocateElement(container).first();
         let editorWidth_ = $(window).width() - 20;
         let height_ = height; // Number(height) seemed needed at one time
         let init_ = function () {
-            editor_ = monaco.editor.create(document.getElementById(container), {
+            editor_ = monaco.editor.create($_[0], {
                 language: 'vb',
                 theme: "vs-dark",
                 glyphMargin: true,
@@ -18,7 +19,7 @@
             } else {
                 editor_.updateOptions({ fontSize: 14 });
             }
-            editor_.setValue(`\"${container_}\"\r\n`);
+            editor_.setValue(`\"${container}\"\r\n`);
         };
         init_();
         return {
@@ -28,7 +29,7 @@
             "getSelection": function () {
                 let position = this.editor().getPosition();
                 let model = this.editor().getModel();
-                let textUntilPosition = ww.EditorCode.textUntilPosition(model, position);
+                let textUntilPosition = basic_.EditorCode.textUntilPosition(model, position);
                 let caret = textUntilPosition.length;
                 return { "first": caret, "last": caret };
             },
@@ -38,26 +39,26 @@
             "bindOnMouseDown": function () {
                 editor_.onMouseDown(function (e) {
                     if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) { // xxx below
-                        let isBreak = ww.BreaksPause.isBreak(ww.CommitRebase.Name, e.target.position.lineNumber);
+                        let isBreak = basic_.BreaksPause.isBreak(basic_.CommitRebase.Name, e.target.position.lineNumber);
                         let doBreak = isBreak ? false : true;
                         let request = {
                             command: "break",
-                            target: ww.CommitRebase.Name,
+                            target: basic_.CommitRebase.Name,
                             line: e.target.position.lineNumber,
                             on: doBreak
                         };
-                        ww.Ajax.PushPendingRequest(request);
+                        basic_.PushPendingRequest(request);
                     }
                 });
             },
             "showing": function () {
-                return $(`#${container_}`).css('display') !== 'none';
+                return $_.css('display') !== 'none';
             },
             "show": function () {
-                $(`#${container_}`).show();
+                $_.show();
             },
             "hide": function () {
-                $(`#${container_}`).hide();
+                $_.hide();
             },
             "appendText": function (text) {
                 // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.icodeeditor.html#executeedits

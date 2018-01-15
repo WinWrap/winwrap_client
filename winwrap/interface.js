@@ -1,44 +1,45 @@
 ﻿define(function () {
 
-    class InterfacePrototype {
-        constructor() {
-
+    class Interface {
+        constructor(basic) {
+            this.Basic = basic;
         }
         Initialize() {
-            ww.InputMacro.Initialize();
-            ww.ButtonRun.Initialize();
-            ww.ButtonPause.Initialize();
-            ww.ButtonEnd.Initialize();
-            ww.ButtonInto.Initialize();
-            ww.ButtonOver.Initialize();
-            ww.ButtonOut.Initialize();
-            ww.ButtonNew.Initialize();
-            ww.ButtonSave.Initialize();
-            ww.ButtonWatch.Initialize();
-            ww.WinWrapVersion.Initialize();
+            this.ButtonNew = new ButtonNew(this.Basic);
+            this.InputMacro = new InputMacro(this.Basic);
+            this.ButtonSave = new ButtonSave(this.Basic);
+            this.ButtonRun = new ButtonRun(this.Basic);
+            this.ButtonPause = new ButtonPause(this.Basic);
+            this.ButtonEnd = new ButtonEnd(this.Basic);
+            this.ButtonInto = new ButtonInto(this.Basic);
+            this.ButtonOver = new ButtonOver(this.Basic);
+            this.ButtonOut = new ButtonOut(this.Basic);
+            this.ButtonWatch = new ButtonWatch(this.Basic);
+            this.WinWrapVersion = new WinWrapVersion(this.Basic);
         }
         SetState(response) {
             // editor should be
             // ww.EditorCode.editor."readonly" = response.commands.run || response.commands.pause;
-            ww.ButtonRun.Enabled(response.commands.run);
-            ww.ButtonPause.Enabled(response.commands.pause);
-            ww.ButtonEnd.Enabled(response.commands.end);
-            ww.ButtonInto.Enabled(response.commands.into);
-            ww.ButtonOver.Enabled(response.commands.over);
-            ww.ButtonOut.Enabled(response.commands.out);
-            ww.ButtonNew.Enabled(!response.macro_loaded);
-            ww.ButtonSave.Enabled(true);
-            ww.ButtonWatch.Enabled(true);
+            this.ButtonNew.Enabled(!response.macro_loaded);
+            this.InputMacro.Enabled(true);
+            this.ButtonSave.Enabled(true);
+            this.ButtonRun.Enabled(response.commands.run);
+            this.ButtonPause.Enabled(response.commands.pause);
+            this.ButtonEnd.Enabled(response.commands.end);
+            this.ButtonInto.Enabled(response.commands.into);
+            this.ButtonOver.Enabled(response.commands.over);
+            this.ButtonOut.Enabled(response.commands.out);
+            this.ButtonWatch.Enabled(true);
             // update current line
-            ww.BreaksPause.setPause(response);
+            this.Basic.BreaksPause.setPause(response);
         }
     }
 
-    ww.InterfacePrototype = InterfacePrototype;
+    ww.Interface = Interface;
 
     class Button_Helper {
-        constructor(buttonid, clickhandler) {
-            this.button_ = $(buttonid);
+        constructor(button, clickhandler) {
+            this.button_ = button;
             this.button_.button(); // make sure the button is initialized
             this.button_.click(clickhandler);
             this.Enabled(false);
@@ -52,91 +53,143 @@
         }
     }
 
-    class ButtonRun {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttonrun", () => {
-                ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
-                ww.Ajax.PushPendingRequest({ command: "run", target: ww.CommitRebase.Name });
-            });
+    class ButtonNew {
+        constructor(basic) {
+            this.button_ = new Button_Helper(basic.LocateElement("new-button"),
+                () => {
+                    basic.PushPendingRequest({ command: "?new", kind: "Macro", has_main: true, names: [] });
+                });
         }
         Enabled(enable) {
             this.button_.Enabled(enable);
         }
     }
 
-    ww.ButtonRun = new ButtonRun();
+    class InputMacro {
+        constructor(basic) {
+            this.Basic = basic;
+            this.macros_ = []; // xxx Macros
+            this.$_ = basic.LocateElement("files");
+            let inputMacro = this; // closure can't handle this in the lambdas below
+            this.$_.autocomplete({
+                source: function (request, response) {
+                    let term = $.ui.autocomplete.escapeRegex(request.term);
+                    //console.log(term);
+                    var matcher = new RegExp(`^.*${term}.*$`, "i");
+                    response($.grep(inputMacro.macros_, function (item) { // xxx
+                        return matcher.test(item);
+                    }));
+                }
+            });
+            this.$_.on("autocompleteselect", function (event, ui) {
+                inputMacro.Basic.PushPendingRequest({ command: "?read", target: ui.item.value });
+            });
+        }
+        Enabled(enable) {
+            // to be written - 1/15/18
+        }
+        GetValue() {
+            return this.$_.val();
+        }
+        SetValue(value) {
+            this.$_.val(value);
+        }
+        SetValues(values) {
+            this.macros_ = values;
+            if (values.find(item => item === "\\Sample1.bas")) {
+                this.Basic.PushPendingRequest({ command: "?read", target: "\\Sample1.bas" });
+            }
+            else {
+                this.Basic.PushPendingRequest({ command: "?new", names: [] });
+            }
+        }
+    }
+
+    class ButtonSave {
+        constructor(basic) {
+            this.button_ = new Button_Helper(basic.LocateElement("save-button"),
+                () => {
+                    let code = basic.EditorCode.editor().getValue();
+                    let name = basic.CommitRebase.Name;
+                    let newname = basic.Interface.InputMacro.GetValue();
+                    basic.PushPendingRequest(basic.CommitRebase.GetCommitRequest());
+                    basic.PushPendingRequest({ command: "?write", target: name, new_name: newname });
+                });
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
+        }
+    }
+
+    class ButtonRun {
+        constructor(basic) {
+            this.button_ = new Button_Helper(basic.LocateElement("run-button"),
+                () => {
+                    basic.PushPendingRequest(basic.CommitRebase.GetCommitRequest());
+                    basic.PushPendingRequest({ command: "run", target: basic.CommitRebase.Name });
+                });
+        }
+        Enabled(enable) {
+            this.button_.Enabled(enable);
+        }
+    }
 
     class ButtonInto {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttoninto", () => {
-                ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
-                ww.Ajax.PushPendingRequest({ command: "into", target: ww.CommitRebase.Name });
-            });
+        constructor(basic) {
+            this.button_ = new Button_Helper(basic.LocateElement("into-button"),
+                () => {
+                    basic.PushPendingRequest(basic.CommitRebase.GetCommitRequest());
+                    basic.PushPendingRequest({ command: "into", target: basic.CommitRebase.Name });
+                });
         }
         Enabled(enable) {
             this.button_.Enabled(enable);
         }
     }
-
-    ww.ButtonInto = new ButtonInto();
 
     class ButtonOver {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttonover", () => {
-                ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
-                ww.Ajax.PushPendingRequest({ command: "over", target: ww.CommitRebase.Name });
-            });
+        constructor(basic) {
+            this.button_ = new Button_Helper(basic.LocateElement("over-button"),
+                () => {
+                    basic.PushPendingRequest(basic.CommitRebase.GetCommitRequest());
+                    basic.PushPendingRequest({ command: "over", target: basic.CommitRebase.Name });
+                });
         }
         Enabled(enable) {
             this.button_.Enabled(enable);
         }
     }
-
-    ww.ButtonOver = new ButtonOver();
 
     class ButtonOut {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttonout", () => {
-                ww.Ajax.PushPendingRequest({ command: "out", target: ww.CommitRebase.Name });
-            });
+        constructor(basic) {
+            this.button_ = new Button_Helper(basic.LocateElement("out-button"),
+                () => {
+                    basic.PushPendingRequest({ command: "out", target: basic.CommitRebase.Name });
+                });
         }
         Enabled(enable) {
             this.button_.Enabled(enable);
         }
     }
-
-    ww.ButtonOut = new ButtonOut();
 
     class ButtonPause {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttonpause", () => {
-                ww.Ajax.PushPendingRequest({ command: "pause", target: ww.CommitRebase.Name });
-            });
+        constructor(basic) {
+            this.button_ = new Button_Helper(basic.LocateElement("pause-button"),
+                () => {
+                    basic.PushPendingRequest({ command: "pause", target: basic.CommitRebase.Name });
+                });
         }
         Enabled(enable) {
             this.button_.Enabled(enable);
         }
     }
 
-    ww.ButtonPause = new ButtonPause();
-
     class ButtonEnd {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttonend", () => {
-                ww.Ajax.PushPendingRequest({ command: "end", target: ww.CommitRebase.Name });
-            });
+        constructor(basic) {
+            this.button_ = new Button_Helper(basic.LocateElement("end-button"),
+                () => {
+                    basic.PushPendingRequest({ command: "end", target: basic.CommitRebase.Name });
+                });
         }
         Enabled(enable) {
             this.button_.Enabled(enable);
@@ -146,89 +199,45 @@
         }
     }
 
-    ww.ButtonEnd = new ButtonEnd();
-
-    class ButtonNew {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttonnew", () => {
-                ww.Ajax.PushPendingRequest({ command: "?new", kind: "Macro", has_main: true, names: [] });
-            });
-        }
-        Enabled(enable) {
-            this.button_.Enabled(enable);
-        }
-    }
-
-    ww.ButtonNew = new ButtonNew();
-
-    class ButtonSave {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttonsave", () => {
-                let code = ww.EditorCode.editor().getValue();
-                let name = ww.CommitRebase.Name;
-                let newname = ww.InputMacro.GetValue();
-                this.Save(code, name, newname);
-            });
-        }
-        Save(code, name, newname) { // xxx don't need code - abstraction?
-            ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
-            ww.Ajax.PushPendingRequest({ command: "?write", target: name, new_name: newname });
-        }
-        Enabled(enable) {
-            this.button_.Enabled(enable);
-        }
-    }
-
-    ww.ButtonSave = new ButtonSave();
-
     class ButtonWatch {
-        constructor() {
-        }
-        Initialize() {
-            this.button_ = new Button_Helper("#buttonwatch", () => { // xxx
-                let immediateShowing = ww.EditorImmediate.showing();
-                let watchShowing = ww.EditorWatch.showing();
-                if (!immediateShowing && !watchShowing) {
-                    ww.EditorImmediate.hide();
-                    ww.EditorWatch.show();
-                } else if (!immediateShowing && watchShowing) {
-                    ww.EditorImmediate.show();
-                    ww.EditorWatch.hide();
-                } else if (immediateShowing && !watchShowing) {
-                    ww.EditorImmediate.show();
-                    ww.EditorWatch.show();
-                } else if (immediateShowing && watchShowing) {
-                    ww.EditorImmediate.hide();
-                    ww.EditorWatch.hide();
-                }
-            });
+        constructor(basic) {
+            this.button_ = new Button_Helper(basic.LocateElement("watch-button"),
+                () => { // xxx
+                    let immediateShowing = basic.EditorImmediate.showing();
+                    let watchShowing = basic.EditorWatch.showing();
+                    if (!immediateShowing && !watchShowing) {
+                        basic.EditorImmediate.hide();
+                        basic.EditorWatch.show();
+                    } else if (!immediateShowing && watchShowing) {
+                        basic.EditorImmediate.show();
+                        basic.EditorWatch.hide();
+                    } else if (immediateShowing && !watchShowing) {
+                        basic.EditorImmediate.show();
+                        basic.EditorWatch.show();
+                    } else if (immediateShowing && watchShowing) {
+                        basic.EditorImmediate.hide();
+                        basic.EditorWatch.hide();
+                    }
+                });
         }
         Enabled(enable) {
             this.button_.Enabled(enable);
         }
     }
-
-    ww.ButtonWatch = new ButtonWatch();
 
     class WinWrapVersion {
-        constructor() {
-            this.button_ = $("#winwrapversion");
-        }
-        Initialize() {
+        constructor(basic) {
+            this.Basic = basic;
+            this.button_ = basic.LocateElement("version");
             this.button_.click(() => {
-                ww.Test001.Run();
+                let test001 = new Test001(this.Basic);
+                test001.Run();
             });
         }
         SetValue(version) {
             this.button_.text(version);
         }
     }
-
-    ww.WinWrapVersion = new WinWrapVersion();
 
     class Browser {
         constructor() { }

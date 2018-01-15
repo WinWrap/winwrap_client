@@ -20,27 +20,28 @@
     </script>
 </head>
 <body>
-    <div id="buttons">
-        <fieldset>
-            <!-- link to news article and added title= -->
-            <a class="ui-button ui-widget ui-corner-all" href="https://www.winwrap.com/web2/news/web-based-editing" target="_blank">WinWrap&copy;</a>
-            <input id="inputmacro" class="ui-autocomplete-input ui-widget ui-corner-all" />
-            <!-- rearranged to more closely match WinWrap Directors' toolbar -->
-            <button id="buttonrun" class="ui-button ui-widget ui-corner-all"><i class="fas fa-play"></i></button>
-            <button id="buttonpause" class="ui-button ui-widget ui-corner-all"><i class="fas fa-pause"></i></button>
-            <button id="buttonend" class="ui-button ui-widget ui-corner-all"><i class="fas fa-stop"></i></button>
-            <button id="buttoninto" class="ui-button ui-widget ui-corner-all"><i class="fas fa-angle-down fa-lg"></i></button>
-            <button id="buttonover" class="ui-button ui-widget ui-corner-all"><i class="fas fa-angle-double-down fa-lg"></i></button>
-            <button id="buttonout" class="ui-button ui-widget ui-corner-all"><i class="fas fa-angle-double-left fa-lg"></i></button>
-            <button id="buttonnew" class="ui-button ui-widget ui-corner-all"><i class="fas fa-file"></i></button>
-            <button id="buttonsave" class="ui-button ui-widget ui-corner-all"><i class="fas fa-save"></i></button>
-            <button id="buttonwatch" class="ui-button ui-widget ui-corner-all"><i class="fas fa-window-restore"></i></button>
-        </fieldset>
+    <div class="ww-basic" id="editor">
+        <div class="ww-toolbar">
+            <fieldset>
+                <a class="ww-loading ui-button ui-widget ui-corner-all" href="https://www.winwrap.com/web2/news/web-based-editing" target="_blank">WinWrap&copy;</a>
+                <button class="ww-new-button ui-button ui-widget ui-corner-all"><i class="fas fa-file"></i></button>
+                <input class="ww-files ui-autocomplete-input ui-widget ui-corner-all" />
+                <button class="ww-save-button ui-button ui-widget ui-corner-all"><i class="fas fa-save"></i></button>
+                <button class="ww-run-button ui-button ui-widget ui-corner-all"><i class="fas fa-play"></i></button>
+                <button class="ww-pause-button ui-button ui-widget ui-corner-all"><i class="fas fa-pause"></i></button>
+                <button class="ww-end-button ui-button ui-widget ui-corner-all"><i class="fas fa-stop"></i></button>
+                <button class="ww-into-button ui-button ui-widget ui-corner-all"><i class="fas fa-angle-down fa-lg"></i></button>
+                <button class="ww-over-button ui-button ui-widget ui-corner-all"><i class="fas fa-angle-double-down fa-lg"></i></button>
+                <button class="ww-out-button ui-button ui-widget ui-corner-all"><i class="fas fa-angle-double-left fa-lg"></i></button>
+                <button class="ww-watch-button ui-button ui-widget ui-corner-all"><i class="fas fa-window-restore"></i></button>
+            </fieldset>
+        </div>
+        <div class="ww-immediate-editor" style="border:1px solid grey; display:none"></div>
+        <div class="ww-watch-editor" style="border:1px solid grey; display:none"></div>
+        <div class="ww-code-editor" style="border:1px solid grey"></div>
+        <div class="ww-statusbar" style="border:1px solid grey; display:none"></div>
+        <div>WinWrap Version = <span class="ww-version"></span></div>
+        <pre><span id="jsondata"></span></pre>
     </div>
-    <div id="immediateeditor" style="border:1px solid grey; display:none"></div>
-    <div id="watcheditor" style="border:1px solid grey; display:none"></div>
-    <div id="codeeditor" style="border:1px solid grey"></div>
-    <div id="version">WinWrap Version = <span id="winwrapversion"></span></div>
-    <pre><span id="jsondata"></span></pre>
 </body>
 </html>

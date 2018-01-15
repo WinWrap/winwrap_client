@@ -1,40 +1,40 @@
 ﻿define(function () {
-
-    class Notifications { // singleton
-        constructor() {
+    class Notifications {
+        constructor(basic) {
+            this.Basic = basic;
         }
-        ProcessNotification(notification) {
+        Process(notification) {
             switch (notification.response) { // each case => one requests
                 case "!break": // notification
-                    ww.BreaksPause.setBreak(notification);
-                    ww.DebugDecorate.display();
+                    this.Basic.BreaksPause.setBreak(notification);
+                    this.Basic.DebugDecorate.display();
                     break;
                 case "!notify_begin": // notification
-                    ww.EditorImmediate.show();
-                    ww.Interface.SetState(notification);
+                    this.Basic.EditorImmediate.show();
+                    this.Basic.Interface.SetState(notification);
                     break;
                 case "!notify_debugclear": // notification
-                    // need a ww.EditorImmediate method to clear the immediate text
+                    // need a this.Basic.EditorImmediate method to clear the immediate text
                     break;
                 case "!notify_debugprint": // notification
-                    ww.EditorImmediate.appendText(notification.text);
-                    ww.EditorImmediate.scrollToBottom();
+                    this.Basic.EditorImmediate.appendText(notification.text);
+                    this.Basic.EditorImmediate.scrollToBottom();
                     /*setTimeout(function () {
-                        ww.EditorImmediate.appendText(notification.text);
-                        ww.EditorImmediate.scrollToBottom();
+                        this.Basic.EditorImmediate.appendText(notification.text);
+                        this.Basic.EditorImmediate.scrollToBottom();
                     }, 100);*/ // xxx
                     break;
                 case "!notify_end": // notification
-                    ww.EditorImmediate.hide();
-                    ww.Interface.SetState(notification);
+                    this.Basic.EditorImmediate.hide();
+                    this.Basic.Interface.SetState(notification);
                     break;
                 case "!notify_errorlog": // notification
                     break;
                 case "!notify_errors": // notification
                     alert(notification.error.macro_name + "@" + notification.error.line_num + ": " +
                         notification.error.line + "\n" + notification.error.desc);
-                    if (ww.CommitRebase.Name !== notification.error.macro_name) {
-                        ww.Ajax.PushPendingRequest({ command: "?read", target: notification.error.macro_name });
+                    if (this.Basic.CommitRebase.Name !== notification.error.macro_name) {
+                        this.Basic.PushPendingRequest({ command: "?read", target: notification.error.macro_name });
                     }
                     // should highlight the error line in red and scroll to it
                     // notification.error.line_num
@@ -45,20 +45,20 @@
                 case "!notify_macroend": // notification
                     break;
                 case "!notify_pause": // notification
-                    if (ww.CommitRebase.Name !== notification.file_name) {
-                        ww.Ajax.PushPendingRequest({ command: "?read", target: notification.file_name });
+                    if (this.Basic.CommitRebase.Name !== notification.file_name) {
+                        this.Basic.PushPendingRequest({ command: "?read", target: notification.file_name });
                     }
-                    let watches = ww.EditorWatch.editor().getValue().trim().split(/[\r]?\n/).filter(el => { return el !== ""; });
+                    let watches = this.Basic.EditorWatch.editor().getValue().trim().split(/[\r]?\n/).filter(el => { return el !== ""; });
                     if (watches.length >= 1) { // xxx
-                        ww.Ajax.PushPendingRequest({ command: "?watch", watches: watches });
+                        this.Basic.PushPendingRequest({ command: "?watch", watches: watches });
                     }
-                    ww.Interface.SetState(notification);
+                    this.Basic.Interface.SetState(notification);
                     break;
                 case "!notify_resume": // notification
-                    ww.Interface.SetState(notification);
+                    this.Basic.Interface.SetState(notification);
                     break;
                 case "!rebase": // notification
-                    ww.CommitRebase.Rebase(notification);
+                    this.Basic.CommitRebase.Rebase(notification);
                     break;
                 default:
                     break;
@@ -66,6 +66,6 @@
         }
     }
 
-    ww.Notifications = new Notifications();
+    ww.Notifications = Notifications;
 
 });

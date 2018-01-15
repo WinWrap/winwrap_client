@@ -1,15 +1,16 @@
 ﻿define(function () {
 
     class CommitRebase {
-        constructor() {
+        constructor(basic) {
+            this.Basic = basic;
             this.Name = null;
             this.ActiveDoc = null;
         }
 
         Read(file) {
             this.Name = file.name;
-            ww.EditorCode.editor().setValue(file.code);
-            this.ActiveDoc = new ww.Doc(ww.Attach.AllocatedID, file.revision, ww.EditorCode);
+            this.Basic.EditorCode.editor().setValue(file.code);
+            this.ActiveDoc = new ww.Doc(this.Basic.AllocatedID, file.revision, this.Basic.EditorCode);
         }
 
         CommitDone(revision) {
@@ -36,7 +37,7 @@
                 request = {
                     //"id": this.ActiveDoc.SyncId, // xxx not needed
                     command: "?commit",
-                    target: ww.CommitRebase.Name,
+                    target: this.Name,
                     doc_revision: this.ActiveDoc.Revision,
                     revision: commit.Revision,
                     edits: edits
@@ -46,6 +47,6 @@
         }
     }
 
-    ww.CommitRebase = new CommitRebase();
+    ww.CommitRebase = CommitRebase;
 
 });
