@@ -13,7 +13,7 @@ $(function () {
             'ww-remote': (basic, name) => { return new ww.Remote(basic, name, serverip) },
             'ww-channel': (remote, name) => { return new ww.Channel(remote, name) },
             'ww-ui': (channel, name) => { return new ww.UI(channel, name) },
-            'ww-item': (ui, element, name) => { return ui.CreateItem(element, name) }
+            'ww-item': (ui, element, name) => { return ww.CreateItem(ui, element, name) }
         };
 
         ww.Basic.Initialize(factory);

@@ -36,7 +36,7 @@
             'editor': function () {
                 return editor_;
             },
-            'bindOnMouseDown': function () {
+            'Initialize': function () {
                 editor_.onMouseDown(function (e) {
                     if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) { // xxx below
                         let channel = ui_.Channel;

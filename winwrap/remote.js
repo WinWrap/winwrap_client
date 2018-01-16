@@ -39,6 +39,9 @@
             }
         }
         Poll() {
+            if (this.Tid == null) {
+                return;
+            }
             this.Tid = null; // not waiting to poll
             let id = 0;
             let requests = [];
@@ -58,6 +61,8 @@
                     this.Process(responses);
                 }
                 this.StartPolling();
+            }).catch(reason => {
+                console.log('Remote.Poll error: ' + reason);
             });
         }
         PushPendingRequest(request) {

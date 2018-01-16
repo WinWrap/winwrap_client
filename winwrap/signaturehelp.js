@@ -4,12 +4,16 @@
         constructor(autoauto) {
             let signatureHelp = this; // can't pass this through closure to the lambdas below
             monaco.languages.registerSignatureHelpProvider('vb', {
+                // 1/15/18 - Tom
+                // added ' ': WinWrap Basic doesn't require () around parameters
                 signatureHelpTriggerCharacters: ['(',' '],
                 provideSignatureHelp: async function (model, position) {
                     let textUntilPosition = autoauto.Element.textUntilPosition(model, position);
-                    let match = textUntilPosition.match('[(]'); // was '('
+                    // 1/15/18 - Tom
+                    // added ' '
+                    let match = textUntilPosition.match('[( ]'); // was '('
                     if (match) { // was [{}]
-                        let response = await autoauto.SendAsync(model, position);
+                        let response = await autoauto.SendAsync(model, position, textUntilPosition);
                         return signatureHelp._createSignatureHelp(response);
                     }
                     return {};
@@ -17,9 +21,13 @@
             });
         }
         _createSignatureHelp(response) {
-            if (!('prototypes' in response)) {
-                throw "ww-error: createSignatureHelp(response) no prototypes in response"; // xxx
+            //console.log("_createSignatureHelp");
+            if (response === null) {
+                console.log("ww-error: _createSignatureHelp no response"); // xxx
                 //return {};
+            }
+            if (response === null || !('prototypes' in response)) {
+                response = { prototypes: [], prototype_index: 0, prototype_arg_index: 0 };
             }
             let result = {
                 signatures: response.prototypes.map(prototype => {

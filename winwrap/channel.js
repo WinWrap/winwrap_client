@@ -23,7 +23,8 @@
                 this.StartPolling();
                 this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
                 this.PushPendingRequest({ command: '?stack' });
-            }); // now UI is initialized
+            });
+            // now UI is initialized
         }
         async _AttachAsync() {
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };

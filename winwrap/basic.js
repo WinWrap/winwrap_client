@@ -10,6 +10,7 @@
     './signaturehelp',
     './stack',
     './ui',
+    './ui-items',
     './ww-commit',
     './ww-doc',
     './ww-edit',

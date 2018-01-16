@@ -33,6 +33,7 @@
         GetCommitRequest() {
             let request = null;
             if (this.ActiveDoc.Commit(false)) {
+                //console.log("Commit needed");
                 var commit = this.ActiveDoc.CurrentCommit;
                 var edits = [];
                 commit.Edits.Edits().forEach(function (edit) {

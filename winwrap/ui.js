@@ -7,6 +7,11 @@
             this.items_ = {};
         }
         Initialize() {
+            Object.values(this.items_).forEach(item => {
+                if ('Initialize' in item) {
+                    item.Initialize();
+                }
+            });
             this.EditorImmediate = this.items_['ww-item-immediate'];
             this.EditorWatch = this.items_['ww-item-watch'];
             this.EditorCode = this.items_['ww-item-code'];
@@ -15,27 +20,6 @@
             this.Breaks = new ww.Breaks(this);
             this.Stack = new ww.Stack(this);
             this.DebugDecorate = new ww.DebugDecorate(this);
-            this.WinWrapVersion = new WinWrapVersion(this);
-        }
-        CreateItem(element, name) {
-            switch (name) {
-                case 'ww-item-new': return new ButtonNew(this, element);
-                case 'ww-item-files': return new InputMacro(this, element);
-                case 'ww-item-save': return new ButtonSave(this, element);
-                case 'ww-item-check': return new ButtonCheck(this, element);
-                case 'ww-item-run': return new ButtonRun(this, element);
-                case 'ww-item-pause': return new ButtonPause(this, element);
-                case 'ww-item-end': return new ButtonEnd(this, element);
-                case 'ww-item-into': return new ButtonInto(this, element);
-                case 'ww-item-over': return new ButtonOver(this, element);
-                case 'ww-item-out': return new ButtonOut(this, element);
-                case 'ww-item-cycle': return new ButtonCycle(this, element);
-                case 'ww-item-immediate': return ww.MonacoEditor(this, element, 'immediate-editor', 150);
-                case 'ww-item-watch': return ww.MonacoEditor(this, element, 'watch-editor', 125);
-                case 'ww-item-code': return ww.MonacoEditor(this, element, 'code-editor', 500);
-                case 'ww-item-statusbar': return undefined;
-                case 'ww-item-version': return new WinWrapVersion(this);
-            }
         }
         AddItem(item, name) {
             if (item !== undefined) {
@@ -60,10 +44,17 @@
         }
         SetState(response) {
             Object.values(this.items_).forEach(item => {
-                item.SetState(response);
+                if ('SetState' in item) {
+                    item.SetState(response);
+                }
             });
             // update current line
             this.Stack.setStack(response);
+            if (response.is_idle) {
+                this.EditorImmediate.hide();
+            } else {
+                this.EditorImmediate.show();
+            }
         }
         ProcessNotification(notification) {
             switch (notification.response) { // each case => one requests
@@ -72,7 +63,6 @@
                     this.DebugDecorate.display();
                     break;
                 case '!notify_begin': // notification
-                    this.EditorImmediate.show();
                     this.SetState(notification);
                     break;
                 case '!notify_debugclear': // notification
@@ -87,7 +77,6 @@
                     }, 100);*/ // xxx
                     break;
                 case '!notify_end': // notification
-                    this.EditorImmediate.hide();
                     this.SetState(notification);
                     break;
                 case '!notify_errorlog': // notification
@@ -175,249 +164,6 @@
     }
 
     ww.UI = UI;
-
-    class Button_Helper {
-        constructor(element, clickhandler) {
-            this.element_ = element;
-            this.element_.button(); // make sure the button is initialized
-            if (clickhandler !== undefined) {
-                this.element_.click(clickhandler);
-            }
-            this.Enabled(false);
-        }
-        Enabled(enable) {
-            this.enabled_ = enable;
-            this.element_.button(enable ? 'enable' : 'disable');
-        }
-        IsEnabled() {
-            return this.enabled_;
-        }
-    }
-
-    class ButtonNew {
-        constructor(ui, element) {
-            this.button_ = new Button_Helper(element,
-                () => {
-                    ui.Channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
-                });
-        }
-        SetState(response) {
-            this.button_.Enabled(!response.macro_loaded);
-        }
-    }
-
-    class InputMacro {
-        constructor(ui, element) {
-            //this.button_ = new Button_Helper(element);
-            this.UI = ui;
-            let channel = ui.Channel;
-            this.macros_ = []; // xxx Macros
-            this.element_ = element;
-            let inputMacro = this; // closure can't handle this in the lambdas below
-            this.element_.autocomplete({
-                source: function (request, response) {
-                    let term = $.ui.autocomplete.escapeRegex(request.term);
-                    //console.log(term);
-                    var matcher = new RegExp(`^.*${term}.*$`, 'i');
-                    response($.grep(inputMacro.macros_, function (element) { // xxx
-                        return matcher.test(element);
-                    }));
-                }
-            });
-            this.element_.on('autocompleteselect', function (event, ui) {
-                channel.PushPendingRequest({ command: '?read', target: ui.item.value });
-            });
-        }
-        SetState(response) {
-            //this.button_.Enabled(!response.macro_loaded);
-        }
-        GetFileValue() {
-            return this.element_.val();
-        }
-        SetFileValue(value) {
-            this.element_.val(value);
-        }
-        SetFileValues(values) {
-            this.macros_ = values;
-            let channel = this.UI.Channel;
-            if (values.find(item => item === '\\Sample1.bas')) {
-                channel.PushPendingRequest({ command: '?read', target: '\\Sample1.bas' });
-            }
-            else {
-                channel.PushPendingRequest({ command: '?new', names: [] });
-            }
-        }
-    }
-
-    class ButtonSave {
-        constructor(ui, element) {
-            let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
-                () => {
-                    let code = channel.EditorCode.editor().getValue();
-                    let name = channel.CommitRebase.Name;
-                    let newname = ui.GetFileValue();
-                    channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
-                    channel.PushPendingRequest({ command: '?write', target: name, new_name: newname });
-                });
-        }
-        SetState(response) {
-            this.button_.Enabled(true);
-        }
-    }
-
-    class ButtonCheck {
-        constructor(ui, element) {
-            let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
-                    channel.PushPendingRequest({ command: '?syntax', target: channel.CommitRebase.Name });
-                });
-        }
-        SetState(response) {
-            this.button_.Enabled(!response.macro_loaded);
-        }
-    }
-
-    class ButtonRun {
-        constructor(ui, element) {
-            let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
-                    channel.PushPendingRequest({ command: 'run', target: channel.CommitRebase.Name });
-                });
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.run);
-        }
-    }
-
-    class ButtonPause {
-        constructor(ui, element) {
-            let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.Name });
-                });
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.pause);
-        }
-    }
-
-    class ButtonEnd {
-        constructor(ui, element) {
-            let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.Name });
-                });
-        }
-        IsEnabled() {
-            return this.button_.IsEnabled();
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.end);
-        }
-    }
-
-    class ButtonInto {
-        constructor(ui, element) {
-            let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
-                    channel.PushPendingRequest({ command: 'into', target: channel.CommitRebase.Name });
-                });
-        }
-        Enabled(enable) {
-            this.button_.Enabled(enable);
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.into);
-        }
-    }
-
-    class ButtonOver {
-        constructor(ui, element) {
-            let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
-                    channel.PushPendingRequest({ command: 'over', target: channel.CommitRebase.Name });
-                });
-        }
-        Enabled(enable) {
-            this.button_.Enabled(enable);
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.over);
-        }
-    }
-
-    class ButtonOut {
-        constructor(ui, element) {
-            let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.Name });
-                });
-        }
-        Enabled(enable) {
-            this.button_.Enabled(enable);
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.out);
-        }
-    }
-
-    class ButtonCycle {
-        constructor(ui, element) {
-            let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
-                () => { // xxx
-                    let immediateShowing = ui.EditorImmediate.showing();
-                    let watchShowing = ui.EditorWatch.showing();
-                    if (!immediateShowing && !watchShowing) {
-                        ui.EditorImmediate.hide();
-                        ui.EditorWatch.show();
-                    } else if (!immediateShowing && watchShowing) {
-                        ui.EditorImmediate.show();
-                        ui.EditorWatch.hide();
-                    } else if (immediateShowing && !watchShowing) {
-                        ui.EditorImmediate.show();
-                        ui.EditorWatch.show();
-                    } else if (immediateShowing && watchShowing) {
-                        ui.EditorImmediate.hide();
-                        ui.EditorWatch.hide();
-                    }
-                });
-        }
-        Enabled(enable) {
-            this.button_.Enabled(enable);
-        }
-        SetState(response) {
-            this.button_.Enabled(true);
-        }
-    }
-
-    class WinWrapVersion {
-        constructor(ui, element) {
-            this.UI = ui;
-            this.element_ = element;
-            //this.element_.click(() => {
-            //    let test001 = new Test001(this.Channel);
-            //    test001.Run();
-            //});
-        }
-        Initialize() {
-            this.element_.text(this.UI.Channel.Version);
-        }
-        SetState(response) {
-        }
-    }
 
     class Browser {
         constructor() { }

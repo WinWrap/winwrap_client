@@ -16,25 +16,31 @@
                     let textUntilPosition = autoauto.Element.textUntilPosition(model, position);
                     let match = textUntilPosition.match(this.re_auto); // limits traffic to server
                     if (match) {
-                        let response = await autoauto.SendAsync(model, position);
+                        let response = await autoauto.SendAsync(model, position, textUntilPosition);
                         return autoComplete._createDependencyProposals(response); // incomplete not used
                     }
                 }
             });
         }
         _createDependencyProposals(response) {
+            //console.log("_createDependencyProposals");
             let deps = [];
-            if (response != null && response.members !== undefined) {
-                let autoComplete = response.members;
-                for (let key in autoComplete) {
-                    let itemKind = this.autoTypes_[autoComplete[key]];
-                    let dep = {
-                        label: key,
-                        kind: monaco.languages.CompletionItemKind[itemKind],
-                        insertText: key
-                    };
-                    deps.push(dep);
-                }
+            if (response === null) {
+                console.log("ww-error: _createDependencyProposals no response"); // xxx
+                return;
+            }
+            if (!('members' in response)) {
+                return;
+            }
+            let autoComplete = response.members;
+            for (let key in autoComplete) {
+                let itemKind = this.autoTypes_[autoComplete[key]];
+                let dep = {
+                    label: key,
+                    kind: monaco.languages.CompletionItemKind[itemKind],
+                    insertText: key
+                };
+                deps.push(dep);
             }
             return { isIncomplete: false, items: deps };
         }
