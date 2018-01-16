@@ -31,7 +31,7 @@ define(function () {
         }
 
         IsNull() {
-            return this.DeleteCount == 0 && (this.Insert === undefined || this.Insert == "");
+            return this.DeleteCount == 0 && (this.Insert === undefined || this.Insert == '');
         }
 
         Equals(edit) {
@@ -66,7 +66,7 @@ define(function () {
 
             var iIndex = 0;
             var iDelete = nextedit.DeleteCount;
-            var sInsert = "";
+            var sInsert = '';
             var iThisInsertLength = this.InsertLength();
 
             // this is the prior edit
@@ -127,8 +127,8 @@ define(function () {
         }
 
         MergeTransform(serverEdit) {
-            var beforeEdit = new Edit(0, 0, "");
-            var afterEdit = new Edit(0, 0, "");
+            var beforeEdit = new Edit(0, 0, '');
+            var afterEdit = new Edit(0, 0, '');
             if (this.DeleteIndex() < serverEdit.Index) {
                 // entirely before serverEdit
                 beforeEdit = this.Copy();
@@ -186,7 +186,7 @@ define(function () {
         }
 
         toString() {
-            return this.Index + "-" + this.DeleteCount + "'" + this.Insert + "'";
+            return this.Index + '-' + this.DeleteCount + '"' + this.Insert + '"';
         }
     }
 
@@ -196,7 +196,7 @@ define(function () {
         var len0 = s0.length;
         var len1 = s1.length;
         if (len0 == len1 && s0 == s1)
-            return new Edit(len0, 0, "");
+            return new Edit(len0, 0, '');
 
         var min = Math.min(len0, len1);
         var offset = 0;

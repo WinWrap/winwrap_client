@@ -1,132 +1,102 @@
 ﻿define([
-    './ajax',
     './autoauto',
     './autocomplete',
-    './breakspause',
+    './breaks',
+    './channel',
     './commitrebase',
     './debugdecorate',
-    './interface',
     './monacoeditor',
-    './notifications',
-    './responses',
+    './remote',
     './signaturehelp',
+    './stack',
+    './ui',
     './ww-commit',
     './ww-doc',
     './ww-edit',
     './ww-edits'], function () {
         class Basic {
-            constructor(top) {
-                this.Top = top;
-                this.ClientID = ('0000000000' + Math.floor(Math.random() * 2147483647)).slice(-10).toString();
-                this.AllocatedID = 0; // explicitly set in ?attach
-                this.generation_ = 0;
-                this.EditorImmediate = ww.MonacoEditor(this, "immediate-editor", 150);
-                this.EditorWatch = ww.MonacoEditor(this, "watch-editor", 125);
-                let editor = this.LocateElement("code-editor").first();
-                let version = this.LocateElement("version").first();
-                let editorHeight = $(window).height() - editor.position().top - version.height();
-                this.EditorCode = ww.MonacoEditor(this, "code-editor", editorHeight);
-                this.EditorCode.bindOnMouseDown();
-
-                this.AutoAuto = new ww.AutoAuto(this);
-                this.AutoComplete = new ww.AutoComplete(this);
-                this.BreaksPause = new ww.BreaksPause(this);
-                this.CommitRebase = new ww.CommitRebase(this);
-                this.DebugDecorate = new ww.DebugDecorate(this);
-                this.Interface = new ww.Interface(this); // bind interface elements only when document ready
-                this.Notifications = new ww.Notifications(this);
-                this.Responses = new ww.Responses(this);
-                this.SignatureHelp = new ww.SignatureHelp(this);
-
-                var loading = this.LocateElement("loading").first();
-                var text = loading.text();
-                loading.text("loading...");
-                this.AttachAsync().then(attach => {
-                    this.Interface.Initialize(this);
-                    this.Interface.WinWrapVersion.SetValue(attach.version);
-                    this.AutoComplete.Register();
-                    this.SignatureHelp.Register();
-                    loading.text(text);
-                    //this.Test = new ww.TestPrototype(this, ww.EditorCode);
-                    this.StartPolling();
-                    this.PushPendingRequest({ command: "?opendialog", dir: "\\", exts: "wwd|bas" });
-                    this.PushPendingRequest({ command: "?stack" });
-                }); // now UI is initialized
-            }
-            async AttachAsync() {
-                let request = { command: "?attach", version: "10.40.001", unique_name: this.ClientID };
-                let attach = await this.SendAsync(request, "!attach").catch(err => {
-                    console.log("ERROR basic.js Attachsync ", err);
-                });
-                this.Response = attach;
-                this.AllocatedID = attach.allocated_id;
-                return attach;
-            }
-            Generation() {
-                if (++this.generation_ == 0x10000)
-                    this.generation_ = 1; // 16 bit number (never 0)
-                return this.generation_;
-            }
-            LocateElement(elementname) {
-                return this.Top.find(".ww-" + elementname);
-            }
-            PushPendingRequest(request) {
-                if (request) {
-                    request.datetime = new Date().toLocaleString();
-                    request.id = this.AllocatedID;
-                    request.gen = this.Generation();
-                    ww.Basics.Ajax.PushPendingRequest(request);
-                }
-            }
-            async SendAsync(request, expected) {
-                request.datetime = new Date().toLocaleString();
-                request.id = this.AllocatedID;
-                request.gen = this.Generation();
-                return await ww.Basics.Ajax.SendAsync(request, expected, request.id);
-            }
-            StartPolling() {
-                ww.Basics.Ajax.StartPolling();
-            }
-            StopPolling() {
-                ww.Basics.Ajax.StopPolling();
-            }
-        }
-
-        class Basics { // singleton
             constructor() {
-                this.Ajax = null;
-                this.basics_ = [];
-                this.pollingIndex_ = -1;
+                this.remotes_ = {};
             }
-            Initialize(serverip) {
-                this.Ajax = new ww.Ajax(serverip);
-                $(".ww-basic").each((index, elem) => {
-                    this.basics_.push(new Basic($(elem), serverip));
+            Initialize(factory) {
+                Object.keys(factory).forEach(key => {
+                    let prefix = key + '-';
+                    let elements = $('[class*="' + prefix + '"]');
+                    elements.each((index, element) => {
+                        if (this.ClassName(element, prefix) === undefined) {
+                            return; // protect against matching a prefix embedded class name
+                        }
+                        let remote = this.Remote(this.ClassName(element, 'ww-remote-'));
+                        let channel = undefined;
+                        let ui = undefined;
+                        if (key !== 'ww-remote') {
+                            if (remote === undefined) {
+                                remote = this.Remote('ww-remote-1');
+                                if (remote === undefined) {
+                                    remote = factory['ww-remote'](this, 'ww-remote-1');
+                                    this._AddRemote(remote);
+                                }
+                            }
+                            channel = remote.Channel(this.ClassName(element, 'ww-channel-'));
+                            if (key !== 'ww-channel') {
+                                if (channel === undefined) {
+                                    channel = remote.Channel('ww-channel-1');
+                                    if (channel == undefined) {
+                                        channel = factory['ww-channel'](remote, 'ww-channel-1');
+                                        remote.AddChannel(channel);
+                                    }
+                                }
+                                ui = channel.UI;
+                                if (key !== 'ww-ui' && ui === undefined) {
+                                    ui = factory['ww-ui'](channel, 'ww-ui-1');
+                                    channel.UI = ui;
+                                }
+                            }
+                        }
+                        let name = this.ClassName(element, prefix);
+                        switch (key) {
+                            case 'ww-remote':
+                                if (remote === undefined) {
+                                    this._AddRemote(factory[key](this, name));
+                                }
+                                break;
+                            case 'ww-channel':
+                                if (channel === undefined) {
+                                    remote.AddChannel(factory[key](remote, name));
+                                }
+                                break;
+                            case 'ww-ui':
+                                if (ui === undefined) {
+                                    channel.UI = factory[key](channel, name);
+                                }
+                                break;
+                            default:
+                                let wrapped = $(element);
+                                ui.AddItem(factory[key](ui, wrapped, name), name);
+                                break;
+                        }
+                    });
+                });
+                Object.values(this.remotes_).forEach(remote => {
+                    remote.Initialize();
                 });
             }
-            NextPollingId() {
-                if (++this.pollingIndex_ >= this.basics_.length)
-                    this.pollingIndex_ = 0;
-                return this.pollingIndex_ < this.basics_.length ? this.basics_[this.pollingIndex_].AllocatedID : 0;
-            }
-            Process(responses) {
-                responses.forEach(response => {
-                    response.datetimeClient = new Date().toLocaleString();
-                    if (response.id === -1) {
-                        // all basic's process the notification
-                        this.basics_.forEach(basic => {
-                            basic.Notifications.Process(response);
-                        });
-                    } else {
-                        // response is for a particular basic
-                        let basic = this.basics_.find(basic => basic.AllocatedID === response.id);
-                        if (basic != null) {
-                            basic.Responses.Process(response);
-                        }
+            ClassName(element, prefix, defaultName) {
+                let className = undefined;
+                element.classList.forEach(name => {
+                    if (name.startsWith(prefix)) {
+                        className = name;
                     }
                 });
+                return className !== undefined ? className : defaultName;
+            }
+            _AddRemote(remote) {
+                this.remotes_[remote.Name] = remote;
+            }
+            Remote(name) {
+                return this.remotes_[name];
             }
         }
 
-        ww.Basics = new Basics();
+        ww.Basic = new Basic();
 });

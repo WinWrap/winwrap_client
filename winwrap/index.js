@@ -1,21 +1,22 @@
 ﻿var ww = ww || {};
 
-/*
- * name interface elements in index.js
- *   by "interface.js" class object elsewhere
- *   but only one way ?
-*/
-
 require.config({ paths: { 'vs': 'scripts/monaco-editor/min/vs' } });
 $(function () {
     require(['vs/editor/editor.main', 'winwrap/basic'], require => {
 
-        console.log("winwrap_edit_client " + new Date().toString());
+        console.log('winwrap_edit_client ' + new Date().toString());
 
         monaco.languages.register({ id: 'vb' });
 
-        let serverip = getSearchParams("serverip");
-        ww.Basics.Initialize(serverip);
+        let serverip = getSearchParams('serverip');
+        let factory = {
+            'ww-remote': (basic, name) => { return new ww.Remote(basic, name, serverip) },
+            'ww-channel': (remote, name) => { return new ww.Channel(remote, name) },
+            'ww-ui': (channel, name) => { return new ww.UI(channel, name) },
+            'ww-item': (ui, element, name) => { return ui.CreateItem(element, name) }
+        };
+
+        ww.Basic.Initialize(factory);
     });
 
     function getSearchParams(k) {
