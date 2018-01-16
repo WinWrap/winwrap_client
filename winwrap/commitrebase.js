@@ -1,17 +1,20 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class CommitRebase {
-        constructor() {
+        constructor(channel) {
+            this.Channel = channel;
             this.Name = null;
             this.ActiveDoc = null;
         }
 
+        SetEditor(editor) {
+            this.Editor = editor;
+        }
+
         Read(file) {
             this.Name = file.name;
-            ww.EditorCode.editor().setValue(file.code);
-            this.ActiveDoc = new ww.Doc(ww.Attach.AllocatedID, file.revision, ww.EditorCode);
+            this.Editor.editor().setValue(file.code);
+            this.ActiveDoc = new ww.Doc(this.Channel.AllocatedID, file.revision, this.Editor);
         }
 
         CommitDone(revision) {
@@ -30,15 +33,16 @@
         GetCommitRequest() {
             let request = null;
             if (this.ActiveDoc.Commit(false)) {
+                //console.log("Commit needed");
                 var commit = this.ActiveDoc.CurrentCommit;
                 var edits = [];
                 commit.Edits.Edits().forEach(function (edit) {
-                    edits.push({ "index": edit.Index, "delete": edit.DeleteCount, "insert": edit.Insert });
+                    edits.push({ 'index': edit.Index, 'delete': edit.DeleteCount, 'insert': edit.Insert });
                 });
                 request = {
-                    //"id": this.ActiveDoc.SyncId, // xxx not needed
-                    command: "?commit",
-                    target: ww.CommitRebase.Name,
+                    //'id': this.ActiveDoc.SyncId, // xxx not needed
+                    command: '?commit',
+                    target: this.Name,
                     doc_revision: this.ActiveDoc.Revision,
                     revision: commit.Revision,
                     edits: edits
@@ -48,6 +52,6 @@
         }
     }
 
-    ww.CommitRebase = new CommitRebase();
+    ww.CommitRebase = CommitRebase;
 
-})();
+});

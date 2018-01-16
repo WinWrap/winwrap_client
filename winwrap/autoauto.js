@@ -1,31 +1,39 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class AutoAuto {
-        constructor() {
-            this.Response = null;
+        constructor(ui, element) {
+            this.UI = ui;
+            this.Element = element;
+            this.AutoComplete = new ww.AutoComplete(this);
+            this.SignatureHelp = new ww.SignatureHelp(this);
+            this.busy_ = false;
         }
-        async SendAsync(model, position) { // xxx block polling during auto...
-            ww.Ajax.StopPolling();
-            this.notification_ = null;
-            let textUntilPosition = ww.EditorCode.textUntilPosition(model, position);
-            ww.Ajax.PushPendingRequest(ww.CommitRebase.GetCommitRequest());
+        async SendAsync(model, position, textUntilPosition) { // xxx block polling during auto...
+            if (this.busy_) {
+                return null;
+            }
+            this.busy_ = true;
+            let channel = this.UI.Channel;
+            channel.StopPolling();
+            channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
             let request = {
-                command: "?auto",
-                target: ww.CommitRebase.Name,
+                command: '?auto',
+                target: channel.CommitRebase.Name,
                 first: textUntilPosition.length - (position.column - 1),
                 offset: position.column - 1 // `${first}`
             };
-            let response = await ww.Ajax.SendAsync(request, "!auto").catch(err => {
-                console.log("ERROR autoauto.js SendAsync ", err);
-            });
-            ww.AutoAuto.Response = response; // for use by autocomplete/signaturehelp
-            ww.Ajax.StartPolling();
+            let response = null;
+            try {
+                response = await channel.SendAsync(request, '!auto');
+            } catch (e) {
+                console.log("ww-error: AutoAuto.SendAsync failed");
+            }
+            channel.StartPolling();
+            this.busy_ = false;
             return response;
         }
     }
 
-    ww.AutoAuto = new AutoAuto();
+    ww.AutoAuto = AutoAuto;
 
-})();
+});

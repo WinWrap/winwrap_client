@@ -1,18 +1,17 @@
-﻿var ww = ww || {};
+﻿define(function () {
 
-(function () {
-
-    ww.MonacoEditor = function (container, height) { // class used for Code, Immediate, Watch editors
+    ww.MonacoEditor = function (ui, element, container, height) { // class used for Code, Immediate, Watch editors
+        let ui_ = ui;
         let editor_;
-        let container_ = container;
+        let element_ = element;
         let editorWidth_ = $(window).width() - 20;
         let height_ = height; // Number(height) seemed needed at one time
         let init_ = function () {
-            editor_ = monaco.editor.create(document.getElementById(container), {
+            editor_ = monaco.editor.create(element_[0], {
                 language: 'vb',
-                theme: "vs-dark",
+                theme: 'vs-dark',
                 glyphMargin: true,
-                scrollbar: { vertical: "visible" } // xxx horizontal ?
+                scrollbar: { vertical: 'visible' } // xxx horizontal ?
             });
             editor_.layout({ width: editorWidth_, height: height_ }); // xxx onresize
             if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
@@ -20,49 +19,50 @@
             } else {
                 editor_.updateOptions({ fontSize: 14 });
             }
-            editor_.setValue(`\"${container_}\"\r\n`);
+            editor_.setValue(`\"${container}\"\r\n`);
         };
         init_();
         return {
-            "getText": function () {
+            'getText': function () {
                 return this.editor().getValue();
             },
-            "getSelection": function () {
+            'getSelection': function () {
                 let position = this.editor().getPosition();
                 let model = this.editor().getModel();
-                let textUntilPosition = ww.EditorCode.textUntilPosition(model, position);
+                let textUntilPosition = ui_.EditorCode.textUntilPosition(model, position);
                 let caret = textUntilPosition.length;
-                return { "first": caret, "last": caret };
+                return { 'first': caret, 'last': caret };
             },
-            "editor": function () {
+            'editor': function () {
                 return editor_;
             },
-            "bindOnMouseDown": function () {
+            'Initialize': function () {
                 editor_.onMouseDown(function (e) {
                     if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) { // xxx below
-                        let isBreak = ww.BreaksPause.isBreak(ww.CommitRebase.Name, e.target.position.lineNumber);
+                        let channel = ui_.Channel;
+                        let isBreak = ui_.Breaks.isBreak(channel.CommitRebase.Name, e.target.position.lineNumber);
                         let doBreak = isBreak ? false : true;
                         let request = {
-                            command: "break",
-                            target: ww.CommitRebase.Name,
+                            command: 'break',
+                            target: channel.CommitRebase.Name,
                             line: e.target.position.lineNumber,
                             on: doBreak
                         };
-                        ww.Ajax.PushPendingRequest(request);
+                        channel.PushPendingRequest(request);
                     }
                 });
             },
-            "showing": function () {
-                return $(`#${container_}`).css('display') !== 'none';
+            'showing': function () {
+                return element_.css('display') !== 'none';
             },
-            "show": function () {
-                $(`#${container_}`).show();
+            'show': function () {
+                element_.show();
             },
-            "hide": function () {
-                $(`#${container_}`).hide();
+            'hide': function () {
+                element_.hide();
             },
-            "appendText": function (text) {
-                // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.icodeeditor.html#executeedits
+            'appendText': function (text) {
+                // https://microsoft.github.io/monaco-editor/api/uis/monaco.editor.icodeeditor.html#executeedits
                 let value = editor_.getValue();
                 if (!value.length) {
                     value = text;
@@ -71,7 +71,7 @@
                 }
                 editor_.setValue(value);
             },
-            "scrollToBottom": function () { // xxx needs work
+            'scrollToBottom': function () { // xxx needs work
                 let lines = editor_.getModel().getLineCount();
                 let top = editor_.getTopForLineNumber(lines);
                 let lineHeight = editor_.getConfiguration().lineHeight;
@@ -79,7 +79,7 @@
                 editor_.setScrollTop(top - contentHeight + lineHeight); // xxx
                 let scrollHeight = editor_.getScrollHeight();
             },
-            "textUntilPosition": function (model, position) {
+            'textUntilPosition': function (model, position) {
                 let text = model.getValueInRange({
                     startLineNumber: 1,
                     startColumn: 1,
@@ -87,66 +87,11 @@
                     endColumn: position.column
                 });
                 return text;
+            },
+            'SetState': function (response) {
+                // to do
             }
         };
     };
 
-})();
-
-/*ww.InitCode = function () { // not used, was for testing
-    code1 = [
-        '\'#Language "WWB.NET"',
-        '',
-        'Imports System.Collections.Generic',
-        '',
-        'Sub Main',
-        '    Dim x As Boolean',
-        '    MessageBox.Show(\"Hi\")',
-        '    Dim i As Integer = Integer.Parse(\"24\")',
-        'End Sub'
-    ].join('\n');
-    code2 = [
-        '\'#Language "WWB.NET"',
-        '',
-        'Imports System.Collections.Generic',
-        '',
-        'Sub Main',
-        '    Integer.Parse',
-        'End Sub'
-    ].join('\n');
-    code3 = [
-        '\'#Language "WWB.NET"',
-        '',
-        'Sub Main',
-        '    Dim x As ',
-        'End Sub'
-    ].join('\n');
-    code = code3;
-    return {
-        value: code
-    };
-};*/
-
-/*ww.MonacoSync = function (obj) { // save this code !!!
-    var delay = (function () {
-        let timer = 0;
-        return function (callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
-    return new monaco.Promise(function (c, e, p) {
-        let waitformsg = function (x) {
-            delay(function () {
-                if (x.isdone) {
-                    c(x.isdone);
-                } else {
-                    waitformsg(x);
-                }
-            },
-                // xxx repeat for a while, put limit later, use partial data still later
-                100);
-        };
-        waitformsg(obj);
-    });
-};*/
+});

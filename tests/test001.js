@@ -6,7 +6,9 @@
     // editor.trigger('source - use any string you like', 'editor.action.triggerParameterHints', {});
 
     class Test001 {
-        constructor() { }
+        constructor(basic) {
+            this.Basic = basic;
+        }
 
         async Run() {
             //await this.Part001();
@@ -18,16 +20,16 @@
             let macroname = "\\test003.bas";
             this.result_ = await ww.InputMacro.ReadAsync(macroname);
             let read = this.result_.find(o => o.response === "!read");
-            ww.CommitRebase.Read(read.files[0]);
+            this.Basic.CommitRebase.Read(read.files[0]);
             ww.Test.InsertText(/MsgBox/, "()");
-            let request = ww.CommitRebase.GetCommitRequest();
-            this.result_ = await ww.Ajax.SendAsync(request, "!commit");
+            let request = this.Basic.CommitRebase.GetCommitRequest();
+            this.result_ = await this.Basic.Ajax.SendAsync(request, "!commit");
             //this.result_ = await ww.InputMacro.ReadAsync(macroname); // rebase instead ?
             let rebase = this.result_.find(o => o.response === "!rebase");
             //ww.CommitRebase.Rebase(rebase); // not needed for this test
-            ww.Test.SetCaret(/MsgBox\(/);
-            ww.Test.Editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
-            await ww.Test.Wait(500);
+            this.Basic.Test.SetCaret(/MsgBox\(/);
+            this.Basic.Test.Editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
+            await this.Basic.Test.Wait(500);
             return this.result_;
         }
 
@@ -35,10 +37,10 @@
             let macroname = "\\test002.bas";
             this.result_ = await ww.InputMacro.ReadAsync(macroname);
             let read = this.result_.find(o => o.response === "!read");
-            ww.CommitRebase.Read(read.files[0]);
-            ww.Test.SetCaret(/As /);
-            ww.Test.Editor.trigger('mysource', 'editor.action.triggerSuggest', {});
-            await ww.Test.Wait(500);
+            this.Basic.CommitRebase.Read(read.files[0]);
+            this.Basic.Test.SetCaret(/As /);
+            this.Basic.Test.Editor.trigger('mysource', 'editor.action.triggerSuggest', {});
+            await this.Basic.Test.Wait(500);
             return this.result_;
         }
 
@@ -46,15 +48,15 @@
             let macroname = "\\test001.bas";
             this.result_ = await ww.InputMacro.ReadAsync(macroname);
             let read = this.result_.find(o => o.response === "!read");
-            ww.CommitRebase.Read(read.files[0]);
-            ww.Test.SetCaret(/'#/);
-            ww.Test.Editor.trigger('mysource', 'editor.action.triggerSuggest', {});
-            await ww.Test.Wait(500);
+            this.Basic.CommitRebase.Read(read.files[0]);
+            this.Basic.Test.SetCaret(/'#/);
+            this.Basic.Test.Editor.trigger('mysource', 'editor.action.triggerSuggest', {});
+            await this.Basic.Test.Wait(500);
             return this.result_;
         }
 
     }
 
-    ww.Test001 = new Test001();
+    ww.Test001 = Test001;
 
 })();

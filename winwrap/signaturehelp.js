@@ -1,15 +1,33 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
 
     class SignatureHelp {
-        constructor() {
-
+        constructor(autoauto) {
+            let signatureHelp = this; // can't pass this through closure to the lambdas below
+            monaco.languages.registerSignatureHelpProvider('vb', {
+                // 1/15/18 - Tom
+                // added ' ': WinWrap Basic doesn't require () around parameters
+                signatureHelpTriggerCharacters: ['(',' '],
+                provideSignatureHelp: async function (model, position) {
+                    let textUntilPosition = autoauto.Element.textUntilPosition(model, position);
+                    // 1/15/18 - Tom
+                    // added ' '
+                    let match = textUntilPosition.match('[( ]'); // was '('
+                    if (match) { // was [{}]
+                        let response = await autoauto.SendAsync(model, position, textUntilPosition);
+                        return signatureHelp._createSignatureHelp(response);
+                    }
+                    return {};
+                }
+            });
         }
-        createSignatureHelp(response) {
-            if (!("prototypes" in response)) {
-                throw "ww-error: createSignatureHelp(response) no prototypes in response"; // xxx
+        _createSignatureHelp(response) {
+            //console.log("_createSignatureHelp");
+            if (response === null) {
+                console.log("ww-error: _createSignatureHelp no response"); // xxx
                 //return {};
+            }
+            if (response === null || !('prototypes' in response)) {
+                response = { prototypes: [], prototype_index: 0, prototype_arg_index: 0 };
             }
             let result = {
                 signatures: response.prototypes.map(prototype => {
@@ -27,45 +45,8 @@
             //ww.Browser.Log(result);
             return result;
         }
-        Register() {
-            monaco.languages.registerSignatureHelpProvider('vb', {
-                signatureHelpTriggerCharacters: ['('],
-                provideSignatureHelp: async function (model, position) {
-                    let textUntilPosition = ww.EditorCode.textUntilPosition(model, position);
-                    let match = textUntilPosition.match("[(]"); // was "("
-                    if (match) { // was [{}]
-                        await ww.AutoAuto.SendAsync(model, position);
-                        return ww.SignatureHelp.createSignatureHelp(ww.AutoAuto.Response);
-                    }
-                    return {};
-                }
-            });
-        }
     }
 
-    ww.SignatureHelp = new SignatureHelp();
+    ww.SignatureHelp = SignatureHelp;
 
-    /*let aprototypes = {
-        signatures: [{
-            label: "MsgBox(ByVal Message As String, Optional ByVal Type As VbMsgBoxStyle, Optional ByVal Title As String) As VbMsgBoxResult",
-            //documentation: " this method does blah",
-            parameters: [
-                {
-                    label: "ByVal Message As String"
-                    //documentation: "this param does blah"
-                },
-                {
-                    label: "Optional ByVal Type As VbMsgBoxStyle"
-                    //documentation: "this param does blah"
-                },
-                {
-                    label: "Optional ByVal Title As String"
-                    //documentation: "this param does blah"
-                }
-            ]
-        }],
-        activeSignature: 0,
-        activeParameter: 0
-    };*/
-
-})();
+});

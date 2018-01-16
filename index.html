@@ -9,26 +9,9 @@
     <script src="scripts/jquery.js"></script>
     <script src="scripts/jquery-ui.min.js"></script>
     <script src="scripts/monaco-editor/min/vs/loader.js"></script>
-    <script src="winwrap/ajax.js"></script>
-    <script src="winwrap/attach.js"></script>
-    <script src="winwrap/autoauto.js"></script>
-    <script src="winwrap/autocomplete.js"></script>
-    <script src="winwrap/breakspause.js"></script>
-    <script src="winwrap/commitrebase.js"></script>
-    <script src="winwrap/debugdecorate.js"></script>
-    <script src="winwrap/interface.js"></script>
-    <script src="winwrap/monacoeditor.js"></script>
-    <script src="winwrap/notifications.js"></script>
-    <script src="winwrap/response-handlers.js"></script>
-    <script src="winwrap/responses.js"></script>
-    <script src="winwrap/signaturehelp.js"></script>
-    <script src="winwrap/ui-inputmacro.js"></script>
+    <script src="winwrap/index.js"></script>
     <script src="tests/test.js"></script>
     <script src="tests/test001.js"></script>
-    <script src="winwrap/ww-commit.js"></script>
-    <script src="winwrap/ww-doc.js"></script>
-    <script src="winwrap/ww-edit.js"></script>
-    <script src="winwrap/ww-edits.js"></script>
     <script>
         // https://jqueryui.com/tooltip/
         $(function () {
@@ -37,28 +20,27 @@
     </script>
 </head>
 <body>
-    <div id="buttons">
+    <div class="ww-remote-1">
         <fieldset>
-            <!-- link to news article and added title= -->
             <a class="ui-button ui-widget ui-corner-all" href="https://www.winwrap.com/web2/news/web-based-editing" target="_blank">WinWrap&copy;</a>
-            <input id="inputmacro" class="ui-autocomplete-input ui-widget ui-corner-all" />
-            <!-- rearranged to more closely match WinWrap Directors' toolbar -->
-            <button id="buttonrun" class="ui-button ui-widget ui-corner-all"><i class="fas fa-play"></i></button>
-            <button id="buttonpause" class="ui-button ui-widget ui-corner-all"><i class="fas fa-pause"></i></button>
-            <button id="buttonend" class="ui-button ui-widget ui-corner-all"><i class="fas fa-stop"></i></button>
-            <button id="buttoninto" class="ui-button ui-widget ui-corner-all"><i class="fas fa-angle-down fa-lg"></i></button>
-            <button id="buttonover" class="ui-button ui-widget ui-corner-all"><i class="fas fa-angle-double-down fa-lg"></i></button>
-            <button id="buttonout" class="ui-button ui-widget ui-corner-all"><i class="fas fa-angle-double-left fa-lg"></i></button>
-            <button id="buttonnew" class="ui-button ui-widget ui-corner-all"><i class="fas fa-file"></i></button>
-            <button id="buttonsave" class="ui-button ui-widget ui-corner-all"><i class="fas fa-save"></i></button>
-            <button id="buttonwatch" class="ui-button ui-widget ui-corner-all"><i class="fas fa-window-restore"></i></button>
+            <button class="ww-remote-1 ww-item-new ui-button ui-widget ui-corner-all"><i class="fas fa-file"></i></button>
+            <input class="ww-remote-1 ww-item-files ui-autocomplete-input ui-widget ui-corner-all" />
+            <button class="ww-remote-1 ww-item-save ui-button ui-widget ui-corner-all"><i class="fas fa-save"></i></button>
+            <button class="ww-remote-1 ww-item-check ui-button ui-widget ui-corner-all"><i class="fas fa-check-square"></i></button>
+            <button class="ww-remote-1 ww-item-run ui-button ui-widget ui-corner-all"><i class="fas fa-play"></i></button>
+            <button class="ww-remote-1 ww-item-pause ui-button ui-widget ui-corner-all"><i class="fas fa-pause"></i></button>
+            <button class="ww-remote-1 ww-item-end ui-button ui-widget ui-corner-all"><i class="fas fa-stop"></i></button>
+            <button class="ww-remote-1 ww-item-into ui-button ui-widget ui-corner-all"><i class="fas fa-angle-down fa-lg"></i></button>
+            <button class="ww-remote-1 ww-item-over ui-button ui-widget ui-corner-all"><i class="fas fa-angle-double-down fa-lg"></i></button>
+            <button class="ww-remote-1 ww-item-out ui-button ui-widget ui-corner-all"><i class="fas fa-angle-double-left fa-lg"></i></button>
+            <button class="ww-remote-1 ww-item-cycle ui-button ui-widget ui-corner-all"><i class="fas fa-window-restore"></i></button>
         </fieldset>
+        <div class="ww-remote-1 ww-item-immediate" style="border:1px solid grey; display:none"></div>
+        <div class="ww-remote-1 ww-item-watch" style="border:1px solid grey; display:none"></div>
+        <div class="ww-remote-1 ww-item-code" style="border:1px solid grey"></div>
+        <div class="ww-remote-1 ww-item-statusbar" style="border:1px solid grey; display:none"></div>
+        <div>WinWrap Version = <span class="ww-remote-1 ww-item-version"></span></div>
     </div>
-    <div id="immediateeditor" style="border:1px solid grey; display:none"></div>
-    <div id="watcheditor" style="border:1px solid grey; display:none"></div>
-    <div id="codeeditor" style="border:1px solid grey"></div>
-    <div id="version">WinWrap Version = <span id="winwrapversion"></span></div>
     <pre><span id="jsondata"></span></pre>
-    <script src="winwrap/index.js"></script>
 </body>
 </html>

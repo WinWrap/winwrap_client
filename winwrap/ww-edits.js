@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
     class Edits {
         constructor(edits = []) {
             this.edits_ = [...edits];
@@ -90,4 +88,4 @@
     }
 
     ww.Edits = Edits;
-})();
+});

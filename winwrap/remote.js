@@ -1,0 +1,167 @@
+﻿define(function () {
+
+    class Remote { // singleton, but created in startup sequence
+        // xxx es6 named paramaters not available Edge 41.16299.15.0
+        // https://medium.com/dailyjs/named-and-optional-arguments-in-javascript-using-es6-destructuring-292a683d5b4e
+        constructor(basic, name, serverip) {
+            this.Basic = basic;
+            this.Name = name;
+            this.serverip = serverip;
+            this.channels_ = {};
+            this.pollingIndex_ = -1;
+            this.Tid = null; // not waiting to poll
+            this.needstatus = false;
+            this.pendingRequests = [];
+        }
+        AddChannel(channel) {
+            this.channels_[channel.Name] = channel;
+        }
+        Channel(name) {
+            return this.channels_[name];
+        }
+        Initialize() {
+            Object.values(this.channels_).forEach(channel => {
+                channel.Initialize();
+            });
+        }
+        StartPolling() { // stop during autocomplete and signaturehelp
+            if (this.Tid == null) {
+                let remote = this; // closure can't handle this in the lambdas below
+                this.Tid = setTimeout(() => {
+                    remote.Poll();
+                }, 100); // waiting to poll
+            }
+        }
+        StopPolling() {
+            if (this.Tid != null) {
+                clearTimeout(this.Tid);
+                this.Tid = null; // not waiting to poll
+            }
+        }
+        Poll() {
+            if (this.Tid == null) {
+                return;
+            }
+            this.Tid = null; // not waiting to poll
+            let id = 0;
+            let requests = [];
+            if (this.pendingRequests.length > 0) {
+                id = this.pendingRequests[0].id;
+                requests = this._ExtractPendingRequestsForId(id);
+                console.log('Remote.Poll>>> ' + this._valuesmsg(requests, 'command'));
+            } else {
+                let channels = Object.values(this.channels_);
+                if (++this.pollingIndex_ >= channels.length)
+                    this.pollingIndex_ = 0;
+                id = this.pollingIndex_ < channels.length ? channels[this.pollingIndex_].AllocatedID : 0;
+            }
+            return this._Send(requests, id).then(responses => {
+                if (responses.length > 0) {
+                    console.log('Remote.Poll<<< ' + this._valuesmsg(responses, 'response'));
+                    this.Process(responses);
+                }
+                this.StartPolling();
+            }).catch(reason => {
+                console.log('Remote.Poll error: ' + reason);
+            });
+        }
+        PushPendingRequest(request) {
+            this.pendingRequests.push(request);
+        }
+        Process(responses) {
+            responses.forEach(response => {
+                response.datetimeClient = new Date().toLocaleString();
+                Object.values(this.channels_).forEach(channel => {
+                    if (response.id === -1) {
+                        // all channel's process the notification
+                        channel.UI.ProcessNotification(response);
+                    } else if (response.id === channel.AllocatedID) {
+                        // only the requesting channel processes the response
+                        channel.UI.ProcessResponse(response);
+                    }
+                });
+            });
+        }
+        async SendAsync(request, expected, id) {
+            let requests = this._ExtractPendingRequestsForId(id);
+            requests.push(request);
+            console.log('Remote.SendAsync>>> ' + this._valuesmsg(requests, 'command'));
+            let response = null;
+            let responses = [];
+            let start = new Date().getTime();
+            let end = start;
+            for (var trys = 1; trys < 10; trys++) { // xxx
+                let tryresponses = await this._Send(trys === 1 ? requests : [], id);
+                end = new Date().getTime();
+                tryresponses.forEach(tryresponse => {
+                    if (tryresponse.response === expected) {
+                        response = tryresponse;
+                    } else {
+                        responses.push(tryresponse);
+                    }
+                });
+                if (response != null) {
+                    break;
+                }
+                await this._Wait(100);
+            }
+            console.log('Remote.SendAsync<<< ' + this._valuesmsg(responses.concat(response), 'response'));
+            this.Process(responses);
+            console.log({
+                request: this._valuesmsg(requests, 'command'),
+                expected: expected.toString(),
+                results: this._valuesmsg(response, 'response'),
+                trys: trys,
+                elapsedms: end-start
+            });
+            return response;
+        }
+        _Send(requests, id) { // called by Poll and SendAsync
+            let url = 'http://' + this.serverip + '/winwrap/poll/' + id;
+            let json = JSON.stringify(requests);
+            let options = {
+                type: 'POST',
+                url: url,
+                dataType: 'text',
+                data: json,
+                contentType: 'application/winwrap; charset=utf-8',
+                beforeSend: function (jqXHR) {
+                    // set request headers here rather than in the ajax 'headers' object
+                    jqXHR.setRequestHeader('Accept', 'application/winwrap');
+                },
+                dataFilter: data => {
+                    return JSON.parse(data);
+                }
+            };
+            return new Promise(function (resolve, reject) {
+                $.ajax(options).done(resolve).fail(reject);
+            });
+        }
+        _Wait(ms) {
+            return new Promise(r => setTimeout(r, ms));
+        }
+        _ExtractPendingRequestsForId(id) {
+            let pendingRequests = this.pendingRequests;
+            this.pendingRequests = [];
+            let requests = [];
+            pendingRequests.forEach(request => {
+                if (request.id === id) {
+                    requests.push(request);
+                } else {
+                    this.pendingRequests.push(request);
+                }
+            });
+            return requests;
+        }
+        _valuesmsg(data, key) {
+            let xdata = [].concat(data).filter(item => {
+                return item !== null && item !== undefined;
+            });
+            let datas = xdata.map(o => o[key]);
+            return datas.toString();
+        }
+    }
+
+    ww.Remote = Remote;
+
+});

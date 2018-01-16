@@ -1,6 +1,4 @@
-﻿var ww = ww || {};
-
-(function () {
+﻿define(function () {
     class Doc {
         constructor(sync_id, revision, editor) {
             this.SyncId = sync_id;
@@ -61,7 +59,7 @@
             var caret = this.editor_.getSelection().first;
             if (enter) {
                 // get current caret
-                commit.AppendEditNoCombine(new ww.Edit(caret, 0, ""));
+                commit.AppendEditNoCombine(new ww.Edit(caret, 0, ''));
                 return commit;
             }
 
@@ -88,7 +86,7 @@
             // Rebasing Onto Master(Client - Side) After an operation is transformed and applied server - side,
             // it is broadcasted to the other clients.
             // When a client receives the change, it does the equivalent of a git rebase:
-            // 1. Reverts all "pending" (non - merged) local operations operation from the server
+            // 1. Reverts all 'pending' (non - merged) local operations operation from the server
             // 2. Applies remote operation
             // 3. Re-applies pending operations, transforming each operation against the new operation from the server
 
@@ -134,4 +132,4 @@
     }
 
     ww.Doc = Doc;
-})();
+});
