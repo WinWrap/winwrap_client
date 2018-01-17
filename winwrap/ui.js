@@ -20,6 +20,11 @@
             this.Breaks = new ww.Breaks(this);
             this.Stack = new ww.Stack(this);
             this.DebugDecorate = new ww.DebugDecorate(this);
+            $(window).resize(() => {
+                this.EditorImmediate.resize();
+                this.EditorWatch.resize();
+                this.EditorCode.resize();
+            });
         }
         AddItem(item, name) {
             if (item !== undefined) {
