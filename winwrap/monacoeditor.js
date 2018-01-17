@@ -35,6 +35,9 @@
                     channel.PushPendingRequest(request);
                 }
             });
+            //this.editor_.resize(() => {
+            //    this.resize();
+            //});
         }
         applyEdit(edit) {
             let model = this.editor_.getModel();
@@ -70,7 +73,7 @@
             this.element_.hide();
         }
         resize() {
-            this.editor_.layout({ width: this.element_.width(), height: this.element_.height() });
+            this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
         }
         appendText(text) {
             // https://microsoft.github.io/monaco-editor/api/uis/monaco.editor.icodeeditor.html#executeedits
