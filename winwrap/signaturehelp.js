@@ -29,13 +29,13 @@
             if (response === null || !('prototypes' in response)) {
                 response = { prototypes: [], prototype_index: 0, prototype_arg_index: 0 };
             }
-            console.log(response);
+            //console.log(response);
             let result = {
                 signatures: response.prototypes.map(prototype => {
                     return {
                         label: prototype.text,
                         parameters: prototype.params.map(item => {
-                            let parameter = prototype.text.substring(item[0], item[0] + item[1] + 1);
+                            let parameter = prototype.text.substring(item[0], item[0] + item[1]);
                             return { label: parameter };
                         })
                     };

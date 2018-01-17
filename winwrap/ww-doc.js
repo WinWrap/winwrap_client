@@ -38,6 +38,9 @@
         }
 
         Commit(enter) {
+            if (this.CurrentCommit != null)
+                return false; // 1/17/18 - temporary fix
+
             this.AppendPendingCommit(false);
             if (this.CurrentCommit != null || this.pendingCommits_.length == 0)
                 return false;
