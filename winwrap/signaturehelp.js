@@ -29,6 +29,7 @@
             if (response === null || !('prototypes' in response)) {
                 response = { prototypes: [], prototype_index: 0, prototype_arg_index: 0 };
             }
+            console.log(response);
             let result = {
                 signatures: response.prototypes.map(prototype => {
                     return {
