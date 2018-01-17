@@ -22,8 +22,7 @@
         }
 
         Rebase(notification) {
-            var serverCommit = new ww.Commit(notification.by_id, notification.for_id, false);
-            serverCommit.Revision = notification.revision;
+            var serverCommit = new ww.Commit(notification.by_id, notification.for_id, notification.revision, false);
             notification.edits.forEach(function (edit) {
                 serverCommit.AppendEdit(new ww.Edit(edit.index, edit.delete, edit.insert));
             });

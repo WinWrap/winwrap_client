@@ -2,11 +2,11 @@
     class Commit {
         // by_sync_id: sync id that creates the commit (0 for server)
         // for_sync_id: sync id that caused the commit (never 0)
-        constructor(by_sync_id, for_sync_id, enter) {
+        constructor(by_sync_id, for_sync_id, revision, enter) {
             this.BySyncId = by_sync_id;
             this.ForSyncId = for_sync_id;
+            this.Revision = revision;
             this.Enter = enter;
-            this.Revision = 0;
             this.Edits = new ww.Edits();
             this.RevertEdits = new ww.Edits();
         }
@@ -38,7 +38,7 @@
         }
 
         Copy() {
-            var commit = new Commit(this.BySyncId, this.ForSyncId, this.Enter);
+            var commit = new Commit(this.BySyncId, this.ForSyncId, this.Revision, this.Enter);
             commit.Edits = this.Edits.Copy();
             commit.ReverEdits = this.RevertEdits.Copy();
             return commit;
@@ -49,7 +49,7 @@
             if (mergedEdits.IsNull())
                 return null;
 
-            var commit = new Commit(this.BySyncId, this.ForSyncId, this.Enter);
+            var commit = new Commit(this.BySyncId, this.ForSyncId, this.Revision, this.Enter);
             commit.AppendEdits(mergedEdits);
             return commit;
         }
@@ -65,6 +65,11 @@
 
             var delta = this.Revision - revision;
             return delta < 0x40000000;
+        }
+
+        Log(title) {
+            //console.log(title);
+            //console.log(this);
         }
     }
 

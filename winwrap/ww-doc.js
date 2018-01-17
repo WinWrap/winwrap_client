@@ -24,12 +24,15 @@
                 var lastCommit = this.pendingCommits_[this.pendingCommits_.length - 1];
                 if (!lastCommit.Enter) {
                     lastCommit.Append(commit);
+                    lastCommit.Log('pendingCommits_: Appended to last pending commit:');
                     commit = null;
                 }
             }
 
-            if (commit !== null)
+            if (commit !== null) {
+                commit.Log('pendingCommits_: Append pending commit:');
                 this.pendingCommits_.push(commit);
+            }
         }
 
         ApplyEdits(edits, isserver) {
@@ -38,15 +41,13 @@
         }
 
         Commit(enter) {
-            if (this.CurrentCommit != null)
-                return false; // 1/17/18 - temporary fix
-
             this.AppendPendingCommit(false);
             if (this.CurrentCommit != null || this.pendingCommits_.length == 0)
                 return false;
 
             this.CurrentCommit = this.pendingCommits_.shift();
             this.CurrentCommit.Revision = this.Revision;
+            this.CurrentCommit.Log('Current commit:');
             return true;
         }
 
@@ -58,7 +59,7 @@
         }
 
         CreateCommit(text, enter) {
-            var commit = new ww.Commit(this.SyncId, this.SyncId, enter);
+            var commit = new ww.Commit(this.SyncId, this.SyncId, this.Revision, enter);
             var caret = this.editor_.getSelection().first;
             if (enter) {
                 // get current caret
@@ -77,9 +78,9 @@
         }
 
         Rebase(serverCommit) {
+            serverCommit.Log('Rebase serverCommit:');
             if (serverCommit.BySyncId === this.SyncId) {
                 // my commit, already applied to client
-                this.CommitDone(serverCommit.Revision); // xyz
                 return;
             }
 
