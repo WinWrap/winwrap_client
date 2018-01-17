@@ -22,7 +22,7 @@
             this.busy1_ = true; // first SendAsync call is busy
             let channel = this.UI.Channel;
             channel.StopPolling();
-            channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
+            channel.PushPendingCommit();
             let request = {
                 command: '?auto',
                 target: channel.CommitRebase.Name,

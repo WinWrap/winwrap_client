@@ -7,6 +7,7 @@
             this.ClientID = ('0000000000' + Math.floor(Math.random() * 2147483647)).slice(-10).toString();
             this.AllocatedID = 0; // explicitly set in ?attach
             this.generation_ = 0;
+            this.commitcounter_ = 0;
         }
         Initialize() {
             this._AttachAsync().then(attach => {
@@ -51,6 +52,16 @@
         }
         StopPolling() {
             this.Remote.StopPolling();
+        }
+        Poll() {
+            if (++this.commitcounter_ == 20) {
+                // push any pending commits (approx once every 2 seconds)
+                this.PushPendingCommit();
+                this.commitcounter_ = 0;
+            }
+        }
+        PushPendingCommit() {
+            this.PushPendingRequest(this.CommitRebase.GetCommitRequest());
         }
         _NextGeneration() {
             if (++this.generation_ == 0x10000)

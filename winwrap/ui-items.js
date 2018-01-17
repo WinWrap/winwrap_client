@@ -98,7 +98,7 @@
                     let code = channel.EditorCode.editor().getValue();
                     let name = channel.CommitRebase.Name;
                     let newname = ui.GetFileValue();
-                    channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
+                    channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?write', target: name, new_name: newname });
                 });
         }
@@ -112,7 +112,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
+                    channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?syntax', target: channel.CommitRebase.Name });
                 });
         }
@@ -126,7 +126,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
+                    channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: 'run', target: channel.CommitRebase.Name });
                 });
         }
@@ -166,7 +166,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
+                    channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: 'into', target: channel.CommitRebase.Name });
                 });
         }
@@ -180,7 +180,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    channel.PushPendingRequest(channel.CommitRebase.GetCommitRequest());
+                    channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: 'over', target: channel.CommitRebase.Name });
                 });
         }

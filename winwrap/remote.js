@@ -8,7 +8,6 @@
             this.Name = name;
             this.serverip = serverip;
             this.channels_ = {};
-            this.channelsbyid_ = [];
             this.pollingIndex_ = -1;
             this.Tid = null; // not waiting to poll
             this.needstatus = false;
@@ -45,6 +44,7 @@
                 return;
             }
             this.Tid = null; // not waiting to poll
+            Object.values(this.channels_).forEach(channel => channel.Poll());
             let id = 0;
             let requests = [];
             if (this.pendingRequests.length > 0) {
