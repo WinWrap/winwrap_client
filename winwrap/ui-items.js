@@ -95,7 +95,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    let code = channel.EditorCode.editor().getValue();
+                    let code = ui.EditorCode.editor().getValue();
                     let name = channel.CommitRebase.Name;
                     let newname = ui.GetFileValue();
                     channel.PushPendingCommit();
