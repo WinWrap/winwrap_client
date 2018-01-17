@@ -6,22 +6,6 @@
         let element_ = element;
         let editorWidth_ = $(window).width() - 20;
         let height_ = height; // Number(height) seemed needed at one time
-        let init_ = function () {
-            editor_ = monaco.editor.create(element_[0], {
-                language: 'vb',
-                theme: 'vs-dark',
-                glyphMargin: true,
-                scrollbar: { vertical: 'visible' } // xxx horizontal ?
-            });
-            editor_.layout({ width: editorWidth_, height: height_ }); // xxx onresize
-            if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-                editor_.updateOptions({ fontSize: 24 });
-            } else {
-                editor_.updateOptions({ fontSize: 14 });
-            }
-            editor_.setValue(`\"${container}\"\r\n`);
-        };
-        init_();
         return {
             'applyEdit': function (edit) {
                 let model = this.editor().getModel();
@@ -53,6 +37,19 @@
                 return editor_;
             },
             'Initialize': function () {
+                editor_ = monaco.editor.create(element_[0], {
+                    language: 'vb',
+                    theme: 'vs-dark',
+                    glyphMargin: true,
+                    scrollbar: { vertical: 'visible' } // xxx horizontal ?
+                });
+                editor_.layout({ width: editorWidth_, height: height_ }); // xxx onresize
+                if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+                    editor_.updateOptions({ fontSize: 24 });
+                } else {
+                    editor_.updateOptions({ fontSize: 14 });
+                }
+                editor_.setValue(`\"${container}\"\r\n`);
                 editor_.onMouseDown(function (e) {
                     if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) { // xxx below
                         let channel = ui_.Channel;
