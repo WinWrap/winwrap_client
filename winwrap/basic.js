@@ -78,9 +78,7 @@
                         }
                     });
                 });
-                Object.values(this.remotes_).forEach(remote => {
-                    remote.Initialize();
-                });
+                Object.values(this.remotes_).forEach(remote => remote.Initialize());
             }
             ClassName(element, prefix, defaultName) {
                 let className = undefined;

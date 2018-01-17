@@ -61,7 +61,16 @@
                 this.EditorImmediate.show();
             }
         }
-        ProcessNotification(notification) {
+        Process(response) {
+            if (response.id === -1) {
+                // all channel's process the notification
+                this._ProcessNotification(response);
+            } else {
+                // only the requesting channel processes the response
+                this._ProcessResponse(response);
+            }
+        }
+        _ProcessNotification(notification) {
             switch (notification.response) { // each case => one requests
                 case '!break': // notification
                     this.Breaks.setBreak(notification);
@@ -120,7 +129,7 @@
                     break;
             }
         }
-        ProcessResponse(response) {
+        _ProcessResponse(response) {
             switch (response.response) { // each case => one requests
                 case '!breaks': // response
                     this.Breaks.setBreaks(response);

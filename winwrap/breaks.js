@@ -7,16 +7,12 @@
         }
         getBreaks(target) {
             let breaks = this.breaks;
-            breaks = breaks.filter(el => {
-                return el.target === target;
-            });
+            breaks = breaks.filter(el => el.target === target);
             return breaks;
         }
         setBreak(notification) {
             let breaks = this.breaks;
-            breaks = breaks.filter(el => {
-                return el.line !== notification.line || el.target !== notification.target;
-            });
+            breaks = breaks.filter(el => el.line !== notification.line || el.target !== notification.target);
             if (notification.on === true) {
                 breaks.push({ 'target': notification.target, 'line': notification.line });
             }

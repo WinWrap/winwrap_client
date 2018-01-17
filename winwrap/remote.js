@@ -8,6 +8,7 @@
             this.Name = name;
             this.serverip = serverip;
             this.channels_ = {};
+            this.channelsbyid_ = [];
             this.pollingIndex_ = -1;
             this.Tid = null; // not waiting to poll
             this.needstatus = false;
@@ -19,10 +20,11 @@
         Channel(name) {
             return this.channels_[name];
         }
+        ChannelById(id) {
+            return Object.values(this.channels_).filter(channel => channel.AllocatedID === id)[0];
+        }
         Initialize() {
-            Object.values(this.channels_).forEach(channel => {
-                channel.Initialize();
-            });
+            Object.values(this.channels_).forEach(channel => channel.Initialize());
         }
         StartPolling() { // stop during autocomplete and signaturehelp
             if (this.Tid == null) {
@@ -48,7 +50,7 @@
             if (this.pendingRequests.length > 0) {
                 id = this.pendingRequests[0].id;
                 requests = this._ExtractPendingRequestsForId(id);
-                console.log('Remote.Poll>>> ' + this._valuesmsg(requests, 'command'));
+                console.log('Remote.Poll(' + id + ')>>> ' + this._valuesmsg(requests, 'command'));
             } else {
                 let channels = Object.values(this.channels_);
                 if (++this.pollingIndex_ >= channels.length)
@@ -57,35 +59,30 @@
             }
             return this._Send(requests, id).then(responses => {
                 if (responses.length > 0) {
-                    console.log('Remote.Poll<<< ' + this._valuesmsg(responses, 'response'));
-                    this.Process(responses);
+                    console.log('Remote.Poll(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
+                    this.Process(responses, id);
                 }
                 this.StartPolling();
             }).catch(reason => {
-                console.log('Remote.Poll error: ' + reason);
+                console.log('Remote.Poll(' + id + ') error: ' + reason);
             });
         }
         PushPendingRequest(request) {
             this.pendingRequests.push(request);
         }
-        Process(responses) {
+        Process(responses, id) {
             responses.forEach(response => {
                 response.datetimeClient = new Date().toLocaleString();
-                Object.values(this.channels_).forEach(channel => {
-                    if (response.id === -1) {
-                        // all channel's process the notification
-                        channel.UI.ProcessNotification(response);
-                    } else if (response.id === channel.AllocatedID) {
-                        // only the requesting channel processes the response
-                        channel.UI.ProcessResponse(response);
-                    }
-                });
+                let channel = this.ChannelById(id);
+                if (channel !== undefined) {
+                    channel.UI.Process(response);
+                }
             });
         }
         async SendAsync(request, expected, id) {
             let requests = this._ExtractPendingRequestsForId(id);
             requests.push(request);
-            console.log('Remote.SendAsync>>> ' + this._valuesmsg(requests, 'command'));
+            console.log('Remote.SendAsync(' + id + ')>>> ' + this._valuesmsg(requests, 'command'));
             let response = null;
             let responses = [];
             let start = new Date().getTime();
@@ -105,8 +102,8 @@
                 }
                 await this._Wait(100);
             }
-            console.log('Remote.SendAsync<<< ' + this._valuesmsg(responses.concat(response), 'response'));
-            this.Process(responses);
+            console.log('Remote.SendAsync(' + id + ')<<< ' + this._valuesmsg(responses.concat(response), 'response'));
+            this.Process(responses, id);
             console.log({
                 request: this._valuesmsg(requests, 'command'),
                 expected: expected.toString(),
@@ -154,9 +151,7 @@
             return requests;
         }
         _valuesmsg(data, key) {
-            let xdata = [].concat(data).filter(item => {
-                return item !== null && item !== undefined;
-            });
+            let xdata = [].concat(data).filter(item => item !== null && item !== undefined);
             let datas = xdata.map(o => o[key]);
             return datas.toString();
         }
