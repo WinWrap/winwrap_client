@@ -23,6 +23,22 @@
         };
         init_();
         return {
+            'applyEdit': function (edit) {
+                let model = this.editor().getModel();
+                let position1 = model.getPositionAt(edit.Index);
+                let position2 = model.getPositionAt(edit.Index + edit.DeleteCount);
+                let range = new monaco.Range(position1.lineNumber, position1.column,
+                    position2.lineNumber, position2.column); 
+                let edits = [
+                    {
+                        range: range,
+                        text: edit.Insert
+                    }];
+                this.editor().executeEdits("rebase", edits);
+            },
+            'scrollToSelection': function () {
+                // to be written
+            },
             'getText': function () {
                 return this.editor().getValue();
             },

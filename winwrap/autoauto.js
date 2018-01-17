@@ -1,9 +1,9 @@
 ﻿define(function () {
 
     class AutoAuto {
-        constructor(ui, element) {
+        constructor(ui, editor) {
             this.UI = ui;
-            this.Element = element;
+            this.Editor = editor;
             this.AutoComplete = new ww.AutoComplete(this);
             this.SignatureHelp = new ww.SignatureHelp(this);
             this.busy1_ = false;

@@ -8,7 +8,7 @@
                 // added ' ': WinWrap Basic doesn't require () around parameters
                 signatureHelpTriggerCharacters: ['(',' '],
                 provideSignatureHelp: async function (model, position) {
-                    let textUntilPosition = autoauto.Element.textUntilPosition(model, position);
+                    let textUntilPosition = autoauto.Editor.textUntilPosition(model, position);
                     // 1/15/18 - Tom
                     // added ' '
                     let match = textUntilPosition.match('[( ]'); // was '('

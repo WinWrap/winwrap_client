@@ -13,7 +13,7 @@
             monaco.languages.registerCompletionItemProvider('vb', {
                 triggerCharacters: [' ', '.', '#', '=', ',', '\t', '\xA0'], // '(', ')'
                 provideCompletionItems: async function (model, position) {
-                    let textUntilPosition = autoauto.Element.textUntilPosition(model, position);
+                    let textUntilPosition = autoauto.Editor.textUntilPosition(model, position);
                     let match = textUntilPosition.match(this.re_auto); // limits traffic to server
                     if (match) {
                         let response = await autoauto.SendAsync(model, position, textUntilPosition);
