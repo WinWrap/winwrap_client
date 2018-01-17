@@ -11,7 +11,7 @@
             this.ready1_ = false;
             this.sharedResponse_ = null;
         }
-        async SendAsync(model, position, textUntilPosition) { // xxx block polling during auto...
+        async SendAsync(model, position) { // xxx block polling during auto...
             if (this.busy2_ || this.ready1_) {
                 // two SendAsync calls are busy, give up
                 return null;
@@ -26,8 +26,8 @@
             let request = {
                 command: '?auto',
                 target: channel.CommitRebase.Name,
-                first: textUntilPosition.length - (position.column - 1),
-                offset: position.column - 1 // `${first}`
+                first: 0,
+                offset: model.getOffsetAt(position)
             };
             let response = null;
             try {

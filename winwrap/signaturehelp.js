@@ -13,7 +13,7 @@
                     // added ' '
                     let match = textUntilPosition.match('[( ]'); // was '('
                     if (match) { // was [{}]
-                        let response = await autoauto.SendAsync(model, position, textUntilPosition);
+                        let response = await autoauto.SendAsync(model, position);
                         return signatureHelp._createSignatureHelp(response);
                     }
                     return {};

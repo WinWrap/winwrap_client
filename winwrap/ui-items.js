@@ -13,9 +13,9 @@
             case 'ww-item-over': return new ButtonOver(ui, element);
             case 'ww-item-out': return new ButtonOut(ui, element);
             case 'ww-item-cycle': return new ButtonCycle(ui, element);
-            case 'ww-item-immediate': return ww.MonacoEditor(ui, element, 'immediate-editor', 150);
-            case 'ww-item-watch': return ww.MonacoEditor(ui, element, 'watch-editor', 125);
-            case 'ww-item-code': return ww.MonacoEditor(ui, element, 'code-editor', 500);
+            case 'ww-item-immediate': return new ww.MonacoEditor(ui, element, 'immediate');
+            case 'ww-item-watch': return new ww.MonacoEditor(ui, element, 'watch');
+            case 'ww-item-code': return new ww.MonacoEditor(ui, element, 'code');
             case 'ww-item-statusbar': return undefined;
             case 'ww-item-version': return new WinWrapVersion(ui, element);
         }

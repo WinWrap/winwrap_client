@@ -16,7 +16,7 @@
                     let textUntilPosition = autoauto.Editor.textUntilPosition(model, position);
                     let match = textUntilPosition.match(this.re_auto); // limits traffic to server
                     if (match) {
-                        let response = await autoauto.SendAsync(model, position, textUntilPosition);
+                        let response = await autoauto.SendAsync(model, position);
                         return autoComplete._createDependencyProposals(response); // incomplete not used
                     }
                 }
