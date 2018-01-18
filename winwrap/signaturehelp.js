@@ -11,8 +11,8 @@
                     let textUntilPosition = autoauto.Editor.textUntilPosition(model, position);
                     // 1/15/18 - Tom
                     // added ' '
-                    //let match = textUntilPosition.match(/[( ,]$/); // signature at chr
-                    //let match = textUntilPosition.match(/\([^)]*$/); // signature until ")"
+                    // 1/18/18 - Ed
+                    // keep signature displayed until closed
                     let match = textUntilPosition.match(/[( ][^)]*$/);
                     if (match) { // was [{}]
                         let response = await autoauto.SendAsync(model, position);
