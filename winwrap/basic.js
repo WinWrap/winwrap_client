@@ -22,10 +22,10 @@
             Initialize(factory) {
                 let basic = this; // closure can't handle this in the lambdas below
                 setTimeout(async () => {
-                    await basic._Initialize(factory);
+                    await basic._InitializeAsync(factory);
                 }, 100); // wait to initialize
             }
-            async _Initialize(factory) {
+            async _InitializeAsync(factory) {
                 Object.keys(factory).forEach(key => {
                     let prefix = key + '-';
                     let elements = $('[class*="' + prefix + '"]');
@@ -85,7 +85,7 @@
                     });
                 });
                 Object.values(this.remotes_).forEach(async function (remote) {
-                    await remote.Initialize();
+                    await remote.InitializeAsync();
                 });
             }
             ClassName(element, prefix, defaultName) {

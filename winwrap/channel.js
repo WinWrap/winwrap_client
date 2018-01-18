@@ -9,7 +9,7 @@
             this.generation_ = 0;
             this.commitcounter_ = 0;
         }
-        async Initialize() {
+        async InitializeAsync() {
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
             try {

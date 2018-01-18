@@ -14,6 +14,12 @@
             this.pollBusy_ = false; // not in Poll
             this.pendingRequests = [];
         }
+        async InitializeAsync() {
+            Object.values(this.channels_).forEach(async function (channel) {
+                await channel.InitializeAsync();
+            });
+            this.StartPolling();
+        }
         AddChannel(channel) {
             this.channels_[channel.Name] = channel;
         }
@@ -22,12 +28,6 @@
         }
         ChannelById(id) {
             return Object.values(this.channels_).filter(channel => channel.AllocatedID === id)[0];
-        }
-        async Initialize() {
-            Object.values(this.channels_).forEach(async function (channel) {
-                await channel.Initialize();
-            });
-            this.StartPolling();
         }
         PollBusy() {
             return this.pollBusy_;
@@ -38,7 +38,7 @@
                 if (this.timerId_ == null) {
                     let remote = this; // closure can't handle this in the lambdas below
                     this.timerId_ = setTimeout(async () => {
-                        await remote._Poll();
+                        await remote._PollAsync();
                     }, 100); // waiting to poll
                 }
             }
@@ -71,7 +71,7 @@
             let start = new Date().getTime();
             let end = start;
             for (var trys = 1; trys < 10; trys++) { // xxx
-                let tryresponses = await this._Send(trys === 1 ? requests : [], id);
+                let tryresponses = await this._SendAsync(trys === 1 ? requests : [], id);
                 end = new Date().getTime();
                 tryresponses.forEach(tryresponse => {
                     if (tryresponse.response === expected) {
@@ -96,7 +96,7 @@
             });
             return response;
         }
-        async _Poll() {
+        async _PollAsync() {
             if (!this.polling_ || this.pollBusy_) {
                 return;
             }
@@ -108,7 +108,7 @@
             if (this.pendingRequests.length > 0) {
                 id = this.pendingRequests[0].id;
                 requests = this._ExtractPendingRequestsForId(id);
-                console.log('Remote.Poll(' + id + ')>>> ' + this._valuesmsg(requests, 'command'));
+                console.log('Remote._PollAsync(' + id + ')>>> ' + this._valuesmsg(requests, 'command'));
             } else {
                 let channels = Object.values(this.channels_);
                 if (++this.pollingIndex_ >= channels.length)
@@ -117,18 +117,18 @@
             }
             let responses = [];
             try {
-                responses = await this._Send(requests, id);
+                responses = await this._SendAsync(requests, id);
             } catch (err) {
-                console.log('Remote.Poll(' + id + ') error: ' + err);
+                console.log('Remote._PollAsync(' + id + ') error: ' + err);
             }
             if (responses.length > 0) {
-                console.log('Remote.Poll(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
+                console.log('Remote._PollAsync(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
                 this.Process(responses, id);
             }
             this.pollBusy_ = false;
             this.StartPolling(); // waiting to poll
         }
-        _Send(requests, id) { // called by Poll and SendAsync
+        _SendAsync(requests, id) { // called by _PollAsync and SendAsync
             let url = 'http://' + this.serverip_ + '/winwrap/poll/' + id;
             let json = JSON.stringify(requests);
             let options = {
