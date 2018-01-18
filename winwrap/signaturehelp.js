@@ -14,6 +14,7 @@
                     // 1/18/18 - Ed
                     // keep signature displayed until closed
                     let match = textUntilPosition.match(/[( ][^)]*$/);
+                    match = true;
                     if (match) { // was [{}]
                         let response = await autoauto.SendAsync(model, position);
                         return signatureHelp._createSignatureHelp(response);
