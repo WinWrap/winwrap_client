@@ -6,11 +6,12 @@
         constructor(basic, name, serverip) {
             this.Basic = basic;
             this.Name = name;
-            this.serverip = serverip;
+            this.serverip_ = serverip;
             this.channels_ = {};
             this.pollingIndex_ = -1;
-            this.Tid = null; // not waiting to poll
-            this.needstatus = false;
+            this.polling_ = false; // not waiting to poll
+            this.timerId_ = null;
+            this.pollBusy_ = false; // not in Poll
             this.pendingRequests = [];
         }
         AddChannel(channel) {
@@ -25,25 +26,33 @@
         Initialize() {
             Object.values(this.channels_).forEach(channel => channel.Initialize());
         }
+        PollBusy() {
+            return this.pollBusy_;
+        }
         StartPolling() { // stop during autocomplete and signaturehelp
-            if (this.Tid == null) {
-                let remote = this; // closure can't handle this in the lambdas below
-                this.Tid = setTimeout(() => {
-                    remote.Poll();
-                }, 100); // waiting to poll
+            if (!this.polling_) {
+                this.polling_ = true; // waiting to poll
+                if (this.timerId_ == null) {
+                    let remote = this; // closure can't handle this in the lambdas below
+                    this.timerId_ = setTimeout(() => {
+                        remote._Poll();
+                    }, 100); // waiting to poll
+                }
             }
         }
         StopPolling() {
-            if (this.Tid != null) {
-                clearTimeout(this.Tid);
-                this.Tid = null; // not waiting to poll
+            this.polling_ = false; // not waiting to poll
+            if (this.timerId_ != null) {
+                clearTimeout(this.timerId_);
+                this.timerId_ = null;
             }
         }
-        Poll() {
-            if (this.Tid == null) {
+        _Poll() {
+            if (!this.polling_ || this.pollBusy_) {
                 return;
             }
-            this.Tid = null; // not waiting to poll
+            this.pollBusy_ = true;
+            this.StopPolling(); // not waiting to poll
             Object.values(this.channels_).forEach(channel => channel.Poll());
             let id = 0;
             let requests = [];
@@ -62,9 +71,12 @@
                     console.log('Remote.Poll(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
                     this.Process(responses, id);
                 }
-                this.StartPolling();
+                this.pollBusy_ = false;
+                this.StartPolling(); // waiting to poll
             }).catch(reason => {
                 console.log('Remote.Poll(' + id + ') error: ' + reason);
+                this.pollBusy_ = false;
+                this.StartPolling(); // waiting to poll
             });
         }
         PushPendingRequest(request) {
@@ -114,7 +126,7 @@
             return response;
         }
         _Send(requests, id) { // called by Poll and SendAsync
-            let url = 'http://' + this.serverip + '/winwrap/poll/' + id;
+            let url = 'http://' + this.serverip_ + '/winwrap/poll/' + id;
             let json = JSON.stringify(requests);
             let options = {
                 type: 'POST',

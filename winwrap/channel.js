@@ -47,6 +47,9 @@
             request.gen = this._NextGeneration();
             return await this.Remote.SendAsync(request, expected, request.id);
         }
+        PollBusy() {
+            return this.Remote.PollBusy();
+        }
         StartPolling() {
             this.Remote.StartPolling();
         }
