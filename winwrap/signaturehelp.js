@@ -12,7 +12,7 @@
                     // 1/15/18 - Tom
                     // added ' '
                     //let match = textUntilPosition.match('[( ]'); // was '('
-                    let match = textUntilPosition.match(/[( ]$/); // was '('
+                    let match = textUntilPosition.match(/[( ,]$/); // was '('
                     if (match) { // was [{}]
                         let response = await autoauto.SendAsync(model, position);
                         return signatureHelp._createSignatureHelp(response);
