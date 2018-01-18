@@ -16,7 +16,7 @@
                         let response = await autoauto.SendAsync(model, position);
                         return signatureHelp._createSignatureHelp(response);
                     }
-                    return {};
+                    return undefined;
                 }
             });
         }
@@ -27,7 +27,7 @@
                 //return {};
             }
             if (response === null || !('prototypes' in response)) {
-                response = { prototypes: [], prototype_index: 0, prototype_arg_index: 0 };
+                return undefined;
             }
             //console.log(response);
             let result = {
