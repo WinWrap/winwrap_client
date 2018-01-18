@@ -37,8 +37,8 @@
                 this.polling_ = true; // waiting to poll
                 if (this.timerId_ == null) {
                     let remote = this; // closure can't handle this in the lambdas below
-                    this.timerId_ = setTimeout(() => {
-                        remote._Poll();
+                    this.timerId_ = setTimeout(async () => {
+                        await remote._Poll();
                     }, 100); // waiting to poll
                 }
             }
@@ -96,7 +96,7 @@
             });
             return response;
         }
-        _Poll() {
+        async _Poll() {
             if (!this.polling_ || this.pollBusy_) {
                 return;
             }
@@ -115,18 +115,18 @@
                     this.pollingIndex_ = 0;
                 id = this.pollingIndex_ < channels.length ? channels[this.pollingIndex_].AllocatedID : 0;
             }
-            return this._Send(requests, id).then(responses => {
-                if (responses.length > 0) {
-                    console.log('Remote.Poll(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
-                    this.Process(responses, id);
-                }
-                this.pollBusy_ = false;
-                this.StartPolling(); // waiting to poll
-            }).catch(reason => {
-                console.log('Remote.Poll(' + id + ') error: ' + reason);
-                this.pollBusy_ = false;
-                this.StartPolling(); // waiting to poll
-            });
+            let responses = [];
+            try {
+                responses = await this._Send(requests, id);
+            } catch (err) {
+                console.log('Remote.Poll(' + id + ') error: ' + err);
+            }
+            if (responses.length > 0) {
+                console.log('Remote.Poll(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
+                this.Process(responses, id);
+            }
+            this.pollBusy_ = false;
+            this.StartPolling(); // waiting to poll
         }
         _Send(requests, id) { // called by Poll and SendAsync
             let url = 'http://' + this.serverip_ + '/winwrap/poll/' + id;
