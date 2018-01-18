@@ -9,29 +9,27 @@
             this.generation_ = 0;
             this.commitcounter_ = 0;
         }
-        Initialize() {
-            this._AttachAsync().then(attach => {
-                if (attach.unique_name !== this.ClientID) {
-                    alert('Attach failed.');
-                    return;
-                }
-                this.AllocatedID = attach.allocated_id;
-                this.Version = attach.version;
-
-                this.CommitRebase = new ww.CommitRebase(this);
-                this.UI.Initialize();
-
-                this.StartPolling();
-                this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
-                this.PushPendingRequest({ command: '?stack' });
-            });
-            // now UI is initialized
-        }
-        async _AttachAsync() {
+        async Initialize() {
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
-            return await this.SendAsync(request, '!attach').catch(err => {
+            let attach = undefined;
+            try {
+                attach = await this.SendAsync(request, '!attach');
+            } catch (err) {
                 console.log('ERROR channel.js _AttachAsync ', err);
-            });
+            }
+            if (attach.unique_name !== this.ClientID) {
+                alert('Attach failed.');
+                return;
+            }
+            this.AllocatedID = attach.allocated_id;
+            this.Version = attach.version;
+
+            this.CommitRebase = new ww.CommitRebase(this);
+            this.UI.Initialize();
+
+            this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
+            this.PushPendingRequest({ command: '?stack' });
+            // now UI is initialized
         }
         PushPendingRequest(request) {
             if (request) {
@@ -46,15 +44,6 @@
             request.id = this.AllocatedID;
             request.gen = this._NextGeneration();
             return await this.Remote.SendAsync(request, expected, request.id);
-        }
-        PollBusy() {
-            return this.Remote.PollBusy();
-        }
-        StartPolling() {
-            this.Remote.StartPolling();
-        }
-        StopPolling() {
-            this.Remote.StopPolling();
         }
         Poll() {
             if (++this.commitcounter_ == 20) {

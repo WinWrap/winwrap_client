@@ -14,7 +14,7 @@
         async SendAsync(model, position) { // xxx block polling during auto...
             let channel = this.UI.Channel;
             // wait for Channel.Poll to finish
-            while (channel.PollBusy())
+            while (channel.Remote.PollBusy())
                 await this._Wait(10);
             if (this.busy2_ || this.ready1_) {
                 // two SendAsync calls are busy, give up
@@ -24,7 +24,7 @@
                 return await this._GetSharedResponseAsync();
             }
             this.busy1_ = true; // first SendAsync call is busy
-            channel.StopPolling();
+            channel.Remote.StopPolling();
             channel.PushPendingCommit();
             let request = {
                 command: '?auto',
@@ -41,7 +41,7 @@
             if (this.busy2_) { // share response to second SendAsync
                 await this._SetSharedResponseAsync(response);
             }
-            channel.StartPolling();
+            channel.Remote.StartPolling();
             this.busy1_ = false; // first SendAsync call is done
             return response;
         }

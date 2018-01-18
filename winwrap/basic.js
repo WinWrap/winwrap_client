@@ -20,6 +20,12 @@
                 this.remotes_ = {};
             }
             Initialize(factory) {
+                let basic = this; // closure can't handle this in the lambdas below
+                setTimeout(async () => {
+                    await basic._Initialize(factory);
+                }, 100); // wait to initialize
+            }
+            async _Initialize(factory) {
                 Object.keys(factory).forEach(key => {
                     let prefix = key + '-';
                     let elements = $('[class*="' + prefix + '"]');
@@ -78,7 +84,9 @@
                         }
                     });
                 });
-                Object.values(this.remotes_).forEach(remote => remote.Initialize());
+                Object.values(this.remotes_).forEach(async function (remote) {
+                    await remote.Initialize();
+                });
             }
             ClassName(element, prefix, defaultName) {
                 let className = undefined;
@@ -97,5 +105,5 @@
             }
         }
 
-        ww.Basic = new Basic();
+        ww.Basic = Basic;
 });

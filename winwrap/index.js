@@ -16,7 +16,8 @@ $(function () {
             'ww-item': (ui, element, name) => { return ww.CreateItem(ui, element, name) }
         };
 
-        ww.Basic.Initialize(factory);
+        let basic = new ww.Basic();
+        basic.Initialize(factory);
     });
 
     function getSearchParams(k) {

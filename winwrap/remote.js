@@ -23,8 +23,11 @@
         ChannelById(id) {
             return Object.values(this.channels_).filter(channel => channel.AllocatedID === id)[0];
         }
-        Initialize() {
-            Object.values(this.channels_).forEach(channel => channel.Initialize());
+        async Initialize() {
+            Object.values(this.channels_).forEach(async function (channel) {
+                await channel.Initialize();
+            });
+            this.StartPolling();
         }
         PollBusy() {
             return this.pollBusy_;
@@ -46,38 +49,6 @@
                 clearTimeout(this.timerId_);
                 this.timerId_ = null;
             }
-        }
-        _Poll() {
-            if (!this.polling_ || this.pollBusy_) {
-                return;
-            }
-            this.pollBusy_ = true;
-            this.StopPolling(); // not waiting to poll
-            Object.values(this.channels_).forEach(channel => channel.Poll());
-            let id = 0;
-            let requests = [];
-            if (this.pendingRequests.length > 0) {
-                id = this.pendingRequests[0].id;
-                requests = this._ExtractPendingRequestsForId(id);
-                console.log('Remote.Poll(' + id + ')>>> ' + this._valuesmsg(requests, 'command'));
-            } else {
-                let channels = Object.values(this.channels_);
-                if (++this.pollingIndex_ >= channels.length)
-                    this.pollingIndex_ = 0;
-                id = this.pollingIndex_ < channels.length ? channels[this.pollingIndex_].AllocatedID : 0;
-            }
-            return this._Send(requests, id).then(responses => {
-                if (responses.length > 0) {
-                    console.log('Remote.Poll(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
-                    this.Process(responses, id);
-                }
-                this.pollBusy_ = false;
-                this.StartPolling(); // waiting to poll
-            }).catch(reason => {
-                console.log('Remote.Poll(' + id + ') error: ' + reason);
-                this.pollBusy_ = false;
-                this.StartPolling(); // waiting to poll
-            });
         }
         PushPendingRequest(request) {
             this.pendingRequests.push(request);
@@ -124,6 +95,38 @@
                 elapsedms: end-start
             });
             return response;
+        }
+        _Poll() {
+            if (!this.polling_ || this.pollBusy_) {
+                return;
+            }
+            this.pollBusy_ = true;
+            this.StopPolling(); // not waiting to poll
+            Object.values(this.channels_).forEach(channel => channel.Poll());
+            let id = 0;
+            let requests = [];
+            if (this.pendingRequests.length > 0) {
+                id = this.pendingRequests[0].id;
+                requests = this._ExtractPendingRequestsForId(id);
+                console.log('Remote.Poll(' + id + ')>>> ' + this._valuesmsg(requests, 'command'));
+            } else {
+                let channels = Object.values(this.channels_);
+                if (++this.pollingIndex_ >= channels.length)
+                    this.pollingIndex_ = 0;
+                id = this.pollingIndex_ < channels.length ? channels[this.pollingIndex_].AllocatedID : 0;
+            }
+            return this._Send(requests, id).then(responses => {
+                if (responses.length > 0) {
+                    console.log('Remote.Poll(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
+                    this.Process(responses, id);
+                }
+                this.pollBusy_ = false;
+                this.StartPolling(); // waiting to poll
+            }).catch(reason => {
+                console.log('Remote.Poll(' + id + ') error: ' + reason);
+                this.pollBusy_ = false;
+                this.StartPolling(); // waiting to poll
+            });
         }
         _Send(requests, id) { // called by Poll and SendAsync
             let url = 'http://' + this.serverip_ + '/winwrap/poll/' + id;
