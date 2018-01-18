@@ -21,10 +21,11 @@
             }
             this.editor_.setValue(`\"${this.container_}\"\r\n`);
             this.resize();
+            let this2 = this;
             this.editor_.onMouseDown(function (e) {
                 if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) { // xxx below
-                    let channel = this.ui_.Channel;
-                    let isBreak = this.ui_.Breaks.isBreak(channel.CommitRebase.Name, e.target.position.lineNumber);
+                    let channel = this2.ui_.Channel;
+                    let isBreak = this2.ui_.Breaks.isBreak(channel.CommitRebase.Name, e.target.position.lineNumber);
                     let doBreak = isBreak ? false : true;
                     let request = {
                         command: 'break',
