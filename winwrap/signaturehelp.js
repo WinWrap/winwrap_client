@@ -13,8 +13,8 @@
                     // added ' '
                     // 1/18/18 - Ed
                     // keep signature displayed until closed
-                    let match = textUntilPosition.match(/[( ][^)]*$/);
-                    match = true;
+                    //let match = textUntilPosition.match(/[( ][^)]*$/);
+                    let match = true;
                     if (match) { // was [{}]
                         let response = await autoauto.SendAsync(model, position);
                         return signatureHelp._createSignatureHelp(response);
