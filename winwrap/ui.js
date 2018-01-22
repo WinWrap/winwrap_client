@@ -17,6 +17,7 @@
             this.EditorCode = this.items_['ww-item-code'];
             this.Channel.CommitRebase.SetEditor(this.EditorCode);
             this.AutoAuto = new ww.AutoAuto(this, this.EditorCode);
+            this.AutoAutoWatch = new ww.AutoAuto(this, this.EditorWatch);
             this.Breaks = new ww.Breaks(this);
             this.Stack = new ww.Stack(this);
             this.DebugDecorate = new ww.DebugDecorate(this);
