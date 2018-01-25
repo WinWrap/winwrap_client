@@ -7,6 +7,14 @@
             this.Basic = basic;
             this.Name = name;
             this.serverip_ = serverip;
+            this.key_ = undefined;
+            let hash = window.location.hash;
+            if (hash) {
+                let match = hash.toLowerCase().match(/\/key=([0-9a-f]*)/);
+                if (match !== undefined && match.length === 2 && match[1].length === 32) {
+                    this.key_ = match[1];
+                }
+            }
             this.channels_ = {};
             this.pollingIndex_ = -1;
             this.polling_ = false; // not waiting to poll
@@ -35,7 +43,7 @@
         StartPolling() { // stop during autocomplete and signaturehelp
             if (!this.polling_) {
                 this.polling_ = true; // waiting to poll
-                if (this.timerId_ == null) {
+                if (this.timerId_ === null) {
                     let remote = this; // closure can't handle this in the lambdas below
                     this.timerId_ = setTimeout(async () => {
                         await remote._PollAsync();
@@ -45,7 +53,7 @@
         }
         StopPolling() {
             this.polling_ = false; // not waiting to poll
-            if (this.timerId_ != null) {
+            if (this.timerId_ !== null) {
                 clearTimeout(this.timerId_);
                 this.timerId_ = null;
             }
@@ -80,7 +88,7 @@
                         responses.push(tryresponse);
                     }
                 });
-                if (response != null) {
+                if (response !== null) {
                     break;
                 }
                 await this._Wait(100);
@@ -130,6 +138,14 @@
         }
         _SendAsync(requests, id) { // called by _PollAsync and SendAsync
             let url = 'http://' + this.serverip_ + '/winwrap/poll/' + id;
+            if (this.key_) {
+                if (this.serverip_) {
+                    url = 'http://' + this.serverip_ + '/winwrap/route/' + this.key_ + '/' + id;
+                } else {
+                    url = 'http://www.winwrap.com/web/webedit/remote.asp?key=' + this.key_ + '&id=' + id;
+                }
+            }
+
             let json = JSON.stringify(requests);
             let options = {
                 type: 'POST',
