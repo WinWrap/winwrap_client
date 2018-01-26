@@ -10,8 +10,8 @@
             this.key_ = undefined;
             let hash = window.location.hash;
             if (hash) {
-                let match = hash.toLowerCase().match(/\/key=([0-9a-f]*)/);
-                if (match !== undefined && match.length === 2 && match[1].length === 32) {
+                let match = hash.toLowerCase().match(/\/key=([0-9a-f\-]*)/);
+                if (match !== undefined && match.length === 2) {
                     this.key_ = match[1];
                 }
             }
