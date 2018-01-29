@@ -56,16 +56,16 @@
             this.element_ = element;
             let inputMacro = this; // closure can't handle this in the lambdas below
             this.element_.autocomplete({
-                source: function (request, response) {
+                source: (request, response) => {
                     let term = $.ui.autocomplete.escapeRegex(request.term);
                     //console.log(term);
                     var matcher = new RegExp(`^.*${term}.*$`, 'i');
-                    response($.grep(inputMacro.macros_, function (element) { // xxx
+                    response($.grep(inputMacro.macros_, element => { // xxx
                         return matcher.test(element);
                     }));
                 }
             });
-            this.element_.on('autocompleteselect', function (event, ui) {
+            this.element_.on('autocompleteselect', (event, ui) => {
                 channel.PushPendingRequest({ command: '?read', target: ui.item.value });
             });
         }

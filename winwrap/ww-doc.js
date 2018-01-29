@@ -1,14 +1,15 @@
 ﻿define(function () {
     class Doc {
         constructor(sync_id, revision, editor) {
-            this.SyncId = sync_id;
-            this.Revision = revision;
+            this.sync_id_ = sync_id;
+            this.revision_ = revision;
             this.editor_ = editor;
             // editor object support this methods:
             // applyEdit, getText, getSelection and scrollToSelection
-            this.CurrentCommit = null;
-            this.revisionText_ = this.editor_.getText();
-            this.pendingCommits_ = [];
+            this.need_commit_ = false;
+            this.current_commit_ = null;
+            this.revision_text_ = this.editor_.getText();
+            this.pending_commits_ = [];
         }
 
         AppendPendingCommit(enter) {
@@ -18,48 +19,46 @@
                 return;
 
             // update revision text
-            this.revisionText_ = text;
+            this.revision_text_ = text;
 
-            if (!commit.Enter && this.pendingCommits_.length > 0) {
-                var lastCommit = this.pendingCommits_[this.pendingCommits_.length - 1];
-                if (!lastCommit.Enter) {
+            if (!commit.Enter() && this.pending_commits_.length > 0) {
+                var lastCommit = this.pending_commits_[this.pending_commits_.length - 1];
+                if (!lastCommit.Enter()) {
                     lastCommit.Append(commit);
-                    lastCommit.Log('pendingCommits_: Appended to last pending commit:');
+                    lastCommit.Log('pending_commits_: Appended to last pending commit:');
                     commit = null;
                 }
             }
 
             if (commit !== null) {
-                commit.Log('pendingCommits_: Append pending commit:');
-                this.pendingCommits_.push(commit);
+                commit.Log('pending_commits_: Append pending commit:');
+                this.pending_commits_.push(commit);
             }
         }
 
         ApplyEdits(edits, isserver) {
             var editor = this.editor_;
-            edits.Edits().forEach(function (edit) { editor.applyEdit(edit, isserver); });
+            edits.Edits().forEach(edit => { editor.applyEdit(edit, isserver); });
         }
 
         Commit(enter) {
             this.AppendPendingCommit(false);
-            if (this.CurrentCommit != null || this.pendingCommits_.length == 0)
+            if (this.current_commit_ !== null || this.pending_commits_.length === 0)
                 return false;
 
-            this.CurrentCommit = this.pendingCommits_.shift();
-            this.CurrentCommit.Revision = this.Revision;
-            this.CurrentCommit.Log('Current commit:');
+            this.current_commit_ = this.pending_commits_.shift();
+            this.current_commit_.Log('Current commit:');
             return true;
         }
 
-        CommitDone(revision) {
-            if (this.CurrentCommit != null) {
-                this.CurrentCommit = null;
-                this.Revision = revision;
+        CommitDone() {
+            if (this.current_commit_ !== null) {
+                this.current_commit_ = null;
             }
         }
 
         CreateCommit(text, enter) {
-            var commit = new ww.Commit(this.SyncId, this.SyncId, this.Revision, enter);
+            var commit = new ww.Commit(this.sync_id_, this.sync_id_, enter);
             var caret = this.editor_.getSelection().first;
             if (enter) {
                 // get current caret
@@ -67,23 +66,33 @@
                 return commit;
             }
 
-            var edit = ww.Diff(this.revisionText_, text, caret);
-            if (edit.IsNull())
-                return null;
+            var edit = ww.Diff(this.revision_text_, text, caret);
+            if (edit.IsNull()) {
+                if (this.need_commit_) {
+                    this.need_commit_ = false;
+                } else {
+                    commit = null;
+                }
 
-            var revertEdit = edit.RevertEdit(this.revisionText_);
+                return commit;
+            }
+
+            var revertEdit = edit.RevertEdit(this.revision_text_);
             commit.AppendEdit(edit);
             commit.PrependRevertEdit(revertEdit);
             return commit;
         }
 
+        CurrentCommit() {
+            return this.current_commit_;
+        }
+
+        NeedCommit() {
+            this.need_commit_ = true;
+        }
+
         Rebase(serverCommit) {
             serverCommit.Log('Rebase serverCommit:');
-            if (serverCommit.BySyncId === this.SyncId) {
-                // my commit, already applied to client
-                return;
-            }
-
             // make sure all edits have been commited
             this.AppendPendingCommit(false);
 
@@ -95,43 +104,52 @@
             // 3. Re-applies pending operations, transforming each operation against the new operation from the server
 
             // take the pending commits and append the future commit
-            var pendingCommits = this.pendingCommits_;
-            this.pendingCommits_ = [];
+            var pendingCommits = this.pending_commits_;
+            this.pending_commits_ = [];
 
             // revert the pending commits in reverse order
             pendingCommits.reverse();
 
             // revert code and selection using the pending commits
-            pendingCommits.forEach(function (commit) {
+            pendingCommits.forEach(commit => {
                 // revert code
-                this.ApplyEdits(commit.RevertEdits, false);
+                this.ApplyEdits(commit.RevertEdits(), false);
             });
 
             // rebase text using server commit
-            this.ApplyEdits(serverCommit.Edits, true);
+            this.ApplyEdits(serverCommit.Edits(), true);
 
             // update revision
-            this.Revision = serverCommit.Revision;
+            this.SetRevision(serverCommit.revision);
 
             // update revision text
-            this.revisionText_ = this.editor_.getText();
+            this.revision_text_ = this.editor_.getText();
 
             // restore original commit order
             pendingCommits.reverse();
 
             // rebase the pending commits using the server commit
-            pendingCommits.forEach(function (commit) {
+            pendingCommits.forEach(commit => {
                 // rebase commit changes using the server commit and apply
-                var mergedEdits = commit.Edits.MergeTransform(serverCommit.Edits);
+                var mergedEdits = commit.Edits().MergeTransform(serverCommit.Edits());
                 this.ApplyEdits(mergedEdits, false);
 
                 // append commit based on the rebase changes result
-                this.AppendPendingCommit(commit.Enter);
+                this.AppendPendingCommit(commit.Enter());
             });
 
             // scroll to selection
-            if (serverCommit.ForSyncId == this.SyncId)
-                this.editor_.scrollToSelection();
+            if (serverCommit.caret_index) {
+                this.editor_.setSelection(serverCommit.caret_index, serverCommit.caret_index);
+            }
+        }
+
+        Revision() {
+            return this.revision_;
+        }
+
+        SetRevision(revision) {
+            this.revision_ = revision;
         }
     }
 

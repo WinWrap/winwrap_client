@@ -23,7 +23,7 @@
             this.pendingRequests = [];
         }
         async InitializeAsync() {
-            Object.values(this.channels_).forEach(async function (channel) {
+            Object.values(this.channels_).forEach(async channel => {
                 await channel.InitializeAsync();
             });
             this.StartPolling();
@@ -153,7 +153,7 @@
                 dataType: 'text',
                 data: json,
                 contentType: 'application/winwrap; charset=utf-8',
-                beforeSend: function (jqXHR) {
+                beforeSend: jqXHR => {
                     // set request headers here rather than in the ajax 'headers' object
                     jqXHR.setRequestHeader('Accept', 'application/winwrap');
                 },
@@ -161,7 +161,7 @@
                     return JSON.parse(data);
                 }
             };
-            return new Promise(function (resolve, reject) {
+            return new Promise((resolve, reject) => {
                 $.ajax(options).done(resolve).fail(reject);
             });
         }

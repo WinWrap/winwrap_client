@@ -48,7 +48,7 @@
                             if (key !== 'ww-channel') {
                                 if (channel === undefined) {
                                     channel = remote.Channel('ww-channel-1');
-                                    if (channel == undefined) {
+                                    if (channel === undefined) {
                                         channel = factory['ww-channel'](remote, 'ww-channel-1');
                                         remote.AddChannel(channel);
                                     }
@@ -84,7 +84,7 @@
                         }
                     });
                 });
-                Object.values(this.remotes_).forEach(async function (remote) {
+                Object.values(this.remotes_).forEach(async remote => {
                     await remote.InitializeAsync();
                 });
             }

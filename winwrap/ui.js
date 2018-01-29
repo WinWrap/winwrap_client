@@ -85,10 +85,6 @@
                 case '!notify_debugprint': // notification
                     this.EditorImmediate.appendText(notification.text);
                     this.EditorImmediate.scrollToBottom();
-                    /*setTimeout(function () {
-                        this.EditorImmediate.appendText(notification.text);
-                        this.EditorImmediate.scrollToBottom();
-                    }, 100);*/ // xxx
                     break;
                 case '!notify_end': // notification
                     this.SetState(notification);
@@ -135,7 +131,7 @@
                     this.Breaks.setBreaks(response);
                     break;
                 case '!commit':
-                    this.Channel.CommitRebase.CommitDone(response.revision);
+                    this.Channel.CommitRebase.CommitDone(response);
                     break;
                 case '!new': // response
                     this.Channel.PushPendingRequest({ command: '?read', target: response.name });

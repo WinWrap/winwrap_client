@@ -8,8 +8,13 @@
             this.AllocatedID = 0; // explicitly set in ?attach
             this.generation_ = 0;
             this.commitcounter_ = 0;
+            this.busy_ = false;
         }
         async InitializeAsync() {
+            while (this.busy_)
+                this._Wait(100);
+
+            this.busy_ = true;
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
             try {
@@ -17,6 +22,7 @@
             } catch (err) {
                 console.log('ERROR channel.js _AttachAsync ', err);
             }
+            this.busy_ = false;
             if (attach.unique_name !== this.ClientID) {
                 alert('Attach failed.');
                 return;
@@ -46,7 +52,7 @@
             return await this.Remote.SendAsync(request, expected, request.id);
         }
         Poll() {
-            if (++this.commitcounter_ == 20) {
+            if (++this.commitcounter_ === 20) {
                 // push any pending commits (approx once every 2 seconds)
                 this.PushPendingCommit();
                 this.commitcounter_ = 0;
@@ -56,9 +62,12 @@
             this.PushPendingRequest(this.CommitRebase.GetCommitRequest());
         }
         _NextGeneration() {
-            if (++this.generation_ == 0x10000)
+            if (++this.generation_ === 0x10000)
                 this.generation_ = 1; // 16 bit number (never 0)
             return this.generation_;
+        }
+        _Wait(ms) {
+            return new Promise(r => setTimeout(r, ms));
         }
     }
 

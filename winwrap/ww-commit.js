@@ -2,71 +2,81 @@
     class Commit {
         // by_sync_id: sync id that creates the commit (0 for server)
         // for_sync_id: sync id that caused the commit (never 0)
-        constructor(by_sync_id, for_sync_id, revision, enter) {
-            this.BySyncId = by_sync_id;
-            this.ForSyncId = for_sync_id;
-            this.Revision = revision;
-            this.Enter = enter;
-            this.Edits = new ww.Edits();
-            this.RevertEdits = new ww.Edits();
+        constructor(by_sync_id, for_sync_id, enter) {
+            this.by_sync_id_ = by_sync_id;
+            this.for_sync_id_ = for_sync_id;
+            this.enter_ = enter;
+            this.edits_ = new ww.Edits();
+            this.revert_edits_ = new ww.Edits();
         }
 
         Append(nextcommit)
         {
-            this.Edits.Append(nextcommit.Edits);
+            this.edits_.Append(nextcommit.edits_);
             // revert changes are stored first revert change to last revert change
             // this commit's revert changes occur after nextcommit's revert changes
-            var revertEdits = new ww.Edits(nextcommit.RevertEdits);
-            this.RevertEdits.forEach(function (revertEdit) { revertEdits.Append(revertEdit); });
-            this.RevertEdits = revertEdits;
+            var revertEdits = new ww.edits_(nextcommit.revert_edits_);
+            this.revert_edits_.forEach(revertEdit => { revertEdits.Append(revertEdit); });
+            this.revert_edits_ = revertEdits;
         }
 
         AppendEdit(nextedit) {
-            this.Edits.Append(nextedit);
+            this.edits_.Append(nextedit);
         }
 
         AppendEditNoCombine(nextedit) {
-            this.Edits.AppendNoCombine(nextedit);
+            this.edits_.AppendNoCombine(nextedit);
         }
 
         AppendEdits(edits) {
-            this.Edits.Append(edits);
+            this.edits_.Append(edits);
         }
 
         Apply(text) {
-            return this.Edits.Apply(text);
+            return this.edits_.Apply(text);
+        }
+
+        BySyncId() {
+            return this.by_sync_id_;
         }
 
         Copy() {
-            var commit = new Commit(this.BySyncId, this.ForSyncId, this.Revision, this.Enter);
-            commit.Edits = this.Edits.Copy();
-            commit.ReverEdits = this.RevertEdits.Copy();
+            var commit = new Commit(this.by_sync_id_, this.for_sync_id_, this.enter_);
+            commit.edits_ = this.edits_.Copy();
+            commit.ReverEdits = this.revert_edits_.Copy();
             return commit;
         }
 
+        Edits() {
+            return this.edits_;
+        }
+
+        Enter() {
+            return this.enter_;
+        }
+
+        ForSyncId() {
+            return this.for_sync_id_;
+        }
+
         MergeTransform(serverCommit) {
-            var mergedEdits = this.Edits.MergeTransform(serverCommit.Edits);
+            var mergedEdits = this.edits_.MergeTransform(serverCommit.edits_);
             if (mergedEdits.IsNull())
                 return null;
 
-            var commit = new Commit(this.BySyncId, this.ForSyncId, this.Revision, this.Enter);
+            var commit = new Commit(this.by_sync_id_, this.for_sync_id_, this.enter_);
             commit.AppendEdits(mergedEdits);
             return commit;
         }
 
         PrependRevertEdit(prioredit) {
-            this.RevertEdits.Prepend(prioredit);
+            this.revert_edits_.Prepend(prioredit);
+        }
+
+        RevertEdits() {
+            return this.revert_edits_;
         }
             
-        Use(revision) {
-            // 1 <= revision <= int.MaxValue
-            if (revision > this.Revision)
-                revision -= 0x7fffffff;
-
-            var delta = this.Revision - revision;
-            return delta < 0x40000000;
-        }
-
         Log(title) {
             //console.log(title);
             //console.log(this);

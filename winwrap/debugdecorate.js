@@ -17,7 +17,7 @@
             let decorations = [];
             let this0 = this; // should not be necessary ? bug in Edge ?
             let breaks = this.UI.Breaks.getBreaks(target);
-            breaks.forEach(function (abreak) {
+            breaks.forEach(abreak => {
                 let decoration = this0._breakDecoration(abreak.line);
                 decorations.push(decoration);
             });

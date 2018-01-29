@@ -21,11 +21,11 @@
             }
             this.editor_.setValue(`\"${this.container_}\"\r\n`);
             this.resize();
-            let this2 = this;
+            let ui = this.ui_; // closure can't handle this in the lambdas below
             this.editor_.onMouseDown(function (e) {
                 if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) { // xxx below
-                    let channel = this2.ui_.Channel;
-                    let isBreak = this2.ui_.Breaks.isBreak(channel.CommitRebase.Name, e.target.position.lineNumber);
+                    let channel = ui.Channel;
+                    let isBreak = ui.Breaks.isBreak(channel.CommitRebase.Name, e.target.position.lineNumber);
                     let doBreak = isBreak ? false : true;
                     let request = {
                         command: 'break',
@@ -42,11 +42,11 @@
         }
         applyEdit(edit) {
             let model = this.editor_.getModel();
-            let position1 = model.getPositionAt(edit.Index);
-            let position2 = model.getPositionAt(edit.Index + edit.DeleteCount);
+            let position1 = model.getPositionAt(edit.Index());
+            let position2 = model.getPositionAt(edit.DeleteIndex());
             let range = new monaco.Range(position1.lineNumber, position1.column,
                 position2.lineNumber, position2.column); 
-            let edits = [{ range: range, text: edit.Insert }];
+            let edits = [{ range: range, text: edit.Insert() }];
             this.editor_.executeEdits("rebase", edits);
         }
         scrollToSelection() {
@@ -94,6 +94,9 @@
             this.editor_.setScrollTop(top - contentHeight + lineHeight); // xxx
             let scrollHeight = this.editor_.getScrollHeight();
         }
+        setSelection(first, last) {
+            // to be written
+        }
         textUntilPosition(model, position) {
             let text = model.getValueInRange({
                 startLineNumber: position.lineNumber,
@@ -118,6 +121,6 @@
         }
     }
 
-        ww.MonacoEditor = MonacoEditor;
+    ww.MonacoEditor = MonacoEditor;
 
 });
