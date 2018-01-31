@@ -240,8 +240,9 @@
                 console.log(new Date().toLocaleString());
                 //alert("WinWrapVersion");
                 let editorcode = this2.UI.EditorCode;
-                //editorcode.trigger('mysource', 'editor.action.triggerSuggest', {});
-                editorcode.trigger('mysource', 'editor.action.triggerParameterHints', {});
+                let editor = editorcode.editor_;
+                //editor.trigger('mysource', 'editor.action.triggerSuggest', {});
+                editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
             });
         }
         Initialize() {
