@@ -238,7 +238,7 @@
                 //test001.Run();
                 console.log(new Date().toLocaleString());
                 //alert("WinWrapVersion");
-                let editorcode = ww.Browser.EditorCode;
+                let editorcode = ww.UI.EditorCode;
                 //editorcode.trigger('mysource', 'editor.action.triggerSuggest', {});
                 editorcode.trigger('mysource', 'editor.action.triggerParameterHints', {});
             });
