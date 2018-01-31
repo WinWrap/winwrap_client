@@ -232,13 +232,14 @@
     class WinWrapVersion {
         constructor(ui, element) {
             this.UI = ui;
+            let this2 = this;
             this.element_ = element;
             this.element_.click(() => {
                 //let test001 = new Test001(this.Channel);
                 //test001.Run();
                 console.log(new Date().toLocaleString());
                 //alert("WinWrapVersion");
-                let editorcode = ww.UI.EditorCode;
+                let editorcode = this2.ui.EditorCode;
                 //editorcode.trigger('mysource', 'editor.action.triggerSuggest', {});
                 editorcode.trigger('mysource', 'editor.action.triggerParameterHints', {});
             });
