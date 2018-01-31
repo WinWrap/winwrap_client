@@ -233,11 +233,12 @@
         constructor(ui, element) {
             this.UI = ui;
             this.element_ = element;
-            //this.element_.click(() => {
-            //    let test001 = new Test001(this.Channel);
-            //    test001.Run();
-            //});
-            console.log(new Date().toLocaleString());
+            this.element_.click(() => {
+                //let test001 = new Test001(this.Channel);
+                //test001.Run();
+                //console.log(new Date().toLocaleString());
+                alert("WinWrapVersion");
+            });
         }
         Initialize() {
             this.element_.text(this.UI.Channel.Version);
