@@ -237,6 +237,7 @@
             //    let test001 = new Test001(this.Channel);
             //    test001.Run();
             //});
+            console.log(new Date().toLocaleString());
         }
         Initialize() {
             this.element_.text(this.UI.Channel.Version);
