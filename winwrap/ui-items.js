@@ -235,14 +235,11 @@
             let this2 = this;
             this.element_ = element;
             this.element_.click(() => {
-                //let test001 = new Test001(this.Channel);
-                //test001.Run();
                 console.log(new Date().toLocaleString());
-                //alert("WinWrapVersion");
                 let editorcode = this2.UI.EditorCode;
                 let editor = editorcode.editor_;
-                //editor.trigger('mysource', 'editor.action.triggerSuggest', {});
-                editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
+                editor.trigger('mysource', 'editor.action.triggerSuggest', {});
+                //editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
             });
         }
         Initialize() {
