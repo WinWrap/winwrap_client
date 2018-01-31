@@ -236,8 +236,8 @@
             this.element_.click(() => {
                 //let test001 = new Test001(this.Channel);
                 //test001.Run();
-                //console.log(new Date().toLocaleString());
-                alert("WinWrapVersion");
+                console.log(new Date().toLocaleString());
+                //alert("WinWrapVersion");
             });
         }
         Initialize() {
