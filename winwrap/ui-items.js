@@ -238,7 +238,7 @@
                 console.log(new Date().toLocaleString());
                 let editorcode = this2.UI.EditorCode;
                 let editor = editorcode.editor_;
-                editor.trigger('mysource', 'editor.action.triggerSuggest', {});
+                //editor.trigger('mysource', 'editor.action.triggerSuggest', {});
                 //editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
             });
         }
