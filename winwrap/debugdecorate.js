@@ -41,7 +41,7 @@
             if (line !== null) {
                 let decoration = {};
                 decoration.range = new monaco.Range(line, 1, line, 1);
-                decoration.options = { isWholeLine: true, 'className': 'myDebugPauseClass' };
+                decoration.options = { isWholeLine: true, 'className': 'myErrorClass' };
                 decorations.push(decoration);
             }
             return decorations;
