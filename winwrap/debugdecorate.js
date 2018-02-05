@@ -37,7 +37,8 @@
             let decorations = [];
             let target = this.UI.Channel.CommitRebase.Name;
             let breaksDecorations = this._breaksDecorations(target);
-            Array.prototype.push.apply(decorations, breaksDecorations);
+            //Array.prototype.push.apply(decorations, breaksDecorations);
+            decorations.push(...breaksDecorations);
             let pauseDecoration = this._pauseDecoration(target);
             if (pauseDecoration !== null) {
                 decorations.push(pauseDecoration);
