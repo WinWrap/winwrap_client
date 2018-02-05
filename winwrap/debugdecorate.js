@@ -36,7 +36,8 @@
         }
         _errorDecoration(target) {
             let decorations = [];
-            let line = this.UI.Stack.getPauseLine(target);
+            //let line = this.UI.Stack.getPauseLine(target);
+            let line = 5;
             if (line !== null) {
                 let decoration = {};
                 decoration.range = new monaco.Range(line, 1, line, 1);
@@ -48,10 +49,9 @@
         display() {
             let decorations = [];
             let target = this.UI.Channel.CommitRebase.Name;
-            //let breaksDecorations = this._breaksDecorations(target);
             decorations.push(...this._breaksDecorations(target));
-            let pauseDecoration = this._pauseDecoration(target);
-            decorations.push(...pauseDecoration);
+            decorations.push(...this._pauseDecoration(target));
+            decorations.push(...this._errorDecoration(target));
             if (decorations.length >= 1) {
                 this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
             } else {
