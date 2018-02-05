@@ -38,7 +38,7 @@
             let decorations = [];
             //let line = this.UI.Stack.getPauseLine(target);
             //let line = 5;
-            let line = this.UI.Syntax.error.line_num;
+            let line = this.UI.SyntaxError.GetSyntaxError(target);
             if (line !== null) {
                 let decoration = {};
                 decoration.range = new monaco.Range(line, 1, line, 1);

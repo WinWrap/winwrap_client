@@ -3,15 +3,15 @@
     class SyntaxError {
         constructor(ui) {
             this.UI = ui;
-            this.syntax = [];
+            this.syntaxerror = [];
         }
-        getSyntax(target) {
-            let syntax = this.syntax;
-            breaks = syntax.filter(el => el.target === target);
-            return syntax;
+        getSyntaxError(target) {
+            let syntaxerror = this.syntaxerror;
+            breaks = syntaxerror.filter(el => el.target === target);
+            return syntaxerror;
         }
-        setSyntax(notification) {
-            this.syntax = notification;
+        setSyntaxError(notification) {
+            this.syntaxerror = notification;
             this.UI.DebugDecorate.display();
         }
     }

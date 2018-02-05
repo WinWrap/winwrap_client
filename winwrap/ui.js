@@ -158,7 +158,7 @@
                     /*if (response.okay) {
                         alert('No syntax errors.');
                     }*/
-                    this.SyntaxError.setSyntax(response);
+                    this.SyntaxError.setSyntaxError(response);
                     break;
                 case '!watch': // response
                     let watchResults = response.results.map(item => {
