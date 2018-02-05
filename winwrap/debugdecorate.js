@@ -24,14 +24,15 @@
             return decorations;
         }
         _pauseDecoration(target) {
+            let decorations = [];
             let line = this.UI.Stack.getPauseLine(target);
-            if (line === null) {
-                return null;
+            if (line !== null) {
+                let decoration = {};
+                decoration.range = new monaco.Range(line, 1, line, 1);
+                decoration.options = { isWholeLine: true, 'className': 'myDebugPauseClass' };
+                decorations.push(decoration);
             }
-            let decoration = {};
-            decoration.range = new monaco.Range(line, 1, line, 1);
-            decoration.options = { isWholeLine: true, 'className': 'myDebugPauseClass' };
-            return decoration;
+            return decorations;
         }
         display() {
             let decorations = [];
@@ -40,9 +41,10 @@
             //Array.prototype.push.apply(decorations, breaksDecorations);
             decorations.push(...breaksDecorations);
             let pauseDecoration = this._pauseDecoration(target);
-            if (pauseDecoration !== null) {
+            /*if (pauseDecoration !== null) {
                 decorations.push(pauseDecoration);
-            }
+            }*/
+            decorations.push(...pauseDecoration);
             if (decorations.length >= 1) {
                 this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
             } else {
