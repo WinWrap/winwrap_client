@@ -9,7 +9,7 @@
     './remote',
     './signaturehelp',
     './stack',
-    './syntax',
+    './syntaxerror',
     './ui',
     './ui-items',
     './ww-commit',

@@ -1,6 +1,6 @@
 ﻿define(function () {
 
-    class Syntax {
+    class SyntaxError {
         constructor(ui) {
             this.UI = ui;
             this.syntax = [];
@@ -16,6 +16,6 @@
         }
     }
 
-    ww.Syntax = Syntax;
+    ww.SyntaxError = SyntaxError;
 
 });
