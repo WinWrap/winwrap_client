@@ -18,6 +18,7 @@
             this.Channel.CommitRebase.SetEditor(this.EditorCode);
             this.AutoAuto = new ww.AutoAuto(this, this.EditorCode);
             this.Breaks = new ww.Breaks(this);
+            this.Syntax = new ww.Syntax(this);
             this.Stack = new ww.Stack(this);
             this.DebugDecorate = new ww.DebugDecorate(this);
             $(window).resize(() => {
@@ -154,9 +155,9 @@
                     this.Stack.setStack(response);
                     break;
                 case '!syntax': // response
-                    if (response.okay) {
+                    /*if (response.okay) {
                         alert('No syntax errors.');
-                    }
+                    }*/
                     break;
                 case '!watch': // response
                     let watchResults = response.results.map(item => {
