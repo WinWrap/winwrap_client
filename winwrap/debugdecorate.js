@@ -52,7 +52,7 @@
             let target = this.UI.Channel.CommitRebase.Name;
             decorations.push(...this._breaksDecorations(target));
             decorations.push(...this._pauseDecoration(target));
-            decorations.push(...this._errorDecoration(target));
+            //decorations.push(...this._errorDecoration(target));
             if (decorations.length >= 1) {
                 this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
             } else {
