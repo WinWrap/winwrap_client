@@ -15,7 +15,7 @@
         }
         _breaksDecorations(target) {
             let decorations = [];
-            let this0 = this; // should not be necessary ? bug in Edge ?
+            let this0 = this;
             let breaks = this.UI.Breaks.getBreaks(target);
             breaks.forEach(abreak => {
                 let decoration = this0._breakDecoration(abreak.line);
@@ -34,16 +34,23 @@
             }
             return decorations;
         }
+        _errorDecoration(target) {
+            let decorations = [];
+            let line = this.UI.Stack.getPauseLine(target);
+            if (line !== null) {
+                let decoration = {};
+                decoration.range = new monaco.Range(line, 1, line, 1);
+                decoration.options = { isWholeLine: true, 'className': 'myDebugPauseClass' };
+                decorations.push(decoration);
+            }
+            return decorations;
+        }
         display() {
             let decorations = [];
             let target = this.UI.Channel.CommitRebase.Name;
-            let breaksDecorations = this._breaksDecorations(target);
-            //Array.prototype.push.apply(decorations, breaksDecorations);
-            decorations.push(...breaksDecorations);
+            //let breaksDecorations = this._breaksDecorations(target);
+            decorations.push(...this._breaksDecorations(target));
             let pauseDecoration = this._pauseDecoration(target);
-            /*if (pauseDecoration !== null) {
-                decorations.push(pauseDecoration);
-            }*/
             decorations.push(...pauseDecoration);
             if (decorations.length >= 1) {
                 this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
