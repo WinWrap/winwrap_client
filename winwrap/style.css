@@ -36,10 +36,6 @@ label {
 }
 
 .myErrorClass {
-    background: red;
+    background: DarkOrange;
 }
 
-.myHoverClass {
-    background: red;
-    content: 'some hover text';
-}
