@@ -38,8 +38,10 @@
             let decorations = [];
             //let line = this.UI.Stack.getPauseLine(target);
             //let line = 5;
-            let line = this.UI.SyntaxError.GetSyntaxError(target);
-            if (line !== null) {
+            //let line = this.UI.SyntaxError.GetSyntaxError(target);
+            let syntaxerror = this.UI.SyntaxError.GetSyntaxError();
+            if (syntaxerror !== null) {
+                let line = syntaxerror.line_num;
                 let decoration = {};
                 decoration.range = new monaco.Range(line, 1, line, 1);
                 decoration.options = { isWholeLine: true, 'className': 'myErrorClass' };

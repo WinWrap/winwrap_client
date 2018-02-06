@@ -101,6 +101,8 @@
                     // should highlight the error line in red and scroll to it
                     // notification.error.line_num
                     // notification.error.offset (index into the line where the error occurred, -1 for runtime error)
+                    this.SyntaxError.setSyntaxError(notification.error);
+                    this.DebugDecorate.display();
                     break;
                 case '!notify_macrobegin': // notification
                     break;
@@ -158,7 +160,8 @@
                     /*if (response.okay) {
                         alert('No syntax errors.');
                     }*/
-                    this.SyntaxError.setSyntaxError(response);
+                    this.SyntaxError.setSyntaxError(response.error);
+                    this.DebugDecorate.display();
                     break;
                 case '!watch': // response
                     let watchResults = response.results.map(item => {
