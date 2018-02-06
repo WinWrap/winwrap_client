@@ -44,7 +44,7 @@
                 //decoration.options = { isWholeLine: true, 'className': 'myErrorClass' };
                 decoration.options = {
                     className: 'myErrorClass',
-                    glyphMarginClassName: 'myErrorClass',
+                    glyphMarginClassName: 'myDebugPauseClass',
                     glyphMarginHoverMessage: 'glyph margin hover message'
                 };
                 decorations.push(decoration);
