@@ -47,6 +47,7 @@
                     hoverMessage: 'hover message'
                 };*/
                 decorations.push(decoration);
+                ww.Browser.Log("a log message");
             }
             return decorations;
         }
