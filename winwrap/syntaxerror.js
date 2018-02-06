@@ -36,16 +36,22 @@
                         msg = "No syntax errors.";
                     } else {
                         // will get !notify_error ?
+                        msg = _makeMessage(response.error);
                     }
                     break;
                 case "!notify_errors":
                     let error = response.error;
-                    //errormsg = error.macro_name + '@' + error.line_num + ': ' + error.line + '\n' + error.desc;
-                    msg = `${error.macro_name}@${error.line_num}:${error.line} ${error.desc}`
+                    msg = _makeMessage(response.error);
                     break;
                 default:
                     break;
             }
+            return msg;
+        }
+        _makeMessage(theerror) {
+            let msg = "";
+            //errormsg = error.macro_name + '@' + error.line_num + ': ' + error.line + '\n' + error.desc;
+            msg = `${theerror.macro_name}@${theerror.line_num}:${theerror.line} ${theerror.desc}`
             return msg;
         }
     }
