@@ -34,19 +34,6 @@
             }
             return decorations;
         }
-        /*_errorDecoration(target) {
-            let decorations = [];
-            let syntaxerror = this.UI.SyntaxError.getSyntaxError();
-            if (syntaxerror !== undefined) {
-                let line = syntaxerror.line_num;
-                let decoration = {};
-                decoration.range = new monaco.Range(line, 1, line, 1);
-                decoration.options = { isWholeLine: true, className: 'myErrorClass' };
-                decorations.push(decoration);
-            }
-            ww.Browser.SetText(this.UI.SyntaxError.getErrorMessage());
-            return decorations;
-        }*/
         /*decoration.options = { // works as hover
             className: 'myContentClass',
             hoverMessage: 'hover message'
