@@ -50,7 +50,7 @@
                 };*/
                 decoration.options = {
                     className: 'myHoverClass',
-                    //hoverMessage: 'hover message'
+                    hoverMessage: 'hover message'
                 };
                 decorations.push(decoration);
             }
