@@ -48,9 +48,12 @@
                     glyphMarginClassName: 'myDebugPauseClass',
                     glyphMarginHoverMessage: 'glyph margin hover message'
                 };*/
-                decoration.options = {
-                    //className: 'myHoverClass',
+                /*decoration.options = { // works as hover
                     className: 'myContentClass',
+                    hoverMessage: 'hover message'
+                };*/
+                decoration.options = { // works as hover
+                    inlineClassName: 'myContentClass',
                     hoverMessage: 'hover message'
                 };
                 decorations.push(decoration);
