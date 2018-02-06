@@ -255,7 +255,7 @@
             let text = JSON.stringify(json, undefined, 2);
             $('#jsondata').append(text + '<br />');
         }
-        Text(json) {
+        SetText(json) {
             let text = JSON.stringify(json, undefined, 2);
             $('#jsondata').text(text + '<br />');
         }

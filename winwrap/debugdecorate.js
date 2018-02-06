@@ -47,7 +47,7 @@
                     hoverMessage: 'hover message'
                 };*/
                 decorations.push(decoration);
-                ww.Browser.Text(new Date().toLocaleString());
+                ww.Browser.SetText(new Date().toLocaleString());
             }
             return decorations;
         }
