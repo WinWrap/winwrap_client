@@ -62,6 +62,9 @@
                     decoration.range = new monaco.Range(line, 1, line, 1);
                     decoration.options = { isWholeLine: true, className: 'myErrorClass' };
                     decorations.push(decoration);
+                    let position = { lineNumber: line, column: syntaxError.offset };
+                    //this.Editor.setPosition(position);
+                    //this.Editor.focus();
                 }
                 let syntaxMsg = syntaxError.getMessage();
                 ww.Browser.SetText(syntaxMsg);
