@@ -38,7 +38,7 @@
                         // will get !notify_error ?
                     }
                     break;
-                case "!notify_error":
+                case "!notify_errors":
                     let error = response.error;
                     //errormsg = error.macro_name + '@' + error.line_num + ': ' + error.line + '\n' + error.desc;
                     msg = `${error.macro_name}@${error.line_num}:${error.line} ${error.desc}`
