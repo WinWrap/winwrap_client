@@ -257,7 +257,7 @@
         }
         SetText(json) {
             let text = JSON.stringify(json, undefined, 2);
-            $('#jsondata').text(text);
+            $('#jsondata').text(text); //
         }
     }
 
