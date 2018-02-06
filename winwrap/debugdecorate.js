@@ -43,16 +43,15 @@
                 //decoration.range = new monaco.Range(line, 1, line, 1);
                 decoration.range = new monaco.Range(3, 1, 3, 10);
                 //decoration.options = { isWholeLine: true, className: 'myErrorClass' };
-                decoration.options = {
-                    className: 'myContentClass',
-                    glyphMarginClassName: 'myDebugPauseClass',
-                    glyphMarginHoverMessage: 'glyph margin hover message'
-                };
                 /*decoration.options = {
                     className: 'myContentClass',
                     glyphMarginClassName: 'myDebugPauseClass',
                     glyphMarginHoverMessage: 'glyph margin hover message'
                 };*/
+                decoration.options = {
+                    className: 'myContentClass',
+                    hoverMessage: 'hover message'
+                };
                 decorations.push(decoration);
             }
             return decorations;
