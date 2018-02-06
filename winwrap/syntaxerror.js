@@ -50,8 +50,8 @@
         _makeMessage(theerror) {
             let msg = "";
             //errormsg = error.macro_name + '@' + error.line_num + ': ' + error.line + '\n' + error.desc;
-            //msg = `${theerror.macro_name}@${theerror.line_num}:${theerror.line} ${theerror.desc}`
             msg = `${theerror.macro_name}@${theerror.line_num}.${theerror.offset}:${theerror.line} ${theerror.desc}`
+            msg = msg.replace(/\s\s+/g, ' ');
             return msg;
         }
     }
