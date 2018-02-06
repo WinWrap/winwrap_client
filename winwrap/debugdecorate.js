@@ -42,7 +42,7 @@
                 let decoration = {};
                 decoration.range = new monaco.Range(line, 1, line, 1);
                 //decoration.options = { isWholeLine: true, 'className': 'myErrorClass' };
-                decoration.options = { 'hoverMessage': 'an error message' };
+                decoration.options = { 'className': 'myErrorClass', 'hoverMessage': 'an error message' };
                 decorations.push(decoration);
             }
             return decorations;
