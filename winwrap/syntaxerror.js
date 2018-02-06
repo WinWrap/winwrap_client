@@ -36,12 +36,11 @@
                         msg = "No syntax errors.";
                     } else {
                         // will get !notify_error ?
-                        msg = _makeMessage(response.error);
+                        msg = this._makeMessage(response.error);
                     }
                     break;
                 case "!notify_errors":
-                    let error = response.error;
-                    msg = _makeMessage(response.error);
+                    msg = this._makeMessage(response.error);
                     break;
                 default:
                     break;
