@@ -38,3 +38,8 @@ label {
 .myErrorClass {
     background: red;
 }
+
+.myHoverClass {
+    background: red;
+    content: 'some hover text';
+}
