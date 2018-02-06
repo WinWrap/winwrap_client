@@ -11,9 +11,16 @@
         setSyntaxError(syntaxerror) {
             this.syntaxerror = syntaxerror;
         }
-        getSyntaxMessage() {
+        getErrorMessage() {
             /*alert(notification.error.macro_name + '@' + notification.error.line_num + ': ' +
     notification.error.line + '\n' + notification.error.desc);*/
+            let error = this.syntaxerror;
+            let errormsg = "No syntax errors.";
+            if (this.syntaxerror !== undefined) {
+                //errormsg = error.macro_name + '@' + error.line_num + ': ' + error.line + '\n' + error.desc;
+                errormsg = `${error.macro_name}@${error.line_num}:${error.line} ${error.desc}`
+            }
+            return errormsg;
         }
     }
 
