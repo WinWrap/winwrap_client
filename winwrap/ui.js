@@ -161,7 +161,8 @@
                         alert('No syntax errors.');
                     }*/
                     this.SyntaxError.setSyntaxError(response.error);
-                    this.DebugDecorate.display();
+                    //this.DebugDecorate.display();
+                    ww.Browser.SetText(this.UI.SyntaxError.getErrorMessage());
                     break;
                 case '!watch': // response
                     let watchResults = response.results.map(item => {
