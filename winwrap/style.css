@@ -36,6 +36,7 @@ label {
 }
 
 .myErrorClass {
-    background: FireBrick;
+    //background: FireBrick;
+    background: Maroon;
 }
 
