@@ -40,7 +40,7 @@
             //let line = 5;
             //let line = this.UI.SyntaxError.GetSyntaxError(target);
             let syntaxerror = this.UI.SyntaxError.GetSyntaxError();
-            if (syntaxerror !== null) {
+            if (syntaxerror !== undefined) {
                 let line = syntaxerror.line_num;
                 let decoration = {};
                 decoration.range = new monaco.Range(line, 1, line, 1);
@@ -54,7 +54,7 @@
             let target = this.UI.Channel.CommitRebase.Name;
             decorations.push(...this._breaksDecorations(target));
             decorations.push(...this._pauseDecoration(target));
-            //decorations.push(...this._errorDecoration(target));
+            decorations.push(...this._errorDecoration(target));
             if (decorations.length >= 1) {
                 this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
             } else {

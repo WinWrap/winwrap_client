@@ -3,10 +3,9 @@
     class SyntaxError {
         constructor(ui) {
             this.UI = ui;
-            this.syntaxerror = null;
+            this.syntaxerror = undefined;
         }
         getSyntaxError() {
-            let syntaxerror = this.syntaxerror.error;
             return this.syntaxerror;
         }
         setSyntaxError(syntaxerror) {
