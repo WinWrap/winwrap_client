@@ -93,8 +93,8 @@
                 case '!notify_errorlog': // notification
                     break;
                 case '!notify_errors': // notification
-                    alert(notification.error.macro_name + '@' + notification.error.line_num + ': ' +
-                        notification.error.line + '\n' + notification.error.desc);
+                    /*alert(notification.error.macro_name + '@' + notification.error.line_num + ': ' +
+                        notification.error.line + '\n' + notification.error.desc);*/
                     if (this.Channel.CommitRebase.Name !== notification.error.macro_name) {
                         this.Channel.PushPendingRequest({ command: '?read', target: notification.error.macro_name });
                     }
