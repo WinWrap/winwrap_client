@@ -10,7 +10,7 @@
             return this.syntaxerror;
         }
         setSyntaxError(syntaxerror) {
-            this.syntaxerror = notification;
+            this.syntaxerror = syntaxerror;
         }
     }
 
