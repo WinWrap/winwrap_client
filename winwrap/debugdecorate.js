@@ -49,7 +49,8 @@
                     glyphMarginHoverMessage: 'glyph margin hover message'
                 };*/
                 decoration.options = {
-                    className: 'myHoverClass',
+                    //className: 'myHoverClass',
+                    className: 'myContentClass',
                     hoverMessage: 'hover message'
                 };
                 decorations.push(decoration);
