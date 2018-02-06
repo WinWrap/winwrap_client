@@ -41,12 +41,12 @@
                 let line = syntaxerror.line_num;
                 let decoration = {};
                 decoration.range = new monaco.Range(line, 1, line, 1);
-                //decoration.options = { isWholeLine: true, 'className': 'myErrorClass' };
-                decoration.options = {
+                decoration.options = { isWholeLine: true, className: 'myErrorClass' };
+                /*decoration.options = {
                     className: 'myContentClass',
                     glyphMarginClassName: 'myDebugPauseClass',
                     glyphMarginHoverMessage: 'glyph margin hover message'
-                };
+                };*/
                 decorations.push(decoration);
             }
             return decorations;
