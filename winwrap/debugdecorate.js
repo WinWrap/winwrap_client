@@ -39,7 +39,7 @@
             //let line = this.UI.Stack.getPauseLine(target);
             //let line = 5;
             //let line = this.UI.SyntaxError.GetSyntaxError(target);
-            let syntaxerror = this.UI.SyntaxError.GetSyntaxError();
+            let syntaxerror = this.UI.SyntaxError.getSyntaxError();
             if (syntaxerror !== undefined) {
                 let line = syntaxerror.line_num;
                 let decoration = {};
