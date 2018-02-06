@@ -50,7 +50,7 @@
                     decoration.options = { isWholeLine: true, className: 'myErrorClass' };
                     decorations.push(decoration);
                     let editor = this.UI.EditorCode.editor_;
-                    let position = { lineNumber: line, column: theError.offset };
+                    let position = { lineNumber: line, column: theError.offset+1 };
                     editor.setPosition(position);
                     editor.focus();
                 }
