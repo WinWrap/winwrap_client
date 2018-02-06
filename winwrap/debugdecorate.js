@@ -48,8 +48,8 @@
                 };*/
                 decorations.push(decoration);
                 //ww.Browser.SetText(new Date().toLocaleString());
-                ww.Browser.SetText(this.UI.SyntaxError.getErrorMessage());
             }
+            ww.Browser.SetText(this.UI.SyntaxError.getErrorMessage());
             return decorations;
         }
         display() {
