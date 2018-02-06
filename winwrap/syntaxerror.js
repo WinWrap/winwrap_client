@@ -3,24 +3,50 @@
     class SyntaxError {
         constructor(ui) {
             this.UI = ui;
-            this.syntaxerror = undefined;
+            this.response = {};
         }
-        getSyntaxError() {
-            return this.syntaxerror;
+        clearError() {
+            this.response = {};
         }
-        setSyntaxError(syntaxerror) {
-            this.syntaxerror = syntaxerror;
+        getResponse() {
+            let response = this.response;
+            return response;
         }
-        getErrorMessage() {
+        setResponse(response) {
+            this.response = response;
+        }
+        getError() {
+            let response = this.response;
+            let error;
+            if (response.response !== undefined) {
+                error = response.error; // can be undefined (no error)
+            } else {
+                error = null; // error value not valid
+            }
+            return error;
+        }
+        getMessage() {
             /*alert(notification.error.macro_name + '@' + notification.error.line_num + ': ' +
     notification.error.line + '\n' + notification.error.desc);*/
-            let error = this.syntaxerror;
-            let errormsg = "No syntax errors.";
-            if (this.syntaxerror !== undefined) {
-                //errormsg = error.macro_name + '@' + error.line_num + ': ' + error.line + '\n' + error.desc;
-                errormsg = `${error.macro_name}@${error.line_num}:${error.line} ${error.desc}`
+            let response = this.response;
+            let msg = "";
+            switch (response.response) {
+                case "!syntax":
+                    if (response.okay) {
+                        msg = "No syntax errors.";
+                    } else {
+                        // will get !notify_error ?
+                    }
+                    break;
+                case "!notify_error":
+                    let error = response.error;
+                    //errormsg = error.macro_name + '@' + error.line_num + ': ' + error.line + '\n' + error.desc;
+                    msg = `${error.macro_name}@${error.line_num}:${error.line} ${error.desc}`
+                    break;
+                default:
+                    break;
             }
-            return errormsg;
+            return msg;
         }
     }
 

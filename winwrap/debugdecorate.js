@@ -34,7 +34,7 @@
             }
             return decorations;
         }
-        _errorDecoration(target) {
+        /*_errorDecoration(target) {
             let decorations = [];
             let syntaxerror = this.UI.SyntaxError.getSyntaxError();
             if (syntaxerror !== undefined) {
@@ -42,14 +42,31 @@
                 let decoration = {};
                 decoration.range = new monaco.Range(line, 1, line, 1);
                 decoration.options = { isWholeLine: true, className: 'myErrorClass' };
-                /*decoration.options = { // works as hover
-                    className: 'myContentClass',
-                    hoverMessage: 'hover message'
-                };*/
                 decorations.push(decoration);
-                //ww.Browser.SetText(new Date().toLocaleString());
-                ww.Browser.SetText(this.UI.SyntaxError.getErrorMessage());
             }
+            ww.Browser.SetText(this.UI.SyntaxError.getErrorMessage());
+            return decorations;
+        }*/
+        /*decoration.options = { // works as hover
+            className: 'myContentClass',
+            hoverMessage: 'hover message'
+        };*/
+        _errorDecoration() {
+            let decorations = [];
+            let syntaxError = this.UI.SyntaxError;
+            let theError = syntaxError.getError();
+            if (theError !== null) {
+                if (theError !== undefined) {
+                    let line = theError.line_num;
+                    let decoration = {};
+                    decoration.range = new monaco.Range(line, 1, line, 1);
+                    decoration.options = { isWholeLine: true, className: 'myErrorClass' };
+                    decorations.push(decoration);
+                }
+                let syntaxMsg = syntaxError.getMessage();
+                ww.Browser.SetText(syntaxMsg);
+            }
+            syntaxError.clearError();
             return decorations;
         }
         display() {
@@ -57,7 +74,7 @@
             let target = this.UI.Channel.CommitRebase.Name;
             decorations.push(...this._breaksDecorations(target));
             decorations.push(...this._pauseDecoration(target));
-            decorations.push(...this._errorDecoration(target));
+            decorations.push(...this._errorDecoration(syntaxError));
             if (decorations.length >= 1) {
                 this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
             } else {
