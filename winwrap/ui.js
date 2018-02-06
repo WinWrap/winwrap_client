@@ -162,7 +162,7 @@
                     }*/
                     this.SyntaxError.setSyntaxError(response.error);
                     //this.DebugDecorate.display();
-                    ww.Browser.SetText(this.UI.SyntaxError.getErrorMessage());
+                    ww.Browser.SetText(this.SyntaxError.getErrorMessage());
                     break;
                 case '!watch': // response
                     let watchResults = response.results.map(item => {
