@@ -237,7 +237,7 @@
             this.element_.click(() => {
                 let editor = this0.UI.EditorCode.editor_;
                 editor.onKeyUp(function (e) {
-                    if (e.keyCode === monaco.KeyCode.Enter) {
+                    if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
                         console.log("e.keyCode === monaco.KeyCode.Enter");
                     }
                 });
