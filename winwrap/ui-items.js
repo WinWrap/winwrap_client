@@ -237,7 +237,7 @@
             this.element_.click(() => {
                 let editor = this0.UI.EditorCode.editor_;
                 editor.onKeyUp(function (e) {
-                    console.log(e.keycode);
+                    console.log(e.keyCode);
                 });
                 /*
                 console.log(new Date().toLocaleString());
