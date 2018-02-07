@@ -232,13 +232,15 @@
     class WinWrapVersion {
         constructor(ui, element) {
             this.UI = ui;
-            let this2 = this;
+            let this0 = this;
             this.element_ = element;
             this.element_.click(() => {
+                let editor = this0.UI.EditorCode.editor_;
+                editor.onKeyUp(function (e) {
+                    let x = e;
+                });
                 /*
                 console.log(new Date().toLocaleString());
-                let editorcode = this2.UI.EditorCode;
-                let editor = editorcode.editor_;
                 //editor.trigger('mysource', 'editor.action.triggerSuggest', {});
                 //editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
                 */
