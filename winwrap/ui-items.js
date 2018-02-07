@@ -237,9 +237,8 @@
             this.element_.click(() => {
                 let editor = this0.UI.EditorCode.editor_;
                 editor.onKeyUp(function (e) {
-                    console.log(e.keyCode);
-                    if (e.keyCode === 3) {
-                        console.log("keyCode \"enter\" pressed");
+                    if (e.keyCode === monaco.KeyCode.Enter) {
+                        console.log("e.keyCode === monaco.KeyCode.Enter");
                     }
                 });
                 /*
