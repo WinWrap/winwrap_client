@@ -238,7 +238,7 @@
                 let editor = this0.UI.EditorCode.editor_;
                 editor.onKeyUp(function (e) {
                     console.log(e.keyCode);
-                    if (e.keyCode === 13) {
+                    if (e.keyCode === 3) {
                         console.log("keyCode \"enter\" pressed");
                     }
                 });
