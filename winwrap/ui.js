@@ -18,6 +18,7 @@
             this.Channel.CommitRebase.SetEditor(this.EditorCode);
             this.AutoAuto = new ww.AutoAuto(this, this.EditorCode);
             this.Breaks = new ww.Breaks(this);
+            this.SyntaxError = new ww.SyntaxError(this);
             this.Stack = new ww.Stack(this);
             this.DebugDecorate = new ww.DebugDecorate(this);
             $(window).resize(() => {
@@ -92,14 +93,16 @@
                 case '!notify_errorlog': // notification
                     break;
                 case '!notify_errors': // notification
-                    alert(notification.error.macro_name + '@' + notification.error.line_num + ': ' +
-                        notification.error.line + '\n' + notification.error.desc);
+                    /*alert(notification.error.macro_name + '@' + notification.error.line_num + ': ' +
+                        notification.error.line + '\n' + notification.error.desc);*/
                     if (this.Channel.CommitRebase.Name !== notification.error.macro_name) {
                         this.Channel.PushPendingRequest({ command: '?read', target: notification.error.macro_name });
                     }
                     // should highlight the error line in red and scroll to it
                     // notification.error.line_num
                     // notification.error.offset (index into the line where the error occurred, -1 for runtime error)
+                    this.SyntaxError.setResponse(notification);
+                    this.DebugDecorate.display();
                     break;
                 case '!notify_macrobegin': // notification
                     break;
@@ -154,9 +157,11 @@
                     this.Stack.setStack(response);
                     break;
                 case '!syntax': // response
-                    if (response.okay) {
+                    /*if (response.okay) {
                         alert('No syntax errors.');
-                    }
+                    }*/
+                    this.SyntaxError.setResponse(response);
+                    this.DebugDecorate.display();
                     break;
                 case '!watch': // response
                     let watchResults = response.results.map(item => {

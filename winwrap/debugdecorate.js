@@ -15,7 +15,7 @@
         }
         _breaksDecorations(target) {
             let decorations = [];
-            let this0 = this; // should not be necessary ? bug in Edge ?
+            let this0 = this;
             let breaks = this.UI.Breaks.getBreaks(target);
             breaks.forEach(abreak => {
                 let decoration = this0._breakDecoration(abreak.line);
@@ -24,24 +24,48 @@
             return decorations;
         }
         _pauseDecoration(target) {
+            let decorations = [];
             let line = this.UI.Stack.getPauseLine(target);
-            if (line === null) {
-                return null;
+            if (line !== null) {
+                let decoration = {};
+                decoration.range = new monaco.Range(line, 1, line, 1);
+                decoration.options = { isWholeLine: true, 'className': 'myDebugPauseClass' };
+                decorations.push(decoration);
             }
-            let decoration = {};
-            decoration.range = new monaco.Range(line, 1, line, 1);
-            decoration.options = { isWholeLine: true, 'className': 'myDebugPauseClass' };
-            return decoration;
+            return decorations;
+        }
+        /*decoration.options = { // works as hover
+            className: 'myContentClass',
+            hoverMessage: 'hover message'
+        };*/
+        _errorDecoration() {
+            let decorations = [];
+            let syntaxError = this.UI.SyntaxError;
+            let theError = syntaxError.getError();
+            if (theError !== null) {
+                if (theError !== undefined) {
+                    let line = theError.line_num;
+                    let decoration = {};
+                    decoration.range = new monaco.Range(line, 1, line, 1);
+                    decoration.options = { isWholeLine: true, className: 'myErrorClass' };
+                    decorations.push(decoration);
+                    let editor = this.UI.EditorCode.editor_;
+                    let position = { lineNumber: line, column: theError.offset+1 };
+                    editor.setPosition(position);
+                    editor.focus();
+                }
+                let syntaxMsg = syntaxError.getMessage();
+                ww.Browser.SetText(syntaxMsg);
+            }
+            syntaxError.clearError();
+            return decorations;
         }
         display() {
             let decorations = [];
             let target = this.UI.Channel.CommitRebase.Name;
-            let breaksDecorations = this._breaksDecorations(target);
-            Array.prototype.push.apply(decorations, breaksDecorations);
-            let pauseDecoration = this._pauseDecoration(target);
-            if (pauseDecoration !== null) {
-                decorations.push(pauseDecoration);
-            }
+            decorations.push(...this._breaksDecorations(target));
+            decorations.push(...this._pauseDecoration(target));
+            decorations.push(...this._errorDecoration());
             if (decorations.length >= 1) {
                 this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
             } else {

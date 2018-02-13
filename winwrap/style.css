@@ -34,3 +34,9 @@ label {
 .myDebugPauseClass {
     background: DarkKhaki;
 }
+
+.myErrorClass {
+    //background: FireBrick;
+    background: Maroon;
+}
+

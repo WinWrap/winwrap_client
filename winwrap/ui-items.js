@@ -232,11 +232,21 @@
     class WinWrapVersion {
         constructor(ui, element) {
             this.UI = ui;
+            let this0 = this;
             this.element_ = element;
-            //this.element_.click(() => {
-            //    let test001 = new Test001(this.Channel);
-            //    test001.Run();
-            //});
+            this.element_.click(() => {
+                let editor = this0.UI.EditorCode.editor_;
+                editor.onKeyUp(function (e) {
+                    if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
+                        console.log("e.keyCode === monaco.KeyCode.Enter");
+                    }
+                });
+                /*
+                console.log(new Date().toLocaleString());
+                //editor.trigger('mysource', 'editor.action.triggerSuggest', {});
+                //editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
+                */
+            });
         }
         Initialize() {
             this.element_.text(this.UI.Channel.Version);
@@ -245,9 +255,13 @@
 
     class Browser {
         constructor() { }
-        Log(json) {
+        Append(json) {
             let text = JSON.stringify(json, undefined, 2);
             $('#jsondata').append(text + '<br />');
+        }
+        SetText(json) {
+            let text = JSON.stringify(json, undefined, 2);
+            $('#jsondata').text(text); //
         }
     }
 
