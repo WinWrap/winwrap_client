@@ -79,13 +79,16 @@
             this.element_.val(value);
         }
         SetFileValues(values) {
+            let first = this.macros_.length === 0;
             this.macros_ = values;
-            let channel = this.UI.Channel;
-            if (values.find(item => item === '\\Sample1.bas')) {
-                channel.PushPendingRequest({ command: '?read', target: '\\Sample1.bas' });
-            }
-            else {
-                channel.PushPendingRequest({ command: '?new', names: [] });
+            if (first) {
+                let channel = this.UI.Channel;
+                if (values.find(item => item === '\\Sample1.bas')) {
+                    channel.PushPendingRequest({ command: '?read', target: '\\Sample1.bas' });
+                }
+                else {
+                    channel.PushPendingRequest({ command: '?new', names: [] });
+                }
             }
         }
     }
@@ -95,7 +98,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    let code = ui.EditorCode.editor().getValue(); // xyz
+                    //let code = ui.EditorCode.editor().getValue(); // xyz
                     let name = channel.CommitRebase.Name;
                     let newname = ui.GetFileValue();
                     channel.PushPendingCommit();
