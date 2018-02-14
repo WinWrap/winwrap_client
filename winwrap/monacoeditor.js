@@ -76,7 +76,7 @@
         resize() {
             let showing = this.showing();
             if (!showing) {
-                this.show();
+                this.show(); // width of showing element is accurate
             }
             this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
             if (!showing) {
