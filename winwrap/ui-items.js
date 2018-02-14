@@ -226,7 +226,6 @@
                         ui.EditorImmediate.hide();
                         ui.EditorWatch.hide();
                     }
-                    ui.Resize();
                 });
         }
         SetState(response) {
