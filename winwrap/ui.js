@@ -36,6 +36,11 @@
             let item = this.items_['ww-item-files'];
             return item !== undefined ? item.GetFileValue() : '?A1';
         }
+        Resize() {
+            this.EditorImmediate.resize();
+            this.EditorWatch.resize();
+            this.EditorCode.resize();
+        }
         SetFileValue(response) {
             let item = this.items_['ww-item-files'];
             if (item !== undefined) {
