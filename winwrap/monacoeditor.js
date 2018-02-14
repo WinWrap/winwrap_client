@@ -74,7 +74,14 @@
             this.element_.hide();
         }
         resize() {
+            let showing = this.showing();
+            if (!showing) {
+                this.show();
+            }
             this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
+            if (!showing) {
+                this.hide();
+            }
         }
         appendText(text) {
             // https://microsoft.github.io/monaco-editor/api/uis/monaco.editor.icodeeditor.html#executeedits
