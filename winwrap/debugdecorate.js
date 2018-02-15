@@ -55,8 +55,8 @@
                     editor.focus();
                 }
                 let syntaxMsg = syntaxError.getMessage();
-                ww.Browser.SetText(syntaxMsg);
-                this.UI.Status.element_.text(syntaxMsg);
+                //ww.Browser.SetText(syntaxMsg);
+                this.UI.Status.element_.text(`error: ${syntaxMsg}`);
             }
             syntaxError.clearError();
             return decorations;
