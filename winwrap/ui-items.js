@@ -233,7 +233,7 @@
         }
     }
 
-    class WinWrapVersion {
+    class WinWrapVersion { // repurposed as a status line
         constructor(ui, element) {
             this.UI = ui;
             let this0 = this;
@@ -253,7 +253,7 @@
             });
         }
         Initialize() {
-            this.element_.text(this.UI.Channel.Version);
+            this.element_.text(`WinWrap Version = ${this.UI.Channel.Version}`);
         }
     }
 
