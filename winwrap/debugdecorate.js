@@ -56,6 +56,7 @@
                 }
                 let syntaxMsg = syntaxError.getMessage();
                 ww.Browser.SetText(syntaxMsg);
+                this.UI.Status.element_.text(syntaxMsg);
             }
             syntaxError.clearError();
             return decorations;
