@@ -56,7 +56,7 @@
                 }
                 let syntaxMsg = syntaxError.getMessage();
                 //ww.Browser.SetText(syntaxMsg);
-                this.UI.Status.element_.text(`error: ${syntaxMsg}`);
+                this.UI.Status.element_.text(`Error ${syntaxMsg}`);
             }
             syntaxError.clearError();
             return decorations;
