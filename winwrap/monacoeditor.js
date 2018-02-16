@@ -85,7 +85,7 @@
                 let height0 = elMenu.height();
                 //let elMenuBottom = ().top - elMenu.height();
                 let elMenuBottom = top + height0;
-                let elVersionheight = elVersion.height();
+                let elVersionHeight = elVersion.height();
                 let height = $(window).height() - elMenuBottom - elVersionHeight;
                 //let position = uibuttons.position();
                 //let height = uibuttons.height();
