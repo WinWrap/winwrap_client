@@ -74,6 +74,8 @@
             this.element_.hide();
         }
         resize() {
+            let windowHeight = $(window).height();
+            console.log(`windowHeight = $(windowHeight)`);
             let showing = this.showing();
             if (!showing) {
                 this.show(); // width of showing element is accurate
