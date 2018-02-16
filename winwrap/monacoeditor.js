@@ -12,6 +12,7 @@
                 language: 'vb',
                 theme: 'vs-dark',
                 glyphMargin: true,
+                automaticLayout: true,
                 scrollbar: { vertical: 'visible' } // xxx horizontal ?
             });
             if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
@@ -111,9 +112,9 @@
                 this.show(); // width of showing element is accurate
             }
             if (this.container_ === "code") {
-                this.editor_.layout({ width: this.element_.innerWidth(), height: codeHeight });
+                //this.editor_.layout({ width: this.element_.innerWidth(), height: codeHeight });
             } else {
-                this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
+                //this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
             }
             if (!showing) {
                 this.hide();
