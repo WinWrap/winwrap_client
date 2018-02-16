@@ -81,7 +81,7 @@
                 let uibuttons = $("#uibuttons");
                 let position = uibuttons.position();
                 let height = uibuttons.height();
-                let top = uibuttons.top();
+                let top = position.top();
                 //console.log(`${uibuttons.position().top()} ${uibuttons.height()}`);
                 console.log(`${height} ${top}`);
             }
