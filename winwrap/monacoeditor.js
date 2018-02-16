@@ -77,7 +77,7 @@
             if (this.container_ === "code") {
                 console.log(`$(window).height() = ${$(window).height()}`);
                 console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
-                console.log(`${this.editor.top()}`);
+                console.log(`${this.editor_.top()}`);
             }
             //console.log(`$(".ww-item-version").top() = ${$(".ww-item-version").top()}`)
             //let el = $(".ww-remote-1 ww-item-version");
