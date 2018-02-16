@@ -74,7 +74,7 @@
             this.element_.hide();
         }
         resize() {
-            if (this.container_ === "editor") {
+            if (this.container_ === "code") {
                 console.log(`$(window).height() = ${$(window).height()}`);
                 console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
                 console.log(`${this.editor.top()}`);
