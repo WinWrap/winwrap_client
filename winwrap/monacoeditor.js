@@ -12,7 +12,7 @@
                 language: 'vb',
                 theme: 'vs-dark',
                 glyphMargin: true,
-                automaticLayout: true,
+                //automaticLayout: true,
                 scrollbar: { vertical: 'visible' } // xxx horizontal ?
             });
             if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
