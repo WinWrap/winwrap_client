@@ -89,7 +89,7 @@
                 let elMenuBottom = top + height0;
                 let elVersionHeight = elVersion.height();
                 codeHeight = $(window).height() - elMenuBottom - elVersionHeight;
-                codeHeight -= 100;
+                //codeHeight -= 100;
                 let elApp = $("#ww-remote-1-app");
                 let elAppHeight = elApp.height();
                 console.log(elAppHeight);
