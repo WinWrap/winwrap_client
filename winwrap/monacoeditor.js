@@ -78,12 +78,16 @@
             if (this.container_ === "code") {
                 console.log(`$(window).height() = ${$(window).height()}`);
                 console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
-                let uibuttons = $("#uibuttons");
-                let position = uibuttons.position();
-                let height = uibuttons.height();
-                let top = position.top;
+                let elMenu = $("#ww-remote-1-menu");
+                let elVersion = $("#ww-remote-1-version");
+                let elMenuBottom = menudiv.position().top - menudiv.height();
+                let elVersionheight = versiondiv.height();
+                let height = $(window).height() - elMenuBottom - elVersionHeight;
+                //let position = uibuttons.position();
+                //let height = uibuttons.height();
+                //let top = position.top;
                 //console.log(`${uibuttons.position().top()} ${uibuttons.height()}`);
-                console.log(`${height} ${top}`);
+                console.log(`${height}`);
             }
             //console.log(`$(".ww-item-version").top() = ${$(".ww-item-version").top()}`)
             //let el = $(".ww-remote-1 ww-item-version");
