@@ -80,8 +80,10 @@
                 console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
                 let uibuttons = $("#uibuttons");
                 let position = uibuttons.position();
+                let height = uibuttons.height();
+                let top = position.top();
                 //console.log(`${uibuttons.position().top()} ${uibuttons.height()}`);
-                console.log(`${position.top()} ${uibuttons.height()}`);
+                console.log(`${height} ${top}`);
             }
             //console.log(`$(".ww-item-version").top() = ${$(".ww-item-version").top()}`)
             //let el = $(".ww-remote-1 ww-item-version");
