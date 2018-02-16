@@ -80,7 +80,11 @@
                 console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
                 let elMenu = $("#ww-remote-1-menu");
                 let elVersion = $("#ww-remote-1-version");
-                let elMenuBottom = (elMenu.position()).top - elMenu.height();
+                let position = elMenu.position();
+                let top = position.top;
+                let height0 = elMenu.height();
+                //let elMenuBottom = ().top - elMenu.height();
+                let elMenuBottom = top + height0;
                 let elVersionheight = elVersion.height();
                 let height = $(window).height() - elMenuBottom - elVersionHeight;
                 //let position = uibuttons.position();
