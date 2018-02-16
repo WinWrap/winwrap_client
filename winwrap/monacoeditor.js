@@ -89,6 +89,9 @@
                 let elVersionHeight = elVersion.height();
                 codeHeight = $(window).height() - elMenuBottom - elVersionHeight;
                 codeHeight -= 100;
+                let elApp = $("#ww-remote-1-app");
+                let elAppHeight = elApp.height();
+                console.log(elAppHeight);
                 //let position = uibuttons.position();
                 //let height = uibuttons.height();
                 //let top = position.top;
