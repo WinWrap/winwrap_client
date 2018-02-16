@@ -93,8 +93,10 @@
                 let elApp = $("#ww-remote-1-app");
                 let elAppHeight = elApp.height();
                 console.log(elAppHeight);
-                ww.Browser.Append(elAppHeight);
-                ww.Browser.Append(codeHeight);
+                ww.Browser.Append(`elAppHeight ${elAppHeight}`);
+                ww.Browser.Append(`elMenuBottom ${elMenuBottom}`);
+                ww.Browser.Append(`codeHeight ${codeHeight}`);
+                ww.Browser.Append(`elVersionHeight ${elVersionHeight}`);
                 //let position = uibuttons.position();
                 //let height = uibuttons.height();
                 //let top = position.top;
