@@ -77,6 +77,8 @@
             console.log(`$(window).height() = ${$(window).height()}`);
             console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
             //console.log(`$(".ww-item-version").top() = ${$(".ww-item-version").top()}`)
+            let el = $(".ww-item-version");
+            console.log(el.top());
             let showing = this.showing();
             if (!showing) {
                 this.show(); // width of showing element is accurate
