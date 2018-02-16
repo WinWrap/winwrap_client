@@ -113,7 +113,7 @@
             }
             if (this.container_ === "code") {
                 let el = $("#ww-remote-1-code");
-                //el.height(codeHeight);
+                el.height(codeHeight);
                 this.editor_.layout({ width: this.element_.innerWidth(), height: codeHeight });
             } else {
                 //this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
