@@ -74,8 +74,11 @@
             this.element_.hide();
         }
         resize() {
-            console.log(`$(window).height() = ${$(window).height()}`);
-            console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
+            if (this.container_ === "editor") {
+                console.log(`$(window).height() = ${$(window).height()}`);
+                console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
+                console.log(`${this.editor.top()}`);
+            }
             //console.log(`$(".ww-item-version").top() = ${$(".ww-item-version").top()}`)
             //let el = $(".ww-remote-1 ww-item-version");
             //console.log(el.top());
