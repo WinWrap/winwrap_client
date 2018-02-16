@@ -77,7 +77,7 @@
             // let editorHeight = $(window).height() - $("#codeeditor").position().top - $("#version").height();
             let codeHeight = undefined;
             if (this.container_ === "code") {
-                $("#ww-remote-1-app").css("height", window.innerHeight + "px");
+                //$("#ww-remote-1-app").css("height", window.innerHeight + "px");
                 //console.log(`$(window).height() = ${$(window).height()}`);
                 //console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
                 let elMenu = $("#ww-remote-1-menu");
@@ -93,6 +93,8 @@
                 let elApp = $("#ww-remote-1-app");
                 let elAppHeight = elApp.height();
                 console.log(elAppHeight);
+                ww.Browser.Append(elAppHeight);
+                ww.Browser.Append(codeHeight);
                 //let position = uibuttons.position();
                 //let height = uibuttons.height();
                 //let top = position.top;
