@@ -78,7 +78,7 @@
             if (this.container_ === "code") {
                 console.log(`$(window).height() = ${$(window).height()}`);
                 console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
-                let uibuttons = $("#uibuttons").height();
+                let uibuttons = $("#uibuttons");
                 console.log(`${uibuttons.top()} ${uibuttons.height()}`);
             }
             //console.log(`$(".ww-item-version").top() = ${$(".ww-item-version").top()}`)
