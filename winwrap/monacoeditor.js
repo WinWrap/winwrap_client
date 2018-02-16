@@ -75,9 +75,10 @@
         }
         resize() {
             // let editorHeight = $(window).height() - $("#codeeditor").position().top - $("#version").height();
+            let codeHeight = undefined;
             if (this.container_ === "code") {
-                console.log(`$(window).height() = ${$(window).height()}`);
-                console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
+                //console.log(`$(window).height() = ${$(window).height()}`);
+                //console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
                 let elMenu = $("#ww-remote-1-menu");
                 let elVersion = $("#ww-remote-1-version");
                 let position = elMenu.position();
@@ -86,12 +87,12 @@
                 //let elMenuBottom = ().top - elMenu.height();
                 let elMenuBottom = top + height0;
                 let elVersionHeight = elVersion.height();
-                let height = $(window).height() - elMenuBottom - elVersionHeight;
+                codeHeight = $(window).height() - elMenuBottom - elVersionHeight;
                 //let position = uibuttons.position();
                 //let height = uibuttons.height();
                 //let top = position.top;
                 //console.log(`${uibuttons.position().top()} ${uibuttons.height()}`);
-                console.log(`${height}`);
+                //console.log(`${height}`);
             }
             //console.log(`$(".ww-item-version").top() = ${$(".ww-item-version").top()}`)
             //let el = $(".ww-remote-1 ww-item-version");
@@ -100,7 +101,11 @@
             if (!showing) {
                 this.show(); // width of showing element is accurate
             }
-            this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
+            if (this.container_ === "code") {
+                this.editor_.layout({ width: this.element_.innerWidth(), height: codeHeight });
+            } else {
+                this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
+            }
             if (!showing) {
                 this.hide();
             }
