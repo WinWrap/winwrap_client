@@ -75,50 +75,12 @@
             this.element_.hide();
         }
         resize() {
-            /*// let editorHeight = $(window).height() - $("#codeeditor").position().top - $("#version").height();
-            let codeHeight = undefined;
-            if (this.container_ === "code") {
-                //$("#ww-remote-1-app").css("height", window.innerHeight + "px");
-                //console.log(`$(window).height() = ${$(window).height()}`);
-                //console.log(`this.element_.innerHeight() = ${this.element_.innerHeight()}`)
-                let elMenu = $("#ww-remote-1-menu");
-                let elVersion = $("#ww-remote-1-version");
-                let position = elMenu.position();
-                let top = position.top;
-                let height0 = elMenu.height();
-                //let elMenuBottom = ().top - elMenu.height();
-                let elMenuBottom = top + height0;
-                let elVersionHeight = elVersion.height();
-                codeHeight = $(window).height() - elMenuBottom - elVersionHeight;
-                //codeHeight -= 100;
-                let elApp = $("#ww-remote-1-app");
-                let elAppHeight = elApp.height();
-                console.log(elAppHeight);
-                ww.Browser.Append(`elAppHeight ${elAppHeight}`);
-                ww.Browser.Append(`elMenuBottom ${elMenuBottom}`);
-                ww.Browser.Append(`codeHeight ${codeHeight}`);
-                ww.Browser.Append(`elVersionHeight ${elVersionHeight}`);
-                //let position = uibuttons.position();
-                //let height = uibuttons.height();
-                //let top = position.top;
-                //console.log(`${uibuttons.position().top()} ${uibuttons.height()}`);
-                //console.log(`${height}`);
-            }
-            //console.log(`$(".ww-item-version").top() = ${$(".ww-item-version").top()}`)
-            //let el = $(".ww-remote-1 ww-item-version");
-            //console.log(el.top());*/
+            // adjusting code editor height did not adjust encompassing divs
             let showing = this.showing();
             if (!showing) {
                 this.show(); // width of showing element is accurate
             }
-            if (this.container_ === "code") {
-                //let el = $("#ww-remote-1-code");
-                //el.height(codeHeight);
-                //this.editor_.layout({ width: this.element_.innerWidth(), height: codeHeight });
-                this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
-            } else {
-                this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
-            }
+            this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
             if (!showing) {
                 this.hide();
             }
