@@ -75,11 +75,12 @@
             this.element_.hide();
         }
         resize() {
-            // adjusting code editor height did not adjust encompassing divs
+            // editor options "automaticLayout: true" checks size every 100ms
             /*let showing = this.showing();
             if (!showing) {
-                this.show(); // width of showing element is accurate
+                this.show(); // only for a showing element is the width accurate
             }
+            // adjusting code editor height did not adjust encompassing divs
             this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
             if (!showing) {
                 this.hide();
