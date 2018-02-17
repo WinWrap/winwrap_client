@@ -12,7 +12,7 @@
                 language: 'vb',
                 theme: 'vs-dark',
                 glyphMargin: true,
-                //automaticLayout: true,
+                automaticLayout: true,
                 scrollbar: { vertical: 'visible' } // xxx horizontal ?
             });
             if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
@@ -76,14 +76,14 @@
         }
         resize() {
             // adjusting code editor height did not adjust encompassing divs
-            let showing = this.showing();
+            /*let showing = this.showing();
             if (!showing) {
                 this.show(); // width of showing element is accurate
             }
             this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
             if (!showing) {
                 this.hide();
-            }
+            }*/
         }
         appendText(text) {
             // https://microsoft.github.io/monaco-editor/api/uis/monaco.editor.icodeeditor.html#executeedits
