@@ -41,7 +41,6 @@
     </style>
     <script>
         $(window).resize(() => {
-            //$("#ww-remote-1-app").css("height", window.innerHeight + "px");
             //let editor = $(".ww-item-code");
             //let version = $(".ww-item-version");
             //let height = $(window).height() - version.height() - editor.top();
@@ -50,7 +49,7 @@
     </script>
 </head>
 <body>
-    <div id="ww-remote-1-app" class="ww-remote-1">
+    <div class="ww-remote-1">
         <fieldset id="ww-remote-1-menu">
             <a class="ui-button ui-widget ui-corner-all" href="https://www.winwrap.com/web2/news/web-based-editing" target="_blank">WinWrap&copy;</a>
             <button class="ww-remote-1 ww-item-new ui-button ui-widget ui-corner-all"><i class="fas fa-file"></i></button>
@@ -69,8 +68,8 @@
         <div class="ww-remote-1 ww-item-watch" style="border:1px solid grey; display:none"></div>
         <div class="ww-remote-1 ww-item-code" style="border:1px solid grey"></div>
         <div class="ww-remote-1 ww-item-statusbar" style="border:1px solid grey; display:none"></div>
-        <div id="ww-remote-1-version" style="font-size:initial"><span class="ww-remote-1 ww-item-version">WinWrap Version = </span></div>
+        <div style="font-size:initial"><span class="ww-remote-1 ww-item-version">WinWrap Version = </span></div>
     </div>
-    <pre style="display:none><span id="jsondata"></span></pre>
+    <pre><span id="jsondata"></span></pre>
 </body>
 </html>

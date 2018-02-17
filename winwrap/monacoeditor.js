@@ -75,7 +75,7 @@
             this.element_.hide();
         }
         resize() {
-            // let editorHeight = $(window).height() - $("#codeeditor").position().top - $("#version").height();
+            /*// let editorHeight = $(window).height() - $("#codeeditor").position().top - $("#version").height();
             let codeHeight = undefined;
             if (this.container_ === "code") {
                 //$("#ww-remote-1-app").css("height", window.innerHeight + "px");
@@ -110,10 +110,10 @@
             let showing = this.showing();
             if (!showing) {
                 this.show(); // width of showing element is accurate
-            }
+            }*/
             if (this.container_ === "code") {
-                let el = $("#ww-remote-1-code");
-                el.height(codeHeight);
+                //let el = $("#ww-remote-1-code");
+                //el.height(codeHeight);
                 //this.editor_.layout({ width: this.element_.innerWidth(), height: codeHeight });
                 this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
             } else {
