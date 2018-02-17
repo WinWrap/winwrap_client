@@ -106,11 +106,11 @@
             }
             //console.log(`$(".ww-item-version").top() = ${$(".ww-item-version").top()}`)
             //let el = $(".ww-remote-1 ww-item-version");
-            //console.log(el.top());
+            //console.log(el.top());*/
             let showing = this.showing();
             if (!showing) {
                 this.show(); // width of showing element is accurate
-            }*/
+            }
             if (this.container_ === "code") {
                 //let el = $("#ww-remote-1-code");
                 //el.height(codeHeight);
