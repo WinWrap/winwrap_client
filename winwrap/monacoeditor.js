@@ -12,8 +12,8 @@
                 language: 'vb',
                 theme: 'vs-dark',
                 glyphMargin: true,
-                automaticLayout: true,
-                scrollbar: { vertical: 'visible' } // xxx horizontal ?
+                automaticLayout: true, // check if its container dom node size has changed
+                scrollbar: { vertical: 'visible', horizontal: 'visible' }
             });
             if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
                 this.editor_.updateOptions({ fontSize: 24 });
@@ -102,7 +102,7 @@
             let lineHeight = this.editor_.getConfiguration().lineHeight;
             let contentHeight = this.editor_.getLayoutInfo().contentHeight;
             this.editor_.setScrollTop(top - contentHeight + lineHeight); // xxx
-            let scrollHeight = this.editor_.getScrollHeight();
+            let scrollHeight = this.editor_.getScrollHeight(); // xyz
         }
         setSelection(first, last) {
             // to be written
