@@ -101,8 +101,8 @@
             let top = this.editor_.getTopForLineNumber(lines);
             let lineHeight = this.editor_.getConfiguration().lineHeight;
             let contentHeight = this.editor_.getLayoutInfo().contentHeight;
-            this.editor_.setScrollTop(top - contentHeight + lineHeight); // xxx
-            let scrollHeight = this.editor_.getScrollHeight(); // xyz
+            this.editor_.setScrollTop(top - contentHeight + lineHeight);
+            //let scrollHeight = this.editor_.getScrollHeight(); // horizontal auto
         }
         setSelection(first, last) {
             // to be written
