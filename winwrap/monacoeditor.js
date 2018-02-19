@@ -128,6 +128,7 @@
                     break;
             }
             this.editor_.updateOptions({ readOnly: !editallowed });
+            console.log(`${this.container_} readOnly: ${!editallowed}`);
         }
     }
 
