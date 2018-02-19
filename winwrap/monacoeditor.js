@@ -13,7 +13,7 @@
                 theme: 'vs-dark',
                 glyphMargin: true,
                 automaticLayout: true, // check if its container dom node size has changed
-                scrollbar: { vertical: 'visible', horizontal: 'visible' }
+                scrollbar: { vertical: 'visible' } // horizontal defaults auto
             });
             if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
                 this.editor_.updateOptions({ fontSize: 24 });
