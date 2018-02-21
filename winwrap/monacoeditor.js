@@ -12,7 +12,8 @@
                 language: 'vb',
                 theme: 'vs-dark',
                 glyphMargin: true,
-                scrollbar: { vertical: 'visible' } // xxx horizontal ?
+                automaticLayout: true, // check if its container dom node size has changed
+                scrollbar: { vertical: 'visible' } // horizontal defaults auto
             });
             if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
                 this.editor_.updateOptions({ fontSize: 24 });
@@ -74,7 +75,16 @@
             this.element_.hide();
         }
         resize() {
+            // editor options "automaticLayout: true" checks size every 100ms
+            /*let showing = this.showing();
+            if (!showing) {
+                this.show(); // only for a showing element is the width accurate
+            }
+            // adjusting code editor height did not adjust encompassing divs
             this.editor_.layout({ width: this.element_.innerWidth(), height: this.element_.innerHeight() });
+            if (!showing) {
+                this.hide();
+            }*/
         }
         appendText(text) {
             // https://microsoft.github.io/monaco-editor/api/uis/monaco.editor.icodeeditor.html#executeedits
@@ -91,8 +101,8 @@
             let top = this.editor_.getTopForLineNumber(lines);
             let lineHeight = this.editor_.getConfiguration().lineHeight;
             let contentHeight = this.editor_.getLayoutInfo().contentHeight;
-            this.editor_.setScrollTop(top - contentHeight + lineHeight); // xxx
-            let scrollHeight = this.editor_.getScrollHeight();
+            this.editor_.setScrollTop(top - contentHeight + lineHeight);
+            //let scrollHeight = this.editor_.getScrollHeight(); // horizontal auto
         }
         setSelection(first, last) {
             // to be written
@@ -118,6 +128,7 @@
                     break;
             }
             this.editor_.updateOptions({ readOnly: !editallowed });
+            console.log(`${this.container_} readOnly: ${!editallowed}`);
         }
     }
 

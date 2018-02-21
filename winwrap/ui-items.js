@@ -79,13 +79,16 @@
             this.element_.val(value);
         }
         SetFileValues(values) {
+            let first = this.macros_.length === 0;
             this.macros_ = values;
-            let channel = this.UI.Channel;
-            if (values.find(item => item === '\\Sample1.bas')) {
-                channel.PushPendingRequest({ command: '?read', target: '\\Sample1.bas' });
-            }
-            else {
-                channel.PushPendingRequest({ command: '?new', names: [] });
+            if (first) {
+                let channel = this.UI.Channel;
+                if (values.find(item => item === '\\Sample1.bas')) {
+                    channel.PushPendingRequest({ command: '?read', target: '\\Sample1.bas' });
+                }
+                else {
+                    channel.PushPendingRequest({ command: '?new', names: [] });
+                }
             }
         }
     }
@@ -95,11 +98,12 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    let code = ui.EditorCode.editor().getValue();
+                    //let code = ui.EditorCode.editor().getValue(); // xyz
                     let name = channel.CommitRebase.Name;
                     let newname = ui.GetFileValue();
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: '?write', target: name, new_name: newname });
+                    channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
+                    channel.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
                 });
         }
         SetState(response) {
@@ -229,7 +233,7 @@
         }
     }
 
-    class WinWrapVersion {
+    class WinWrapVersion { // repurposed as a status line
         constructor(ui, element) {
             this.UI = ui;
             let this0 = this;
@@ -249,7 +253,7 @@
             });
         }
         Initialize() {
-            this.element_.text(this.UI.Channel.Version);
+            this.element_.text(`WinWrap Version = ${this.UI.Channel.Version}`);
         }
     }
 

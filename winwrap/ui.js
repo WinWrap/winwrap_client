@@ -12,6 +12,7 @@
                     item.Initialize();
                 }
             });
+            this.Status = this.items_['ww-item-version'];
             this.EditorImmediate = this.items_['ww-item-immediate'];
             this.EditorWatch = this.items_['ww-item-watch'];
             this.EditorCode = this.items_['ww-item-code'];
