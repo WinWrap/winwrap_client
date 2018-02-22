@@ -243,7 +243,7 @@
                 let editor = this0.UI.EditorCode.editor_;
                 // getSelection
                 let selection = editor.getSelection();
-                console.log(`selection`);
+                console.log(`getSelection() => ${selection}`);
                 /*
                 // detect code editor "Enter" key
                 editor.onKeyUp(function (e) {
