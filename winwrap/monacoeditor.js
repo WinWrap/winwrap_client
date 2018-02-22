@@ -105,7 +105,7 @@
             //let scrollHeight = this.editor_.getScrollHeight(); // horizontal auto
         }
         setSelection(first, last) {
-            // to be written
+            // to be written - use monico api
         }
         textUntilPosition(model, position) {
             let text = model.getValueInRange({
