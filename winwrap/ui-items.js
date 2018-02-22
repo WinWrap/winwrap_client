@@ -239,14 +239,17 @@
             let this0 = this;
             this.element_ = element;
             this.element_.click(() => {
+                console.log(`Status line clicked at ${new Date().toLocaleString()}.`);
+                /*
+                // detect code editor "Enter" key
                 let editor = this0.UI.EditorCode.editor_;
                 editor.onKeyUp(function (e) {
                     if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
                         console.log("e.keyCode === monaco.KeyCode.Enter");
                     }
                 });
+                */
                 /*
-                console.log(new Date().toLocaleString());
                 //editor.trigger('mysource', 'editor.action.triggerSuggest', {});
                 //editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
                 */
