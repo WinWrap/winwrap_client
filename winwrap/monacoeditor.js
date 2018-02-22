@@ -13,6 +13,7 @@
                 theme: 'vs-dark',
                 glyphMargin: true,
                 automaticLayout: true, // check if its container dom node size has changed
+                selectionHighlight: false,
                 scrollbar: { vertical: 'visible' } // horizontal defaults auto
             });
             if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
