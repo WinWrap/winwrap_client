@@ -240,9 +240,12 @@
             this.element_ = element;
             this.element_.click(() => {
                 console.log(`Status line clicked at ${new Date().toLocaleString()}.`);
+                let editor = this0.UI.EditorCode.editor_;
+                // getSelection
+                let selection = editor.getSelection();
+                console.log(`selection`);
                 /*
                 // detect code editor "Enter" key
-                let editor = this0.UI.EditorCode.editor_;
                 editor.onKeyUp(function (e) {
                     if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
                         console.log("e.keyCode === monaco.KeyCode.Enter");
