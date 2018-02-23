@@ -13,6 +13,7 @@
                 theme: 'vs-dark',
                 glyphMargin: true,
                 automaticLayout: true, // check if its container dom node size has changed
+                selectionHighlight: false, // repeats of selected word are not highlighted
                 scrollbar: { vertical: 'visible' } // horizontal defaults auto
             });
             if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
@@ -57,10 +58,18 @@
             return this.editor_.getValue();
         }
         getSelection() {
+            /*
+            // previous code
             let position = this.editor_.getPosition();
             let model = this.editor_.getModel();
             let caret = model.getOffsetAt(position);
             return { 'first': caret, 'last': caret };
+            */
+            let model = this.editor_.getModel();
+            let rng = this.editor_.getSelection();
+            let first = model.getOffsetAt(rng.getStartPosition());
+            let last = model.getOffsetAt(rng.getEndPosition());
+            return { first: first, last, last };
         }
         editor() {
             return this.editor_;
@@ -105,7 +114,11 @@
             //let scrollHeight = this.editor_.getScrollHeight(); // horizontal auto
         }
         setSelection(first, last) {
-            // to be written
+            let model = this.editor_.getModel();
+            let p1 = model.getPositionAt(first);
+            let p2 = model.getPositionAt(last);
+            let rng = new monaco.Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+            this.editor_.setSelection(rng);
         }
         textUntilPosition(model, position) {
             let text = model.getValueInRange({

@@ -239,14 +239,20 @@
             let this0 = this;
             this.element_ = element;
             this.element_.click(() => {
-                let editor = this0.UI.EditorCode.editor_;
+                console.log(`Status line clicked at ${new Date().toLocaleString()}.`);
+                let editor = this0.UI.EditorCode;
+                editor.setSelection(3, 7);
+                let obj = editor.getSelection(); // necessary for console.log expansion
+                console.log(obj);
+                /*
+                // detect code editor "Enter" key
                 editor.onKeyUp(function (e) {
                     if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
                         console.log("e.keyCode === monaco.KeyCode.Enter");
                     }
                 });
+                */
                 /*
-                console.log(new Date().toLocaleString());
                 //editor.trigger('mysource', 'editor.action.triggerSuggest', {});
                 //editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
                 */
