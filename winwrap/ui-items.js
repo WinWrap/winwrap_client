@@ -245,11 +245,12 @@
                 // getSelection
                 //editor.setSelection(new monaco.Range(1, 2, 1, 4))
                 //editor.setSelection(new monaco.Range(3, 1, 3, 8))
-                let rng = new monaco.Range(0, 0, 0, 0);
-                let position1 = model.getPositionAt(3);
-                let position2 = model.getPositionAt(6);
-                rng.setStartPosition(position1);
-                rng.setEndPosition(position2);
+                //let rng = new monaco.Range(0, 0, 0, 0);
+                let p1 = model.getPositionAt(3);
+                let p2 = model.getPositionAt(6);
+                //rng.setStartPosition(position1);
+                //rng.setEndPosition(position2);
+                let rng = new monaco.Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
                 editor.setSelection(rng);
                 let selection = editor.getSelection();
                 console.log(`getSelection() => ${selection}`);
