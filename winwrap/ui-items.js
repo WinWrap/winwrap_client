@@ -243,7 +243,6 @@
                 let editor = this0.UI.EditorCode;
                 editor.setSelection(3, 7);
                 let obj = editor.getSelection(); // necessary for console.log expansion
-                //console.log(`getSelection() => ${obj}`);
                 console.log(obj);
                 /*
                 // detect code editor "Enter" key
