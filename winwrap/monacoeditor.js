@@ -58,6 +58,7 @@
             return this.editor_.getValue();
         }
         getSelection() {
+            //let selection = editor.getSelection();
             let position = this.editor_.getPosition();
             let model = this.editor_.getModel();
             let caret = model.getOffsetAt(position);
@@ -107,6 +108,11 @@
         }
         setSelection(first, last) {
             // to be written - use monico api
+            let model = this.editor_.getModel();
+            let p1 = model.getPositionAt(first);
+            let p2 = model.getPositionAt(last);
+            let rng = new monaco.Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+            this.editor_.setSelection(rng);
         }
         textUntilPosition(model, position) {
             let text = model.getValueInRange({

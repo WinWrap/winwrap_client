@@ -240,21 +240,16 @@
             this.element_ = element;
             this.element_.click(() => {
                 console.log(`Status line clicked at ${new Date().toLocaleString()}.`);
-                let editor = this0.UI.EditorCode.editor_;
+                /*let editor = this0.UI.EditorCode.editor_;
                 let model = editor.getModel();
-                // getSelection
-                //editor.setSelection(new monaco.Range(1, 2, 1, 4))
-                //editor.setSelection(new monaco.Range(3, 1, 3, 8))
-                //let rng = new monaco.Range(0, 0, 0, 0);
                 let p1 = model.getPositionAt(3);
                 let p2 = model.getPositionAt(6);
-                //rng.setStartPosition(position1);
-                //rng.setEndPosition(position2);
-                //let rng = new monaco.Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
-                let rng = new monaco.Range(...{ ...p1, ...p2 });
-                editor.setSelection(rng);
-                let selection = editor.getSelection();
-                console.log(`getSelection() => ${selection}`);
+                let rng = new monaco.Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+                editor.setSelection(rng);*/
+                //let selection = editor.getSelection();
+                let editor = this0.UI.EditorCode;
+                editor.setSelection(3, 7);
+                console.log(`getSelection() => ${editor.getSelection()}`);
                 /*
                 // detect code editor "Enter" key
                 editor.onKeyUp(function (e) {
