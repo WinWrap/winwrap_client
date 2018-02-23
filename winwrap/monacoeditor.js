@@ -67,10 +67,8 @@
             */
             let model = this.editor_.getModel();
             let rng = this.editor_.getSelection();
-            let p1 = rng.getStartPosition();
-            let p2 = rng.getEndPosition();
-            let first = model.getOffsetAt(p1);
-            let last = model.getOffsetAt(p2);
+            let first = model.getOffsetAt(rng.getStartPosition());
+            let last = model.getOffsetAt(rng.getEndPosition());
             return { first: first, last, last };
         }
         editor() {
