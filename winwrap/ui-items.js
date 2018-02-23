@@ -250,7 +250,8 @@
                 let p2 = model.getPositionAt(6);
                 //rng.setStartPosition(position1);
                 //rng.setEndPosition(position2);
-                let rng = new monaco.Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+                //let rng = new monaco.Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+                let rng = new monaco.Range(...p1, ...p2);
                 editor.setSelection(rng);
                 let selection = editor.getSelection();
                 console.log(`getSelection() => ${selection}`);
