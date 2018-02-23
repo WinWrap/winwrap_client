@@ -58,11 +58,20 @@
             return this.editor_.getValue();
         }
         getSelection() {
-            //let selection = editor.getSelection();
+            /*
+            // previous code
             let position = this.editor_.getPosition();
             let model = this.editor_.getModel();
             let caret = model.getOffsetAt(position);
             return { 'first': caret, 'last': caret };
+            */
+            let model = this.editor_.getModel();
+            let rng = this.editor_.getSelection();
+            let p1 = rng.getStartPosition();
+            let p2 = rng.getEndPosition();
+            let first = model.getOffsetAt(p1);
+            let last = model.getOffsetAt(p2);
+            return { first: first, last, last };
         }
         editor() {
             return this.editor_;
@@ -107,7 +116,6 @@
             //let scrollHeight = this.editor_.getScrollHeight(); // horizontal auto
         }
         setSelection(first, last) {
-            // to be written - use monico api
             let model = this.editor_.getModel();
             let p1 = model.getPositionAt(first);
             let p2 = model.getPositionAt(last);
