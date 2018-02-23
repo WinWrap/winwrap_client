@@ -13,7 +13,7 @@
                 theme: 'vs-dark',
                 glyphMargin: true,
                 automaticLayout: true, // check if its container dom node size has changed
-                selectionHighlight: false,
+                selectionHighlight: false, // repeats of selected word are not highlighted
                 scrollbar: { vertical: 'visible' } // horizontal defaults auto
             });
             if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {

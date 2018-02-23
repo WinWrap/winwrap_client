@@ -243,7 +243,11 @@
                 let editor = this0.UI.EditorCode.editor_;
                 // getSelection
                 //editor.setSelection(new monaco.Range(1, 2, 1, 4))
-                editor.setSelection(new monaco.Range(3, 1, 3,8))
+                //editor.setSelection(new monaco.Range(3, 1, 3, 8))
+                let rng = new monaco.Range(0, 0, 0, 0);
+                rng.setStartPosition(3);
+                rng.setEndPosition(6);
+                editor.setSelection(rng);
                 let selection = editor.getSelection();
                 console.log(`getSelection() => ${selection}`);
                 /*
