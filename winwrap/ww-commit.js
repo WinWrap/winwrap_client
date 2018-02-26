@@ -2,10 +2,9 @@
     class Commit {
         // by_sync_id: sync id that creates the commit (0 for server)
         // for_sync_id: sync id that caused the commit (never 0)
-        constructor(by_sync_id, for_sync_id, enter) {
+        constructor(by_sync_id, for_sync_id) {
             this.by_sync_id_ = by_sync_id;
             this.for_sync_id_ = for_sync_id;
-            this.enter_ = enter;
             this.edits_ = new ww.Edits();
             this.revert_edits_ = new ww.Edits();
         }
@@ -24,39 +23,24 @@
             this.edits_.Append(nextedit);
         }
 
-        AppendEditNoCombine(nextedit) {
-            this.edits_.AppendNoCombine(nextedit);
-        }
-
         AppendEdits(edits) {
             this.edits_.Append(edits);
-        }
-
-        Apply(text) {
-            return this.edits_.Apply(text);
         }
 
         BySyncId() {
             return this.by_sync_id_;
         }
 
-        Copy() {
-            var commit = new Commit(this.by_sync_id_, this.for_sync_id_, this.enter_);
-            commit.edits_ = this.edits_.Copy();
-            commit.ReverEdits = this.revert_edits_.Copy();
-            return commit;
-        }
-
         Edits() {
             return this.edits_;
         }
 
-        Enter() {
-            return this.enter_;
-        }
-
         ForSyncId() {
             return this.for_sync_id_;
+        }
+
+        IsNull() {
+            return this.edits_.IsNull();
         }
 
         MergeTransform(serverCommit) {
@@ -64,7 +48,7 @@
             if (mergedEdits.IsNull())
                 return null;
 
-            var commit = new Commit(this.by_sync_id_, this.for_sync_id_, this.enter_);
+            var commit = new Commit(this.by_sync_id_, this.for_sync_id_);
             commit.AppendEdits(mergedEdits);
             return commit;
         }
@@ -77,6 +61,19 @@
             return this.revert_edits_;
         }
             
+        TakeChanges(need_commit) {
+            var commit = null;
+            if (!this.IsNull() || need_commit) {
+                commit = new Commit(this.by_sync_id_, this.for_sync_id_);
+                commit.edits_ = this.edits_;
+                this.edits_ = new ww.Edits();
+                commit.revert_edits_ = this.revert_edits_;
+                this.revert_edits_ = new ww.Edits();
+            }
+
+            return commit;
+        }
+
         Log(title) {
             //console.log(title);
             //console.log(this);

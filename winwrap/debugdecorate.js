@@ -61,16 +61,19 @@
             return decorations;
         }
         display() {
-            let decorations = [];
-            let target = this.UI.Channel.CommitRebase.Name;
-            decorations.push(...this._breaksDecorations(target));
-            decorations.push(...this._pauseDecoration(target));
-            decorations.push(...this._errorDecoration());
-            if (decorations.length >= 1) {
-                this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
-            } else {
-                this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations,
-                    [{ range: new monaco.Range(1, 1, 1, 1), options: {} }]);
+            let doc = this.UI.Channel.CommitRebase.ActiveDoc;
+            if (doc !== null) {
+                let decorations = [];
+                let target = doc.Name();
+                decorations.push(...this._breaksDecorations(target));
+                decorations.push(...this._pauseDecoration(target));
+                decorations.push(...this._errorDecoration());
+                if (decorations.length >= 1) {
+                    this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
+                } else {
+                    this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations,
+                        [{ range: new monaco.Range(1, 1, 1, 1), options: {} }]);
+                }
             }
         }
     }

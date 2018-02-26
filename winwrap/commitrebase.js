@@ -3,7 +3,6 @@
     class CommitRebase {
         constructor(channel) {
             this.Channel = channel;
-            this.Name = null;
             this.ActiveDoc = null;
         }
 
@@ -12,9 +11,8 @@
         }
 
         Read(file) {
-            this.Name = file.name;
             this.Editor.editor().setValue(file.code);
-            this.ActiveDoc = new ww.Doc(this.Channel.AllocatedID, file.revision, this.Editor);
+            this.ActiveDoc = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, this.Editor);
         }
 
         CommitDone(response) {
@@ -23,7 +21,7 @@
                     if (commit.by_id !== this.Channel.AllocatedID) {
                         let serverCommit = new ww.Commit(commit.by_id, commit.for_id, false);
                         commit.edits.forEach(edit => {
-                            serverCommit.AppendEdit(new ww.Edit(edit.index, edit.delete, edit.insert));
+                            serverCommit.AppendEdit(new ww.Edit(ww.EditOp.EditEditOp, edit.index, edit.delete, edit.insert));
                         });
                         this.ActiveDoc.Rebase(serverCommit);
                     }
@@ -36,23 +34,30 @@
         }
 
         Rebase(notification) {
-            if (notification.by_id !== this.Channel.AllocatedID && notification.target === this.Name) {
-                this.ActiveDoc.NeedCommit();
+            if (notification.for_id === this.Channel.AllocatedID && this.ActiveDoc.InCommit(notification.target)) {
+                return; // rebasing self commit - no extra work required
             }
+            this.ActiveDoc.NeedCommit();
         }
 
         GetCommitRequest() {
             let request = null;
-            if (this.ActiveDoc.Commit(false)) {
-                //console.log("Commit needed");
-                var commit = this.ActiveDoc.CurrentCommit();
-                var edits = [];
-                commit.Edits().Edits().forEach(edit => {
-                    edits.push({ 'index': edit.Index(), 'delete': edit.DeleteCount(), 'insert': edit.Insert() });
-                });
+            var commit = this.ActiveDoc.Commit();
+            if (commit !== null) {
+                //console.log("Send ?commit request");
+                let edits = [];
+                if (!commit.IsNull()) {
+                    commit.Edits().Edits().forEach(edit => {
+                        if (edit.Op() === ww.EditOp.EditEditOp) {
+                            edits.push({ 'op': edit.Op(), 'index': edit.Index(), 'delete': edit.DeleteCount(), 'insert': edit.Insert() });
+                        } else if (edit.Op() === ww.EditOp.EnterEditOp || edit.Op() === ww.EditOp.FixupEditOp) {
+                            edits.push({ 'op': edit.Op(), 'index': edit.Index(), 'length': edit.DeleteCount() });
+                        }
+                    });
+                }
                 request = {
                     command: '?commit',
-                    target: this.Name,
+                    target: this.ActiveDoc.Name(),
                     revision: this.ActiveDoc.Revision(),
                     edits: edits
                 };

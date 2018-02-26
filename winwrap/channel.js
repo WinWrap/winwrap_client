@@ -13,7 +13,7 @@
         }
         async InitializeAsync() {
             while (this.busy_)
-                this._Wait(100);
+                this.Remote._Wait(100);
 
             this.busy_ = true;
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
@@ -66,9 +66,6 @@
             if (++this.generation_ === 0x10000)
                 this.generation_ = 1; // 16 bit number (never 0)
             return this.generation_;
-        }
-        _Wait(ms) {
-            return new Promise(r => setTimeout(r, ms));
         }
     }
 
