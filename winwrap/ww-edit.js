@@ -1,13 +1,30 @@
 define(function () {
+    var EditOp = {
+        EditEditOp: 0,
+        EnterEditOp: 1,
+        FixupEditOp: 2,
+        ProcEditOp: 3
+    };
+
+    ww.EditOp = EditOp;
+
     class Edit {
-        constructor(index, deletecount, insert) {
+        constructor(op, index, deletecount, insert) {
+            this.op_ = op;
             this.index_ = index;
             this.delete_count_ = deletecount;
-            this.insert_ = insert;
+            this.insert_ = undefined;
+            this.proc_ = undefined;
+            switch (typeof insert) {
+                case 'string': this.insert_ = insert; break;
+                case 'object': this.proc_ = insert; break;
+            }
         }
 
         Copy() {
-            return new Edit(this.index_, this.delete_count_, this.insert_);
+            let edit = new Edit(this.op_, this.index_, this.delete_count_, this.insert_);
+            edit.proc_ = this.proc_;
+            return edit;
         }
 
         DeleteCount() {
@@ -39,15 +56,19 @@ define(function () {
         }
 
         InsertLength() {
-            return this.insert_ === undefined ? 0 : this.insert_.length;
+            return this.insert_ === undefined ? 0 : this.delete_count_;
         }
 
         IsNull() {
-            return this.delete_count_ === 0 && (this.insert_ === undefined || this.insert_ === '');
+            return this.op_ === ww.EditOp.EditEditOp && this.delete_count_ === 0 && (this.insert_ === undefined || this.insert_ === '');
+        }
+
+        Op() {
+            return this.op_;
         }
 
         Equals(edit) {
-            return this.index_ === edit.index_ && this.delete_count_ === edit.delete_count_ && this.insert_ === edit.insert_;
+            return this.op_ === edit.op_ && this.index_ === edit.index_ && this.delete_count_ === edit.delete_count_ && this.insert_ === edit.insert_;
         }
 
         AdjustCaret(x, isserver) {
@@ -58,18 +79,17 @@ define(function () {
                 else if (isserver)
                     x = this.index_; // move to front of change
                 else
-                    x = this.insert_Index(); // move to end of change
+                    x = this.InsertIndex(); // move to end of change
             }
 
             return x;
         }
 
-        Apply(text) {
-            return text.substring(0, this.index_) + this.insert_ + text.substring(this.index_ + this.delete_count_);
-        }
-
         CanCombine(nextedit) {
-            return this.index_ <= nextedit.DeleteIndex() && nextedit.index_ <= this.insert_Index();
+            if (this.op_ !== ww.EditOp.EditEditOp || nextedit.op_ !== ww.EditOp.EditEditOp) {
+                return this.op_ === nextedit.op_ && this.Equals(nextedit);
+            }
+            return this.index_ <= nextedit.DeleteIndex() && nextedit.index_ <= this.InsertIndex();
         }
 
         Combine(nextedit) {
@@ -194,11 +214,20 @@ define(function () {
         }
 
         RevertEdit(s0) {
-            return new Edit(this.index_, this.InsertLength(), s0.substring(this.index_, this.DeleteIndex()));
+            return new Edit(ww.EditOp.EditEditOp, this.index_, this.InsertLength(), s0.substring(this.index_, this.DeleteIndex()));
         }
 
         toString() {
-            return this.index_ + '-' + this.delete_count_ + '"' + this.insert_ + '"';
+            let s = this.index_ + '-' + this.delete_count_;
+            if (this.insert_ !== undefined) {
+                if (typeof this.insert_ === 'string') {
+                    s += '"' + this.insert_ + '"'
+                }
+                else
+                    s += JSON.stringify(this.insert_)
+            }
+
+            return s;
         }
     }
 
@@ -208,7 +237,7 @@ define(function () {
         var len0 = s0.length;
         var len1 = s1.length;
         if (len0 === len1 && s0 === s1)
-            return new Edit(len0, 0, '');
+            return null;
 
         var min = Math.min(len0, len1);
         var offset = 0;
@@ -244,6 +273,6 @@ define(function () {
 
         var deletecount = i0 - index;
         var insert = s1.substring(index, i1);
-        return new Edit(index + offset, deletecount, insert);
+        return new Edit(ww.EditOp.EditEditOp, index + offset, deletecount, insert);
     };
 });

@@ -99,7 +99,7 @@
             this.button_ = new Button_Helper(element,
                 () => {
                     //let code = ui.EditorCode.editor().getValue(); // xyz
-                    let name = channel.CommitRebase.Name;
+                    let name = channel.CommitRebase.ActiveDoc.Name();
                     let newname = ui.GetFileValue();
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
@@ -117,7 +117,7 @@
             this.button_ = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: '?syntax', target: channel.CommitRebase.Name });
+                    channel.PushPendingRequest({ command: '?syntax', target: channel.CommitRebase.ActiveDoc.Name() });
                 });
         }
         SetState(response) {
@@ -131,7 +131,7 @@
             this.button_ = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: 'run', target: channel.CommitRebase.Name });
+                    channel.PushPendingRequest({ command: 'run', target: channel.CommitRebase.ActiveDoc.Name() });
                 });
         }
         SetState(response) {
@@ -144,7 +144,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.Name });
+                    channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.ActiveDoc.Name() });
                 });
         }
         SetState(response) {
@@ -157,7 +157,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.Name });
+                    channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.ActiveDoc.Name() });
                 });
         }
         SetState(response) {
@@ -171,7 +171,7 @@
             this.button_ = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: 'into', target: channel.CommitRebase.Name });
+                    channel.PushPendingRequest({ command: 'into', target: channel.CommitRebase.ActiveDoc.Name() });
                 });
         }
         SetState(response) {
@@ -185,7 +185,7 @@
             this.button_ = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: 'over', target: channel.CommitRebase.Name });
+                    channel.PushPendingRequest({ command: 'over', target: channel.CommitRebase.ActiveDoc.Name() });
                 });
         }
         SetState(response) {
@@ -198,7 +198,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.Name });
+                    channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.ActiveDoc.Name() });
                 });
         }
         SetState(response) {

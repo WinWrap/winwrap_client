@@ -96,7 +96,7 @@
                 case '!notify_errors': // notification
                     /*alert(notification.error.macro_name + '@' + notification.error.line_num + ': ' +
                         notification.error.line + '\n' + notification.error.desc);*/
-                    if (this.Channel.CommitRebase.Name !== notification.error.macro_name) {
+                    if (this.Channel.CommitRebase.ActiveDoc.Name() !== notification.error.macro_name) {
                         this.Channel.PushPendingRequest({ command: '?read', target: notification.error.macro_name });
                     }
                     // should highlight the error line in red and scroll to it
@@ -110,7 +110,7 @@
                 case '!notify_macroend': // notification
                     break;
                 case '!notify_pause': // notification
-                    if (this.Channel.CommitRebase.Name !== notification.file_name) {
+                    if (this.Channel.CommitRebase.ActiveDoc.Name() !== notification.file_name) {
                         this.Channel.PushPendingRequest({ command: '?read', target: notification.file_name });
                     }
                     let watches = this.EditorWatch.editor().getValue().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });

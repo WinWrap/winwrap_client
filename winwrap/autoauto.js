@@ -13,9 +13,10 @@
         }
         async SendAsync(model, position) { // xxx block polling during auto...
             let channel = this.UI.Channel;
+            let remote = channel.Remote;
             // wait for Channel.Poll to finish
-            while (channel.Remote.PollBusy())
-                await this._Wait(10);
+            while (remote.PollBusy())
+                await remote._Wait(10);
             if (this.busy2_ || this.ready1_) {
                 // two SendAsync calls are busy, give up
                 return null;
@@ -24,11 +25,11 @@
                 return await this._GetSharedResponseAsync();
             }
             this.busy1_ = true; // first SendAsync call is busy
-            channel.Remote.StopPolling();
+            remote.StopPolling();
             channel.PushPendingCommit();
             let request = {
                 command: '?auto',
-                target: channel.CommitRebase.Name,
+                target: channel.CommitRebase.ActiveDoc.Name(),
                 first: 0,
                 offset: model.getOffsetAt(position)
             };
@@ -41,17 +42,18 @@
             if (this.busy2_) { // share response to second SendAsync
                 await this._SetSharedResponseAsync(response);
             }
-            channel.Remote.StartPolling();
+            remote.StartPolling();
             this.busy1_ = false; // first SendAsync call is done
             return response;
         }
         async _GetSharedResponseAsync() {
             console.log("AutoAuto.SendAsync call in progress (wait for shared response)...");
+            let remote = this.UI.Channel.Remote;
             // wait until first SendAsync call has a response
             this.busy2_ = true; // second SendAsync call is busy
             // wait for first SendAsync to get a response
             while (!this.ready1_)
-                await this._Wait(50);
+                await remote._Wait(50);
             // first SendAsync's call has a response
             let response = this.sharedResponse_;
             this.busy2_ = false; // second SendAsync call is done
@@ -59,18 +61,16 @@
             return response;
         }
         async _SetSharedResponseAsync(response) {
+            let remote = this.UI.Channel.Remote;
             // share first SendAsync call's response with the send SendAsync call
             this.sharedResponse_ = response;
             this.ready1_ = true; // first SendAsync call has a response
             // wait for second SendAsync call to get the response
             while (this.ready1_)
-                await this._Wait(10);
+                await remote._Wait(10);
             // first SendAsync call is done
             this.sharedResponse_ = null;
             console.log("AutoAuto.SendAsync response has been shared.");
-        }
-        _Wait(ms) {
-            return new Promise(r => setTimeout(r, ms));
         }
     }
 

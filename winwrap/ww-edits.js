@@ -30,17 +30,6 @@
                 this.edits_.push(nextedit);
         }
 
-        Apply(text) {
-            this.edits_.forEach(edit => { text = edit.Apply(text); });
-            return text;
-        }
-
-        Copy() {
-            var edits = new Edits();
-            edits.edits = [...this.edits_];
-            return edits;
-        }
-
         Edits() {
             return this.edits_;
         }

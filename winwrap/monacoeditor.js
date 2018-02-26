@@ -8,7 +8,7 @@
             this.editor_ = null;
         }
         Initialize() {
-            this.editor_ = monaco.editor.create(this.element_[0], {
+            let editor = monaco.editor.create(this.element_[0], {
                 language: 'vb',
                 theme: 'vs-dark',
                 glyphMargin: true,
@@ -16,18 +16,19 @@
                 selectionHighlight: false, // repeats of selected word are not highlighted
                 scrollbar: { vertical: 'visible' } // horizontal defaults auto
             });
+            this.editor_ = editor;
             if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-                this.editor_.updateOptions({ fontSize: 24 });
+                editor.updateOptions({ fontSize: 24 });
             } else {
-                this.editor_.updateOptions({ fontSize: 14 });
+                editor.updateOptions({ fontSize: 14 });
             }
-            this.editor_.setValue(`\"${this.container_}\"\r\n`);
+            editor.setValue(`\"${this.container_}\"\r\n`);
             this.resize();
             let ui = this.ui_; // closure can't handle this in the lambdas below
-            this.editor_.onMouseDown(function (e) {
+            editor.onMouseDown(function (e) {
                 if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) { // xxx below
                     let channel = ui.Channel;
-                    let isBreak = ui.Breaks.isBreak(channel.CommitRebase.Name, e.target.position.lineNumber);
+                    let isBreak = ui.Breaks.isBreak(channel.CommitRebase.ActiveDoc.Name(), e.target.position.lineNumber);
                     let doBreak = isBreak ? false : true;
                     let request = {
                         command: 'break',
@@ -38,9 +39,21 @@
                     channel.PushPendingRequest(request);
                 }
             });
-            //this.editor_.resize(() => {
-            //    this.resize();
-            //});
+            let this_ = this;
+            editor.onKeyUp(function (e) {
+                if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
+                    //console.log("e.keyCode === monaco.KeyCode.Enter");
+                    let channel = ui.Channel;
+                    let doc = channel.CommitRebase.ActiveDoc;
+                    if (doc !== null) {
+                        doc.AppendPendingEdit();
+                        let selection = this_.getSelection();
+                        doc.AppendPendingEdit(ww.EditOp.FixupEditOp, selection.first);
+                        doc.AppendPendingEdit(ww.EditOp.EnterEditOp, selection.first + 2);
+                        channel.PushPendingCommit();
+                    }
+                }
+            });
         }
         applyEdit(edit) {
             let model = this.editor_.getModel();
@@ -143,7 +156,21 @@
             this.editor_.updateOptions({ readOnly: !editallowed });
             console.log(`${this.container_} readOnly: ${!editallowed}`);
         }
-    }
+        getLineFromIndex(index) {
+            let model = this.editor_.getModel();
+            let position = model.getPositionAt(index);
+            return position.lineNumber;
+        }
+        getLineRange(line) {
+            let model = this.editor_.getModel();
+            let first = model.getOffsetAt({ lineNumber: line, column: 1 });
+            let last = model.getOffsetAt({ lineNumber: line + 1, column: 1 });
+            if (last >= first + 2) {
+                last -= 2;
+            }
+            return { first: first, last: last - 2 };
+        }
+   }
 
     ww.MonacoEditor = MonacoEditor;
 
