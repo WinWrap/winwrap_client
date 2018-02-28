@@ -4,15 +4,8 @@
             this.edits_ = [...edits];
         }
 
-        IsNull() {
-            return this.edits_.length === 0;
-        }
-
-        AdjustSelection(selection, isserver) {
-            this.edits_.forEach(edit => {
-                selection.first = edit.AdjustCaret(selection.first, isserver);
-                selection.last = edit.AdjustCaret(selection.last, isserver);
-            });
+        AnyEdits() {
+            return this.edits_.length !== 0;
         }
 
         Append(nextedit) {
@@ -38,8 +31,7 @@
             if (this.edits_.length !== edits.edits_.length)
                 return false;
 
-            var i;
-            for (i = 0; i < this.edits_.length; ++i)
+            for (var i = 0; i < this.edits_.length; ++i)
                 if (!this.edits_[i].Equals(edits.edits_[i]))
                     return false;
 
@@ -47,12 +39,12 @@
         }
 
         MergeTransform(serverEdits) {
-            var mergedEdits = new Edits(this);
+            let mergedEdits = new Edits(this.edits_);
             // apply server Commit to create new Edits
-            serverEdits.forEach(function (serverEdit) {
+            serverEdits.Edits().forEach(function (serverEdit) {
                 // apply each server Edit to create a new merged edits
-                var transformedEdits = new Edits();
-                mergedEdits.forEach(edit => {
+                let transformedEdits = new Edits();
+                mergedEdits.Edits().forEach(edit => {
                     transformedEdits.AppendNoCombine(edit.MergeTransform(serverEdit));
                 });
 
@@ -67,7 +59,7 @@
             else if (this.edits_.length === 0)
                 this.edits_.unshift(prioredit);
             else {
-                var edit = prioredit.Copy();
+                let edit = prioredit.Copy();
                 if (!edit.Combine(this.edits_[0]))
                     this.edits_.unshift(prioredit);
                 else

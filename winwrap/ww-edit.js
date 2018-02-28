@@ -13,70 +13,15 @@ define(function () {
             this.op_ = op;
             this.index_ = index;
             this.delete_count_ = deletecount;
-            this.insert_ = undefined;
-            this.proc_ = undefined;
-            switch (typeof insert) {
-                case 'string': this.insert_ = insert; break;
-                case 'object': this.proc_ = insert; break;
-            }
+            this.insert_ = insert;
         }
 
-        Copy() {
-            let edit = new Edit(this.op_, this.index_, this.delete_count_, this.insert_);
-            edit.proc_ = this.proc_;
-            return edit;
-        }
-
-        DeleteCount() {
-            return this.delete_count_;
-        }
-
-        DeleteIndex() {
-            return this.index_ + this.delete_count_;
-        }
-
-        Delta() {
-            return this.InsertLength() - this.delete_count_;
-        }
-
-        Edit() {
-            return this.index_ + this.InsertLength();
-        }
-
-        Index() {
-            return this.index_;
-        }
-
-        Insert() {
-            return this.insert_;
-        }
-
-        InsertIndex() {
-            return this.index_ + this.InsertLength();
-        }
-
-        InsertLength() {
-            return this.insert_ === undefined ? 0 : this.delete_count_;
-        }
-
-        IsNull() {
-            return this.op_ === ww.EditOp.EditEditOp && this.delete_count_ === 0 && (this.insert_ === undefined || this.insert_ === '');
-        }
-
-        Op() {
-            return this.op_;
-        }
-
-        Equals(edit) {
-            return this.op_ === edit.op_ && this.index_ === edit.index_ && this.delete_count_ === edit.delete_count_ && this.insert_ === edit.insert_;
-        }
-
-        AdjustCaret(x, isserver) {
+        AdjustCaret(x, is_server) {
             // server operation at Index does not adjust the caret
-            if (isserver ? x > this.index_ : x >= this.index_) {
+            if (x >= this.index_ + is_server) {
                 if (x >= this.DeleteIndex())
                     x += this.Delta(); // shift by change's delta
-                else if (isserver)
+                else if (is_server)
                     x = this.index_; // move to front of change
                 else
                     x = this.InsertIndex(); // move to end of change
@@ -96,20 +41,20 @@ define(function () {
             if (!this.CanCombine(nextedit))
                 return false;
 
-            var iIndex = 0;
-            var iDelete = nextedit.delete_count_;
-            var sInsert = '';
-            var iThisInsertLength = this.InsertLength();
+            let iIndex = 0;
+            let iDelete = nextedit.delete_count_;
+            let sInsert = '';
+            let iThisInsertLength = this.InsertLength();
 
             // this is the prior edit
-            var iPriorInsertHeadCount = 0;
-            var iPriorInsertTailCount = 0;
+            let iPriorInsertHeadCount = 0;
+            let iPriorInsertTailCount = 0;
             if (nextedit.index_ < this.index_) {
                 // next edit is left of this (prior) edit
                 iIndex = nextedit.index_;
                 iPriorInsertHeadCount = 0;
-                var iKeepDelete = this.index_ - iIndex;
-                var iPriorInsertDelete = iDelete - iKeepDelete;
+                let iKeepDelete = this.index_ - iIndex;
+                let iPriorInsertDelete = iDelete - iKeepDelete;
                 if (iPriorInsertDelete > iThisInsertLength)
                     iPriorInsertDelete = iThisInsertLength;
 
@@ -158,9 +103,49 @@ define(function () {
             return true;
         }
 
+        Copy() {
+            return new Edit(this.op_, this.index_, this.delete_count_, this.insert_);
+        }
+
+        DeleteCount() {
+            return this.delete_count_;
+        }
+
+        DeleteIndex() {
+            return this.index_ + this.delete_count_;
+        }
+
+        Delta() {
+            return this.InsertLength() - this.delete_count_;
+        }
+
+        Equals(edit) {
+            return this.op_ === edit.op_ && this.index_ === edit.index_ && this.delete_count_ === edit.delete_count_ && this.insert_ === edit.insert_;
+        }
+
+        Index() {
+            return this.index_;
+        }
+
+        Insert() {
+            return this.insert_;
+        }
+
+        InsertIndex() {
+            return this.index_ + this.InsertLength();
+        }
+
+        InsertLength() {
+            return this.op_ === ww.EditOp.EditEditOp ? (this.insert_ === undefined ? 0 : this.insert_.length) : this.delete_count_;
+        }
+
+        IsNull() {
+            return this.op_ === ww.EditOp.EditEditOp && this.delete_count_ === 0 && (this.insert_ === undefined || this.insert_ === '');
+        }
+
         MergeTransform(serverEdit) {
-            var beforeEdit = new Edit(0, 0, '');
-            var afterEdit = new Edit(0, 0, '');
+            let beforeEdit = new Edit(0, 0, '');
+            let afterEdit = new Edit(0, 0, '');
             if (this.DeleteIndex() < serverEdit.index_) {
                 // entirely before serverEdit
                 beforeEdit = this.Copy();
@@ -203,7 +188,7 @@ define(function () {
                 afterEdit.insert_ = this.insert_;
             }
 
-            var edits = [];
+            let edits = [];
             if (!beforeEdit.IsNull())
                 edits.push(beforeEdit);
 
@@ -211,6 +196,10 @@ define(function () {
                 edits.push(afterEdit);
 
             return edits;
+        }
+
+        Op() {
+            return this.op_;
         }
 
         RevertEdit(s0) {
@@ -234,17 +223,17 @@ define(function () {
     ww.Edit = Edit;
 
     ww.Diff = (s0, s1, hint) => {
-        var len0 = s0.length;
-        var len1 = s1.length;
+        let len0 = s0.length;
+        let len1 = s1.length;
         if (len0 === len1 && s0 === s1)
             return null;
 
-        var min = Math.min(len0, len1);
-        var offset = 0;
-        var guard = hint < 100 ? 5 : 50;
+        let min = Math.min(len0, len1);
+        let offset = 0;
+        let guard = hint < 100 ? 5 : 50;
         if (hint >= guard && hint < min - guard) {
-            var hint0 = len0 === min ? hint : hint + len0 - len1;
-            var hint1 = len1 === min ? hint : hint + len1 - len0;
+            let hint0 = len0 === min ? hint : hint + len0 - len1;
+            let hint1 = len1 === min ? hint : hint + len1 - len0;
             if (s0.substring(0, hint - guard) === s1.substring(0, hint - guard) &&
                 s0.substring(hint0 + guard) === s1.substring(hint1 + guard)) {
                 // leading strings match from to hint - guard
@@ -255,15 +244,15 @@ define(function () {
             }
         }
 
-        var index = 0;
+        let index = 0;
         while (index < min) {
             if (s0.charAt(index) !== s1.charAt(index))
                 break;
             ++index;
         }
 
-        var i0 = len0;
-        var i1 = len1;
+        let i0 = len0;
+        let i1 = len1;
         while (i0 > index && i1 > index) {
             if (s0.charAt(i0 - 1) !== s1.charAt(i1 - 1))
                 break;
@@ -271,8 +260,8 @@ define(function () {
             --i1;
         }
 
-        var deletecount = i0 - index;
-        var insert = s1.substring(index, i1);
+        let deletecount = i0 - index;
+        let insert = s1.substring(index, i1);
         return new Edit(ww.EditOp.EditEditOp, index + offset, deletecount, insert);
     };
 });

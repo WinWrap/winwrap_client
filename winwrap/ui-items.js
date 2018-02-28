@@ -59,7 +59,7 @@
                 source: (request, response) => {
                     let term = $.ui.autocomplete.escapeRegex(request.term);
                     //console.log(term);
-                    var matcher = new RegExp(`^.*${term}.*$`, 'i');
+                    let matcher = new RegExp(`^.*${term}.*$`, 'i');
                     response($.grep(inputMacro.macros_, element => { // xxx
                         return matcher.test(element);
                     }));

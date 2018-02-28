@@ -22,15 +22,15 @@
                 caret = this.editor_.getSelection().first;
             }
 
-            var commit = this.pending_commit_;
+            let commit = this.pending_commit_;
 
             if (op === ww.EditOp.EditEditOp) {
                 // calculate change
-                var text = this.editor_.getText();
-                var edit = ww.Diff(this.revision_text_, text, caret);
+                let text = this.editor_.getText();
+                let edit = ww.Diff(this.revision_text_, text, caret);
                 if (edit !== null) {
                     commit.AppendEdit(edit);
-                    var revertEdit = edit.RevertEdit(this.revision_text_);
+                    let revertEdit = edit.RevertEdit(this.revision_text_);
                     commit.PrependRevertEdit(revertEdit);
                     this.revision_text_ = text;
                 }
@@ -47,9 +47,8 @@
             }
         }
 
-        ApplyEdits(edits, isserver) {
-            var editor = this.editor_;
-            edits.Edits().forEach(edit => { editor.applyEdit(edit, isserver); });
+        ApplyEdits(edits, is_server) {
+            this.editor_.applyEdits(edits, is_server);
         }
 
         Commit() {
@@ -57,11 +56,11 @@
                 return null;
 
             this.AppendPendingEdit();
-            if (this.pending_commit_.IsNull() && !this.need_commit_) {
+            if (!this.pending_commit_.AnyEdits() && !this.need_commit_) {
                 return null;
             }
 
-            var need_commit = this.need_commit_;
+            let need_commit = this.need_commit_;
             this.need_commit_ = false;
             this.current_commit_ = this.pending_commit_.TakeChanges(need_commit);
             this.current_commit_.Log('Current commit:');
@@ -88,44 +87,38 @@
         }
 
         Rebase(serverCommit) {
-            serverCommit.Log('Rebase serverCommit:');
-            // make sure all edits have been commited
-            this.AppendPendingEdit();
+            if (serverCommit.AnyEdits()) {
+                serverCommit.Log('Rebase serverCommit:');
+                // make sure all edits have been commited
+                this.AppendPendingEdit();
 
-            // Rebasing Onto Master(Client - Side) After an operation is transformed and applied server - side,
-            // it is broadcasted to the other clients.
-            // When a client receives the change, it does the equivalent of a git rebase:
-            // 1. Reverts all 'pending' (non - merged) local operations operation from the server
-            // 2. Applies remote operation
-            // 3. Re-applies pending operations, transforming each operation against the new operation from the server
+                // Rebasing Onto Master(Client - Side) After an operation is transformed and applied server - side,
+                // it is broadcasted to the other clients.
+                // When a client receives the change, it does the equivalent of a git rebase:
+                // 1. Reverts all 'pending' (non - merged) local operations operation from the server
+                // 2. Applies remote operation
+                // 3. Re-applies pending operations, transforming each operation against the new operation from the server
 
-            // take the pending commits (ApplyEdits below will add them back)
-            var pending_commit = this.pending_commit_.TakeChanges();
+                // take the pending commits (ApplyEdits below will add them back)
+                let pending_commit = this.pending_commit_.TakeChanges();
 
-            if (pending_commit) {
-                // revert code
-                this.ApplyEdits(pending_commit.RevertEdits(), false);
-            }
+                if (pending_commit) {
+                    // revert pending commit and selection using the pending commit
+                    this.ApplyEdits(pending_commit.RevertEdits(), false);
+                }
 
-            // rebase text using server commit
-            this.ApplyEdits(serverCommit.Edits(), true);
+                // rebase text using server commit
+                this.ApplyEdits(serverCommit.Edits(), true);
 
-            // update revision
-            this.SetRevision(serverCommit.revision);
+                // update revision text
+                this.revision_text_ = this.editor_.getText();
 
-            // update revision text
-            this.revision_text_ = this.editor_.getText();
-
-            if (pending_commit) {
-		        // rebase commit edits using the server commit and
-		        // apply rebase code edits
-                var mergedEdits = commit.Edits().MergeTransform(serverCommit.Edits());
-                this.ApplyEdits(mergedEdits, false);
-            }
-
-            // scroll to selection
-            if (serverCommit.caret_index && serverCommit.ForSyncId() === this.sync_id_) {
-                this.editor_.setSelection(serverCommit.caret_index, serverCommit.caret_index);
+                if (pending_commit) {
+                    // rebase pending commit edits using server commit
+                    let pending_edits = pending_commit.Edits().MergeTransform(serverCommit.Edits());
+                    // apply rebased pending edits
+                    this.ApplyEdits(pending_edits, false);
+                }
             }
         }
 
