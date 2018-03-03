@@ -16,8 +16,7 @@
             case 'ww-item-immediate': return new ww.MonacoEditor(ui, element, 'immediate');
             case 'ww-item-watch': return new ww.MonacoEditor(ui, element, 'watch');
             case 'ww-item-code': return new ww.MonacoEditor(ui, element, 'code');
-            case 'ww-item-statusbar': return undefined; //
-            case 'ww-item-version': return new WinWrapVersion(ui, element);
+            case 'ww-item-statusbar': return new StatusBar(ui, element);
         }
     };
 
@@ -233,13 +232,13 @@
         }
     }
 
-    class WinWrapVersion { // repurposed as a status line
+    class StatusBar {
         constructor(ui, element) {
             this.UI = ui;
             let this0 = this;
             this.element_ = element;
             this.element_.click(() => {
-                console.log(`Status line clicked at ${new Date().toLocaleString()}.`);
+                console.log(`StatusBar line clicked at ${new Date().toLocaleString()}.`);
                 let editor = this0.UI.EditorCode;
                 editor.setSelection(3, 7);
                 let obj = editor.getSelection(); // necessary for console.log expansion

@@ -55,7 +55,7 @@
                     editor.focus();
                 }
                 let syntaxMsg = syntaxError.getMessage();
-                this.UI.Status.element_.text(`Error ${syntaxMsg}`);
+                this.UI.StatusBar.element_.text(`Error ${syntaxMsg}`);
             }
             syntaxError.clearError();
             return decorations;
