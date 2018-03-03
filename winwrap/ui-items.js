@@ -16,7 +16,7 @@
             case 'ww-item-immediate': return new ww.MonacoEditor(ui, element, 'immediate');
             case 'ww-item-watch': return new ww.MonacoEditor(ui, element, 'watch');
             case 'ww-item-code': return new ww.MonacoEditor(ui, element, 'code');
-            case 'ww-item-statusbar': return undefined;
+            case 'ww-item-statusbar': return undefined; //
             case 'ww-item-version': return new WinWrapVersion(ui, element);
         }
     };
