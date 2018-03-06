@@ -118,7 +118,9 @@
                         this.Channel.PushPendingRequest({ command: '?watch', watches: watches });
                     }
                     this.SetState(notification);
-                    let linenum = notification.stack[0].linenum;
+                    let pauseLine = notification.stack[0].linenum;
+                    let editor = this.Channel.UI.EditorCode.editor();
+                    editor.revealLineInCenter(pauseLine);
                     break;
                 case '!notify_resume': // notification
                     this.SetState(notification);
