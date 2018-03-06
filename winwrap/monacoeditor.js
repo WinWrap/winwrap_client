@@ -142,14 +142,9 @@
                 this.hide();
             }*/
         }
-        scrollToBottom() { // xxx needs work
-            let lines = this.editor_.getModel().getLineCount();
-            /*let top = this.editor_.getTopForLineNumber(lines);
-            let lineHeight = this.editor_.getConfiguration().lineHeight;
-            let contentHeight = this.editor_.getLayoutInfo().contentHeight;
-            this.editor_.setScrollTop(top - contentHeight + lineHeight);*/
-            this.editor_.revealLine(lines);
-            //let scrollHeight = this.editor_.getScrollHeight(); // horizontal auto
+        scrollToBottom() { // horizontal auto
+            let topLine = this.editor_.getModel().getLineCount();
+            this.editor_.revealLine(topLine); // top line may be empty
         }
         scrollToSelection() {
             // to be written
