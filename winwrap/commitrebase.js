@@ -58,6 +58,7 @@
 
         Read(file) {
             this.Editor.editor().setValue(file.visible_code);
+            this.Editor.editor().setScrollTop(0);
             this.ActiveDoc = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, this.Editor);
         }
 
