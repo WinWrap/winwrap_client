@@ -130,15 +130,6 @@
         hide() {
             this.element_.hide();
         }
-        scrollToSelection() {
-            // to be written
-        }
-        show() {
-            this.element_.show();
-        }
-        showing() {
-            return this.element_.css('display') !== 'none';
-        }
         resize() {
             // editor options "automaticLayout: true" checks size every 100ms
             /*let showing = this.showing();
@@ -159,12 +150,21 @@
             this.editor_.setScrollTop(top - contentHeight + lineHeight);
             //let scrollHeight = this.editor_.getScrollHeight(); // horizontal auto
         }
+        scrollToSelection() {
+            // to be written
+        }
         setSelection(first, last) {
             let model = this.editor_.getModel();
             let p1 = model.getPositionAt(first);
             let p2 = last === undefined ? p1 : model.getPositionAt(last);
             let rng = new monaco.Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
             this.editor_.setSelection(rng);
+        }
+        show() {
+            this.element_.show();
+        }
+        showing() {
+            return this.element_.css('display') !== 'none';
         }
         textUntilPosition(model, position) {
             let text = model.getValueInRange({
