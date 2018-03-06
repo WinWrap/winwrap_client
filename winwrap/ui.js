@@ -118,6 +118,7 @@
                         this.Channel.PushPendingRequest({ command: '?watch', watches: watches });
                     }
                     this.SetState(notification);
+                    let linenum = notification.stack[0].linenum;
                     break;
                 case '!notify_resume': // notification
                     this.SetState(notification);
