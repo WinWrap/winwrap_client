@@ -22,7 +22,7 @@
                 } else {
                     this.stack = [];
                 }
-                this.UI.DebugDecorate.display();
+                this.UI.Decorate.display();
             }
         }
     }

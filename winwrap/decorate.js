@@ -2,7 +2,7 @@
 
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodelwithdecorations.html
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.imodeldeltadecoration.html
-    class DebugDecorate {
+    class Decorate {
         constructor(ui) {
             this.UI = ui;
             this.oldDecorations = '';
@@ -78,6 +78,6 @@
         }
     }
 
-    ww.DebugDecorate = DebugDecorate;
+    ww.Decorate = Decorate;
 
 });
