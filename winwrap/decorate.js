@@ -2,7 +2,7 @@
 
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodelwithdecorations.html
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.imodeldeltadecoration.html
-    class DebugDecorate {
+    class Decorate {
         constructor(ui) {
             this.UI = ui;
             this.oldDecorations = '';
@@ -55,7 +55,7 @@
                     editor.focus();
                 }
                 let syntaxMsg = syntaxError.getMessage();
-                this.UI.Status.element_.text(`Error ${syntaxMsg}`);
+                this.UI.StatusBar.element_.text(`Error ${syntaxMsg}`);
             }
             syntaxError.clearError();
             return decorations;
@@ -78,6 +78,6 @@
         }
     }
 
-    ww.DebugDecorate = DebugDecorate;
+    ww.Decorate = Decorate;
 
 });

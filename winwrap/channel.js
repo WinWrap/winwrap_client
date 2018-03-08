@@ -6,7 +6,7 @@
             this.UI = undefined;
             this.ClientID = ('0000000000' + Math.floor(Math.random() * 2147483647)).slice(-10).toString();
             this.AllocatedID = 0; // explicitly set in ?attach
-            this.Version = undefined; // repurposed as a status line
+            this.Version = undefined;
             this.generation_ = 0;
             this.commitcounter_ = 0;
             this.busy_ = false;

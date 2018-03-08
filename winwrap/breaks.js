@@ -29,7 +29,7 @@
                 });
             }
             this.breaks = breaks;
-            this.UI.DebugDecorate.display();
+            this.UI.Decorate.display();
         }
         isBreak(macro, aline) {
             let breaks = this.breaks;

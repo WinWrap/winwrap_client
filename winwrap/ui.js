@@ -12,7 +12,7 @@
                     item.Initialize();
                 }
             });
-            this.Status = this.items_['ww-item-version'];
+            this.StatusBar = this.items_['ww-item-statusbar'];
             this.EditorImmediate = this.items_['ww-item-immediate'];
             this.EditorWatch = this.items_['ww-item-watch'];
             this.EditorCode = this.items_['ww-item-code'];
@@ -21,7 +21,7 @@
             this.Breaks = new ww.Breaks(this);
             this.SyntaxError = new ww.SyntaxError(this);
             this.Stack = new ww.Stack(this);
-            this.DebugDecorate = new ww.DebugDecorate(this);
+            this.Decorate = new ww.Decorate(this);
             $(window).resize(() => {
                 this.EditorImmediate.resize();
                 this.EditorWatch.resize();
@@ -76,7 +76,7 @@
             switch (notification.response) { // each case => one requests
                 case '!break': // notification
                     this.Breaks.setBreak(notification);
-                    this.DebugDecorate.display();
+                    this.Decorate.display();
                     break;
                 case '!notify_begin': // notification
                     this.SetState(notification);
@@ -103,7 +103,7 @@
                     // notification.error.line_num
                     // notification.error.offset (index into the line where the error occurred, -1 for runtime error)
                     this.SyntaxError.setResponse(notification);
-                    this.DebugDecorate.display();
+                    this.Decorate.display();
                     break;
                 case '!notify_macrobegin': // notification
                     break;
@@ -118,6 +118,9 @@
                         this.Channel.PushPendingRequest({ command: '?watch', watches: watches });
                     }
                     this.SetState(notification);
+                    let pauseLine = notification.stack[0].linenum;
+                    let editor = this.Channel.UI.EditorCode.editor();
+                    editor.revealLineInCenter(pauseLine);
                     break;
                 case '!notify_resume': // notification
                     this.SetState(notification);
@@ -162,7 +165,7 @@
                         alert('No syntax errors.');
                     }*/
                     this.SyntaxError.setResponse(response);
-                    this.DebugDecorate.display();
+                    this.Decorate.display();
                     break;
                 case '!watch': // response
                     let watchResults = response.results.map(item => {

@@ -4,7 +4,7 @@
     './breaks',
     './channel',
     './commitrebase',
-    './debugdecorate',
+    './decorate',
     './monacoeditor',
     './remote',
     './signaturehelp',

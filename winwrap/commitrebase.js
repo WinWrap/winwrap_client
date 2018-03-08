@@ -57,7 +57,10 @@
         }
 
         Read(file) {
-            this.Editor.editor().setValue(file.visible_code);
+            let editor = this.Editor.editor();
+            editor.setValue(file.visible_code);
+            //editor.setScrollTop(0);
+            editor.revealLine(1);
             this.ActiveDoc = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, this.Editor);
         }
 
