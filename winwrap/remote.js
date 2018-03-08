@@ -26,7 +26,7 @@
             Object.values(this.channels_).forEach(async channel => {
                 await channel.InitializeAsync();
             });
-            //this.StartPolling();
+            this.StartPolling();
         }
         AddChannel(channel) {
             this.channels_[channel.Name] = channel;
@@ -134,7 +134,7 @@
                 this.Process(responses, id);
             }
             this.pollBusy_ = false;
-            //this.StartPolling(); // waiting to poll
+            this.StartPolling(); // waiting to poll
         }
         _SendAsync(requests, id) { // called by _PollAsync and SendAsync
             let url = 'http://' + this.serverip_ + '/winwrap/poll/' + id;
