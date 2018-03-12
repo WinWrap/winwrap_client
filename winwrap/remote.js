@@ -26,6 +26,7 @@
             Object.values(this.channels_).forEach(async channel => {
                 try {
                     await channel.InitializeAsync();
+                    console.log(`await channel.InitializeAsync() ${channel.Name}`);
                 } catch (err) {
                     console.log('ERROR remote.js InitializeAsync ', err);
                 }
