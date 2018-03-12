@@ -88,6 +88,7 @@
                 });
                 Object.values(this.remotes_).forEach(async remote => {
                     await remote.InitializeAsync();
+                    console.log(`Basic._InitializeAsync remote.serverip_ = ${remote.serverip_} remotes`);
                 });
             }
             ClassName(element, prefix, defaultName) {
