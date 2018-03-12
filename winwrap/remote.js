@@ -25,6 +25,7 @@
         async InitializeAsync() {
             Object.values(this.channels_).forEach(async channel => {
                 await channel.InitializeAsync();
+                console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
             });
             this.StartPolling();
         }
