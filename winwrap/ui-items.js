@@ -237,28 +237,13 @@
             this.UI = ui;
             let this0 = this;
             this.element_ = element;
-            this.element_.click(() => {
-                console.log(`StatusBar line clicked at ${new Date().toLocaleString()}.`);
-                let editor = this0.UI.EditorCode;
-                editor.setSelection(3, 7);
-                let obj = editor.getSelection(); // necessary for console.log expansion
-                console.log(obj);
-                /*
-                // detect code editor "Enter" key
-                editor.onKeyUp(function (e) {
-                    if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
-                        console.log("e.keyCode === monaco.KeyCode.Enter");
-                    }
-                });
-                */
-                /*
-                //editor.trigger('mysource', 'editor.action.triggerSuggest', {});
-                //editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
-                */
-            });
         }
         Initialize() {
-            this.element_.text(`WinWrap Version = ${this.UI.Channel.Version}`);
+            //this.element_.text(`WinWrap Version = ${this.UI.Channel.Version}`);
+            this.SetText(`WinWrap Version = ${this.UI.Channel.Version}`);
+        }
+        SetText(text) {
+            this.element_.text(text);
         }
     }
 
@@ -277,3 +262,28 @@
     ww.Browser = new Browser();
 
 });
+
+// code snippets
+
+/* use in StatsBar constructor
+    this.element_.click(() => {
+        console.log(`StatusBar line clicked at ${new Date().toLocaleString()}.`);
+        let editor = this0.UI.EditorCode;
+        editor.setSelection(3, 7);
+        let obj = editor.getSelection(); // necessary for console.log expansion
+        console.log(obj);
+    });
+*/
+
+/*detect code editor "Enter" key
+    editor.onKeyUp(function (e) {
+        if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
+            console.log("e.keyCode === monaco.KeyCode.Enter");
+        }
+    });
+*/
+
+/*
+    editor.trigger('mysource', 'editor.action.triggerSuggest', {});
+    editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
+*/
