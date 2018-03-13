@@ -50,9 +50,8 @@
             request.datetime = new Date().toLocaleString();
             request.id = this.AllocatedID;
             request.gen = this._NextGeneration();
-            //return await this.Remote.SendAsync(request, expected, request.id);
             let result = await this.Remote.SendAsync(request, expected, request.id);
-            console.log(`Channel.SendAsync expected = ${expected}`);
+            //console.log(`Channel.SendAsync expected = ${expected}`);
             return result;
         }
         Poll() {
