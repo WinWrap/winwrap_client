@@ -18,7 +18,6 @@
             this.busy_ = true;
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
-            //attach = await this.SendAsync(request, '!attach');
             try {
                 attach = await this.SendAsync(request, '!attach');
             } catch (err) {
