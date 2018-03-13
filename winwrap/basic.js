@@ -86,22 +86,23 @@
                         }
                     });
                 });
-                //let remotes = Object.values(this.remotes_);
+                let remotes = Object.values(this.remotes_);
                 //for (let remote of remotes) {
                 /*for (let remote of Object.values(this.remotes_)) {
                     await remote.InitializeAsync();
                     console.log(`Basic._InitializeAsync remote.Name = ${remote.Name}`);
                 }*/
-                for (let remote in this.remotes_) {
+                /*for (let remote in this.remotes_) {
                     await this.remotes_[remote].InitializeAsync();
                     console.log(`Basic._InitializeAsync remote.Name = ${remote.Name}`);
-                }
+                }*/
                 //let remote = this.remotes_["ww-remote-1"];
                 //await remote.InitializeAsync();
-                /*Object.values(this.remotes_).forEach(async remote => {
+                //Object.values(this.remotes_).forEach(async remote => {
+                remotes.forEach(async remote => {
                     await remote.InitializeAsync();
                     console.log(`Basic._InitializeAsync remote.serverip_ = ${remote.serverip_}`);
-                });*/
+                });
                 console.log(`Basic._InitializeAsync ${Object.keys(this.remotes_).length} remotes`);
             }
             ClassName(element, prefix, defaultName) {
