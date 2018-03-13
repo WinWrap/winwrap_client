@@ -239,7 +239,6 @@
             this.element_ = element;
         }
         Initialize() {
-            //this.element_.text(`WinWrap Version = ${this.UI.Channel.Version}`);
             this.SetText(`WinWrap Version = ${this.UI.Channel.Version}`);
         }
         SetText(text) {
