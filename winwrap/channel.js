@@ -18,12 +18,12 @@
             this.busy_ = true;
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
-            attach = await this.SendAsync(request, '!attach');
-            /*try {
+            //attach = await this.SendAsync(request, '!attach');
+            try {
                 attach = await this.SendAsync(request, '!attach');
             } catch (err) {
                 console.log('ERROR channel.js _AttachAsync ', err);
-            }*/
+            }
             this.busy_ = false;
             if (attach.unique_name !== this.ClientID) {
                 alert('Attach failed.');
