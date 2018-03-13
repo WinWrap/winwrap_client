@@ -24,7 +24,7 @@
                 let basic = this; // closure can't handle this in the lambdas below
                 setTimeout(async () => {
                     await basic._InitializeAsync(factory);
-                    console.log(`Basic.Initialize ${Object.keys(this.remotes_).length} remotes`);
+                    //console.log(`Basic.Initialize ${Object.keys(this.remotes_).length} remotes`);
                 }, 100); // wait to initialize
             }
             async _InitializeAsync(factory) {
@@ -88,13 +88,11 @@
                 });
                 for (let remote of Object.values(this.remotes_)) {
                     await remote.InitializeAsync();
-                    console.log(`Basic._InitializeAsync remote.Name = ${remote.Name}`);
+                    //console.log(`Basic._InitializeAsync remote.Name = ${remote.Name}`);
                 }
                 /*Object.values(this.remotes_).forEach(async remote => {
                     await remote.InitializeAsync();
-                    console.log(`Basic._InitializeAsync remote.serverip_ = ${remote.serverip_}`);
                 });*/
-                console.log(`Basic._InitializeAsync ${Object.keys(this.remotes_).length} remotes`);
             }
             ClassName(element, prefix, defaultName) {
                 let className = undefined;
