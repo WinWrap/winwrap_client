@@ -22,13 +22,14 @@
             this.pollBusy_ = false; // not in Poll
             this.pendingRequests = [];
         }
-        async _channelAsync(channel) {
+        /*async _channelAsync(channel) {
             await channel.InitializeAsync();
             console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
-        }
+        }*/
         async InitializeAsync() {
             let channel = this.channels_["ww-channel-1"];
-            await this._channelAsync(channel);
+            //await this._channelAsync(channel);
+            await channel.InitializeAsync();
             console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
             /*Object.values(this.channels_).forEach(async (channel) => {
                 await this._channelAsync(channel);
