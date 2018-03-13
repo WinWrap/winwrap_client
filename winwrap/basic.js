@@ -87,6 +87,9 @@
                     });
                 });
                 let remotes = Object.values(this.remotes_);
+                for (let remote of remotes) {
+                    console.log(`Basic._InitializeAsync remote.Name = ${remote.Name}`);
+                }
                 let remote = this.remotes_["ww-remote-1"];
                 await remote.InitializeAsync();
                 /*Object.values(this.remotes_).forEach(async remote => {
