@@ -90,6 +90,7 @@
                     await remote.InitializeAsync();
                     console.log(`Basic._InitializeAsync remote.serverip_ = ${remote.serverip_}`);
                 });
+                console.log(`Basic._InitializeAsync ${Object.keys(this.remotes_).length} remotes`);
             }
             ClassName(element, prefix, defaultName) {
                 let className = undefined;
