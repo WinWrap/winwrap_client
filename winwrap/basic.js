@@ -93,7 +93,7 @@
                     console.log(`Basic._InitializeAsync remote.Name = ${remote.Name}`);
                 }*/
                 for (let remote in this.remotes_) {
-                    await remote.InitializeAsync();
+                    await this.remotes_[remote].InitializeAsync();
                     console.log(`Basic._InitializeAsync remote.Name = ${remote.Name}`);
                 }
                 //let remote = this.remotes_["ww-remote-1"];
