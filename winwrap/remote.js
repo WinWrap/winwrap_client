@@ -27,12 +27,14 @@
             console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
         }
         async InitializeAsync() {
-            let xx = this.channels_["ww-channel-1"];
-            Object.values(this.channels_).forEach(async (channel) => {
+            let channel = this.channels_["ww-channel-1"];
+            await this._channelAsync(channel);
+            console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
+            /*Object.values(this.channels_).forEach(async (channel) => {
                 await this._channelAsync(channel);
                 //await channel.InitializeAsync();
                 console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
-            });
+            });*/
             this.StartPolling();
         }
         AddChannel(channel) {
