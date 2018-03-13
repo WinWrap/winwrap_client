@@ -23,7 +23,7 @@
             this.pendingRequests = [];
         }
         async InitializeAsync() {
-            Object.values(this.channels_).forEach(async channel => {
+            Object.values(this.channels_).forEach(async (channel) => {
                 await channel.InitializeAsync();
                 /*try {
                     await channel.InitializeAsync();
