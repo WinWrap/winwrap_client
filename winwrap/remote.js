@@ -24,7 +24,7 @@
         }
         async InitializeAsync() {
             for (let channel of Object.values(this.channels_)) {
-                await this._channelAsync(channel);
+                await channel.InitializeAsync();
                 console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
             }
             /*Object.values(this.channels_).forEach(async channel => {
