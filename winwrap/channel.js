@@ -24,8 +24,8 @@
                 console.log('ERROR channel.js _AttachAsync ', err);
             }
             this.busy_ = false;
-            if (typeof (attach) === undefined) {
-                alert("attach === undefined");
+            if (typeof (attach) === "undefined") {
+                alert("attach === \"undefined\"");
                 return;
             } else if (attach.unique_name !== this.ClientID) {
                 alert('Attach failed.');
