@@ -86,8 +86,9 @@
                         }
                     });
                 });
-                let remotes = Object.values(this.remotes_);
-                for (let remote of remotes) {
+                //let remotes = Object.values(this.remotes_);
+                //for (let remote of remotes) {
+                for (let remote of Object.values(this.remotes_)) {
                     await remote.InitializeAsync();
                     console.log(`Basic._InitializeAsync remote.Name = ${remote.Name}`);
                 }
@@ -117,4 +118,4 @@
         }
 
         ww.Basic = Basic;
-});
+    });
