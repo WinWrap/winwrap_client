@@ -45,7 +45,6 @@
             return this.pollBusy_;
         }
         StartPolling() { // stop during autocomplete and signaturehelp
-            return; // xyz
             if (!this.polling_) {
                 this.polling_ = true; // waiting to poll
                 if (this.timerId_ === null) {
