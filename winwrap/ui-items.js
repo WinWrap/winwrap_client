@@ -240,8 +240,9 @@
         }
         Initialize() {
             let channel = this.UI.Channel;
-            //this.SetText(`WinWrap Version = ${this.UI.Channel.Version}`);
-            this.SetText(`WinWrap Version = ${channel.Version}, ${channel.Name} AllocatedID = ${channel.AllocatedID}`);
+            let versionInfo = `WinWrap Version = ${channel.Version}`;
+            let channelInfo = `${channel.Name} AllocatedID = ${channel.AllocatedID}`;
+            this.SetText(`${versionInfo}, ${channelInfo}`);
         }
         SetText(text) {
             this.element_.text(text);
