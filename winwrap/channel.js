@@ -3,7 +3,7 @@
         constructor(remote, name) {
             this.Remote = remote;
             this.Name = name;
-            this.UI = undefined;
+            this.UI = undefined; // set Basic async _InitializeAsync(factory)
             this.ClientID = ('0000000000' + Math.floor(Math.random() * 2147483647)).slice(-10).toString();
             this.AllocatedID = 0; // explicitly set in ?attach
             this.Version = undefined;
@@ -16,6 +16,7 @@
                 this.Remote._Wait(100);
 
             this.busy_ = true;
+            this.UI.Initialize();
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
             try {
@@ -35,7 +36,7 @@
             this.Version = attach.version;
 
             this.CommitRebase = new ww.CommitRebase(this);
-            this.UI.Initialize();
+            //this.UI.Initialize();
 
             this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
             this.PushPendingRequest({ command: '?stack' });
