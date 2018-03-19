@@ -16,6 +16,7 @@
                 this.Remote._Wait(100);
 
             this.busy_ = true;
+            this.CommitRebase = new ww.CommitRebase(this);
             this.UI.Initialize();
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
@@ -35,7 +36,7 @@
             this.AllocatedID = attach.allocated_id;
             this.Version = attach.version;
 
-            this.CommitRebase = new ww.CommitRebase(this);
+            //this.CommitRebase = new ww.CommitRebase(this);
             //this.UI.Initialize();
 
             this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
