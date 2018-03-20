@@ -239,6 +239,9 @@
             this.element_ = element;
         }
         Initialize() {
+            this.SetVersionChannelInfo();
+        }
+        SetVersionChannelInfo() {
             let channel = this.UI.Channel;
             let versionInfo = `WinWrap Version = ${channel.Version}`;
             let channelInfo = `${channel.Name} AllocatedID = ${channel.AllocatedID}`;
