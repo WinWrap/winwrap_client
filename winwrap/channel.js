@@ -23,13 +23,12 @@
             try {
                 attach = await this.SendAsync(request, '!attach');
             } catch (err) {
-                console.log('ERROR channel.js _AttachAsync ', err);
+                console.log('ERROR channel.js InitializeAsync ', err);
+                let attachErrMsg = `${this.Name} ${request.command} threw error`;
+                this.UI.StatusBar.SetText(attachErrMsg);
             }
             this.busy_ = false;
-            if (typeof (attach) === "undefined") {
-                alert("attach === \"undefined\"");
-                return;
-            } else if (attach.unique_name !== this.ClientID) {
+            if (attach.unique_name !== this.ClientID) {
                 alert('Attach failed.');
                 return;
             }
