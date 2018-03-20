@@ -29,7 +29,7 @@
             }
             this.busy_ = false;
             if (attach.unique_name !== this.ClientID) {
-                alert('Attach failed.');
+                alert(`${this.Name} ${request.command} failed ${attach.unique_name} !== ${this.ClientID}`);
                 return;
             }
             this.AllocatedID = attach.allocated_id;
