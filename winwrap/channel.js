@@ -35,6 +35,7 @@
             }
             this.AllocatedID = attach.allocated_id;
             this.Version = attach.version;
+            this.UI.StatusBar.SetVersionChannelInfo();
 
             //this.CommitRebase = new ww.CommitRebase(this);
             //this.UI.Initialize();
