@@ -1,21 +1,14 @@
 ﻿define([
-    './autoauto',
-    './autocomplete',
     './breaks',
     './channel',
     './commitrebase',
-    './decorate',
-    './monacoeditor',
     './remote',
-    './signaturehelp',
     './stack',
     './syntaxerror',
     './ui',
-    './ui-items',
-    './ww-commit',
-    './ww-doc',
-    './ww-edit',
-    './ww-edits'], function () {
+    './change',
+    './commit',
+    './doc'], function () {
         class Basic {
             constructor() {
                 this.remotes_ = {};

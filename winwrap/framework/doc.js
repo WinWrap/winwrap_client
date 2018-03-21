@@ -6,16 +6,16 @@
             this.revision_ = revision;
             this.editor_ = editor;
             // editor object support this methods:
-            // applyEdit, getText, getSelection and scrollToSelection
+            // applyChange, getText, getSelection and scrollToSelection
             this.need_commit_ = false;
             this.current_commit_ = null;
             this.revision_text_ = this.editor_.getText();
             this.pending_commit_ = new ww.Commit(sync_id, sync_id);
         }
 
-        AppendPendingEdit(op, caret) {
+        AppendPendingChange(op, caret) {
             if (op === undefined) {
-                op = ww.EditOp.EditEditOp;
+                op = ww.ChangeOp.ChangeChangeOp;
             }
 
             if (caret === undefined) {
@@ -24,39 +24,39 @@
 
             let commit = this.pending_commit_;
 
-            if (op === ww.EditOp.EditEditOp) {
+            if (op === ww.ChangeOp.ChangeChangeOp) {
                 // calculate change
                 let text = this.editor_.getText();
-                let edit = ww.Diff(this.revision_text_, text, caret);
-                if (edit !== null) {
-                    commit.AppendEdit(edit);
-                    let revertEdit = edit.RevertEdit(this.revision_text_);
-                    commit.PrependRevertEdit(revertEdit);
+                let change = ww.Diff(this.revision_text_, text, caret);
+                if (change !== null) {
+                    commit.AppendChange(change);
+                    let revertChange = change.RevertChange(this.revision_text_);
+                    commit.PrependRevertChange(revertChange);
                     this.revision_text_ = text;
                 }
             }
-            else if (op === ww.EditOp.EnterEditOp) {
+            else if (op === ww.ChangeOp.EnterChangeOp) {
                 let line = this.editor_.getLineFromIndex(caret);
                 let range = this.editor_.getLineRange(line - 1);
-                commit.AppendEdit(new ww.Edit(op, range.last, 2));
+                commit.AppendChange(new ww.Change(op, range.last, 2));
             }
-            else if (op === ww.EditOp.FixupEditOp) {
+            else if (op === ww.ChangeOp.FixupChangeOp) {
                 let line = this.editor_.getLineFromIndex(caret);
                 let range = this.editor_.getLineRange(line - 1);
-                commit.AppendEdit(new ww.Edit(op, range.first, range.last - range.first));
+                commit.AppendChange(new ww.Change(op, range.first, range.last - range.first));
             }
         }
 
-        ApplyEdits(edits, is_server) {
-            this.editor_.applyEdits(edits, is_server);
+        ApplyChanges(changes, is_server) {
+            this.editor_.applyChanges(changes, is_server);
         }
 
         Commit() {
             if (this.current_commit_ !== null)
                 return null;
 
-            this.AppendPendingEdit();
-            if (!this.pending_commit_.AnyEdits() && !this.need_commit_) {
+            this.AppendPendingChange();
+            if (!this.pending_commit_.AnyChanges() && !this.need_commit_) {
                 return null;
             }
 
@@ -87,10 +87,10 @@
         }
 
         Rebase(serverCommit) {
-            if (serverCommit.AnyEdits()) {
+            if (serverCommit.AnyChanges()) {
                 serverCommit.Log('Rebase serverCommit:');
-                // make sure all edits have been commited
-                this.AppendPendingEdit();
+                // make sure all changes have been commited
+                this.AppendPendingChange();
 
                 // Rebasing Onto Master(Client - Side) After an operation is transformed and applied server - side,
                 // it is broadcasted to the other clients.
@@ -99,25 +99,25 @@
                 // 2. Applies remote operation
                 // 3. Re-applies pending operations, transforming each operation against the new operation from the server
 
-                // take the pending commits (ApplyEdits below will add them back)
+                // take the pending commits (ApplyChanges below will add them back)
                 let pending_commit = this.pending_commit_.TakeChanges();
 
                 if (pending_commit) {
                     // revert pending commit and selection using the pending commit
-                    this.ApplyEdits(pending_commit.RevertEdits(), false);
+                    this.ApplyChanges(pending_commit.RevertChanges(), false);
                 }
 
                 // rebase text using server commit
-                this.ApplyEdits(serverCommit.Edits(), true);
+                this.ApplyChanges(serverCommit.Changes(), true);
 
                 // update revision text
                 this.revision_text_ = this.editor_.getText();
 
                 if (pending_commit) {
-                    // rebase pending commit edits using server commit
-                    let pending_edits = pending_commit.Edits().MergeTransform(serverCommit.Edits());
-                    // apply rebased pending edits
-                    this.ApplyEdits(pending_edits, false);
+                    // rebase pending commit changes using server commit
+                    let pending_changes = pending_commit.Changes().MergeTransform(serverCommit.Changes());
+                    // apply rebased pending changes
+                    this.ApplyChanges(pending_changes, false);
                 }
             }
         }

@@ -1,4 +1,9 @@
-﻿define(function () {
+﻿define([
+    './autoauto',
+    './autocomplete',
+    './decorate',
+    './monacoeditor',
+    './signaturehelp'], function () {
 
     class MonacoEditor {
         constructor(ui, element, container) {
@@ -53,23 +58,23 @@
                     let selection = this_.getSelection();
                     let index = selection.first <= selection.last ? selection.first : selection.last;
                     let delete_count = selection.first <= selection.last ? selection.last - index : selection.first - index;
-                    let edit = new ww.Edit(ww.EditOp.EditEditOp, index, delete_count, '\r\n');
-                    let edits = new ww.Edits([edit]);
-                    this_.applyEdits(edits);
+                    let change = new ww.Change(ww.ChangeOp.ChangeChangeOp, index, delete_count, '\r\n');
+                    let changes = new ww.Changes([change]);
+                    this_.applyChanges(changes);
                     this_.setSelection(index + 2);
                     let channel = ui.Channel;
                     let doc = channel.CommitRebase.ActiveDoc;
                     if (doc !== null) {
-                        doc.AppendPendingEdit();
-                        doc.AppendPendingEdit(ww.EditOp.FixupEditOp, index + 2); // should be +0, but this works (2/27/18)
-                        doc.AppendPendingEdit(ww.EditOp.EnterEditOp, index + 4); // should be +2, but this works (2/27/18)
+                        doc.AppendPendingChange();
+                        doc.AppendPendingChange(ww.ChangeOp.FixupChangeOp, index + 2); // should be +0, but this works (2/27/18)
+                        doc.AppendPendingChange(ww.ChangeOp.EnterChangeOp, index + 4); // should be +2, but this works (2/27/18)
                         channel.PushPendingCommit();
                     }
                 }
             });
         }
         appendText(text) {
-            // https://microsoft.github.io/monaco-editor/api/uis/monaco.editor.icodeeditor.html#executeedits
+            // https://microsoft.github.io/monaco-editor/api/uis/monaco.editor.icodeeditor.html#executechanges
             let value = this.editor_.getValue();
             if (!value.length) {
                 value = text;
@@ -78,21 +83,21 @@
             }
             this.editor_.setValue(value);
         }
-        applyEdits(edits, is_server) {
-            let editOperations = [];
+        applyChanges(changes, is_server) {
+            let changeOperations = [];
 
             let selection = this.getSelection();
 
             let model = this.editor_.getModel();
-            edits.Edits().forEach(edit => {
-                let position1 = model.getPositionAt(edit.Index());
-                let position2 = model.getPositionAt(edit.DeleteIndex());
+            changes.Changes().forEach(change => {
+                let position1 = model.getPositionAt(change.Index());
+                let position2 = model.getPositionAt(change.DeleteIndex());
                 let range = new monaco.Range(position1.lineNumber, position1.column,
                     position2.lineNumber, position2.column);
-                let edits = [{ range: range, text: edit.Insert() }];
-                this.editor_.executeEdits("rebase", edits);
-                selection.first = edit.AdjustCaret(selection.first, is_server);
-                selection.last = edit.AdjustCaret(selection.last, is_server);
+                let changes = [{ range: range, text: change.Insert() }];
+                this.editor_.executeChanges("rebase", changes);
+                selection.first = change.AdjustCaret(selection.first, is_server);
+                selection.last = change.AdjustCaret(selection.last, is_server);
             });
 
             this.setSelection(selection.first, selection.last);
@@ -173,18 +178,18 @@
             return text;
         }
         SetState(response) {
-            let editallowed = false;
+            let changeallowed = false;
             switch (this.container_) {
                 case 'immediate':
                 case 'watch':
-                    editallowed = response.is_idle;
+                    changeallowed = response.is_idle;
                     break;
                 case 'code':
-                    editallowed = !response.macro_loaded;
+                    changeallowed = !response.macro_loaded;
                     break;
             }
-            this.editor_.updateOptions({ readOnly: !editallowed });
-            console.log(`${this.container_} readOnly: ${!editallowed}`);
+            this.editor_.updateOptions({ readOnly: !changeallowed });
+            console.log(`${this.container_} readOnly: ${!changeallowed}`);
         }
    }
 

@@ -3,18 +3,10 @@
     class Remote { // singleton, but created in startup sequence
         // xxx es6 named paramaters not available Edge 41.16299.15.0
         // https://medium.com/dailyjs/named-and-optional-arguments-in-javascript-using-es6-destructuring-292a683d5b4e
-        constructor(basic, name, serverip) {
+        constructor(basic, name, transport) {
             this.Basic = basic;
             this.Name = name;
-            this.serverip_ = serverip;
-            this.key_ = undefined;
-            let hash = window.location.hash;
-            if (hash) {
-                let match = hash.toLowerCase().match(/\/key=([0-9a-f\-]*)/);
-                if (match !== undefined && match.length === 2) {
-                    this.key_ = match[1];
-                }
-            }
+            this.transport_ = transport;
             this.channels_ = {};
             this.pollingIndex_ = -1;
             this.polling_ = false; // not waiting to poll
@@ -84,7 +76,7 @@
             let end = start;
             // retrys may not be necessary - haven't seen
             for (var trys = 1; trys < 10; trys++) { // xxx
-                let tryresponses = await this._SendAsync(trys === 1 ? requests : [], id);
+                let tryresponses = await this.transport_.SendAsync(trys === 1 ? requests : [], id);
                 end = new Date().getTime();
                 tryresponses.forEach(tryresponse => {
                     if (tryresponse.response === expected) {
@@ -130,7 +122,7 @@
             }
             let responses = [];
             try {
-                responses = await this._SendAsync(requests, id);
+                responses = await this.transport_.SendAsync(requests, id);
             } catch (err) {
                 console.log('Remote._PollAsync(' + id + ') error: ' + err);
             }
@@ -140,35 +132,6 @@
             }
             this.pollBusy_ = false;
             this.StartPolling(); // waiting to poll
-        }
-        _SendAsync(requests, id) { // called by _PollAsync and SendAsync
-            let url = 'http://' + this.serverip_ + '/winwrap/poll/' + id;
-            if (this.key_) {
-                if (this.serverip_) {
-                    url = 'http://' + this.serverip_ + '/winwrap/route/' + this.key_ + '/' + id;
-                } else {
-                    url = 'http://www.winwrap.com/web/webedit/remote.asp?key=' + this.key_ + '&id=' + id;
-                }
-            }
-
-            let json = JSON.stringify(requests);
-            let options = {
-                type: 'POST',
-                url: url,
-                dataType: 'text',
-                data: json,
-                contentType: 'application/winwrap; charset=utf-8',
-                beforeSend: jqXHR => {
-                    // set request headers here rather than in the ajax 'headers' object
-                    jqXHR.setRequestHeader('Accept', 'application/winwrap');
-                },
-                dataFilter: data => {
-                    return JSON.parse(data);
-                }
-            };
-            return new Promise((resolve, reject) => {
-                $.ajax(options).done(resolve).fail(reject);
-            });
         }
         _Wait(ms) {
             return new Promise(r => setTimeout(r, ms));

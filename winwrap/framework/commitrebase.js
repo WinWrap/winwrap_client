@@ -14,8 +14,8 @@
             if (response.success) {
                 if (response.target === this.ActiveDoc.Name()) {
                     let serverCommit = new ww.Commit();
-                    response.visible.forEach(edit => {
-                        serverCommit.AppendEdit(new ww.Edit(ww.EditOp.EditEditOp, edit.index, edit.delete, edit.insert));
+                    response.visible.forEach(change => {
+                        serverCommit.AppendChange(new ww.Change(ww.ChangeOp.ChangeChangeOp, change.index, change.delete, change.insert));
                     });
                     this.ActiveDoc.Rebase(serverCommit);
                     this.ActiveDoc.SetRevision(response.revision);
@@ -34,13 +34,13 @@
             let commit = this.ActiveDoc.Commit();
             if (commit !== null) {
                 //console.log("Send ?commit request");
-                let visibleEdits = [];
-                if (commit.AnyEdits()) {
-                    commit.Edits().Edits().forEach(edit => {
-                        if (edit.Op() === ww.EditOp.EditEditOp) {
-                            visibleEdits.push({ 'op': edit.Op(), 'index': edit.Index(), 'delete': edit.DeleteCount(), 'insert': edit.Insert() });
-                        } else if (edit.Op() === ww.EditOp.EnterEditOp || edit.Op() === ww.EditOp.FixupEditOp) {
-                            visibleEdits.push({ 'op': edit.Op(), 'index': edit.Index(), 'length': edit.DeleteCount() });
+                let visibleChanges = [];
+                if (commit.AnyChanges()) {
+                    commit.Changes().Changes().forEach(change => {
+                        if (change.Op() === ww.ChangeOp.ChangeChangeOp) {
+                            visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'delete': change.DeleteCount(), 'insert': change.Insert() });
+                        } else if (change.Op() === ww.ChangeOp.EnterChangeOp || change.Op() === ww.ChangeOp.FixupChangeOp) {
+                            visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'length': change.DeleteCount() });
                         }
                     });
                 }
@@ -50,7 +50,7 @@
                     revision: this.ActiveDoc.Revision(),
                     tab_width: 4,
                     tab_as_space: true,
-                    visible: visibleEdits
+                    visible: visibleChanges
                 };
             }
             return request;
