@@ -3,7 +3,7 @@
         constructor(remote, name) {
             this.Remote = remote;
             this.Name = name;
-            this.UI = undefined;
+            this.UI = undefined; // set Basic async _InitializeAsync(factory)
             this.ClientID = ('0000000000' + Math.floor(Math.random() * 2147483647)).slice(-10).toString();
             this.AllocatedID = 0; // explicitly set in ?attach
             this.Version = undefined;
@@ -16,23 +16,28 @@
                 this.Remote._Wait(100);
 
             this.busy_ = true;
+            this.CommitRebase = new ww.CommitRebase(this);
+            this.UI.Initialize();
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
             try {
                 attach = await this.SendAsync(request, '!attach');
             } catch (err) {
-                console.log('ERROR channel.js _AttachAsync ', err);
+                console.log('ERROR channel.js InitializeAsync ', err);
+                let attachErrMsg = `${this.Name} ${request.command} threw error`;
+                this.UI.StatusBar.SetText(attachErrMsg);
             }
             this.busy_ = false;
             if (attach.unique_name !== this.ClientID) {
-                alert('Attach failed.');
+                alert(`${this.Name} ${request.command} failed ${attach.unique_name} !== ${this.ClientID}`);
                 return;
             }
             this.AllocatedID = attach.allocated_id;
             this.Version = attach.version;
+            this.UI.StatusBar.SetVersionChannelInfo();
 
-            this.CommitRebase = new ww.CommitRebase(this);
-            this.UI.Initialize();
+            //this.CommitRebase = new ww.CommitRebase(this);
+            //this.UI.Initialize();
 
             this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
             this.PushPendingRequest({ command: '?stack' });
@@ -50,7 +55,9 @@
             request.datetime = new Date().toLocaleString();
             request.id = this.AllocatedID;
             request.gen = this._NextGeneration();
-            return await this.Remote.SendAsync(request, expected, request.id);
+            let result = await this.Remote.SendAsync(request, expected, request.id);
+            //console.log(`Channel.SendAsync expected = ${expected}`);
+            return result;
         }
         Poll() {
             if (++this.commitcounter_ === 20) {

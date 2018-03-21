@@ -23,9 +23,13 @@
             this.pendingRequests = [];
         }
         async InitializeAsync() {
-            Object.values(this.channels_).forEach(async channel => {
+            for (let channel of Object.values(this.channels_)) {
                 await channel.InitializeAsync();
-            });
+                //console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
+            }
+            /*Object.values(this.channels_).forEach(async channel => {
+                await channel.InitializeAsync();
+            });*/
             this.StartPolling();
         }
         AddChannel(channel) {
