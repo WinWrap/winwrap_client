@@ -82,6 +82,7 @@
             let responses = [];
             let start = new Date().getTime();
             let end = start;
+            // retrys may not be necessary - haven't seen
             for (var trys = 1; trys < 10; trys++) { // xxx
                 let tryresponses = await this._SendAsync(trys === 1 ? requests : [], id);
                 end = new Date().getTime();
