@@ -1,4 +1,15 @@
-﻿define(function () {
+﻿//FILE: doc.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
     class Doc {
         constructor(sync_id, name, revision, editor) {
             this.sync_id_ = sync_id;
@@ -9,7 +20,7 @@
             // applyChange, getText, getSelection and scrollToSelection
             this.need_commit_ = false;
             this.current_commit_ = null;
-            this.revision_text_ = this.editor_.getText();
+            this.revision_text_ = this.editor_.GetText();
             this.pending_commit_ = new ww.Commit(sync_id, sync_id);
         }
 
@@ -19,14 +30,14 @@
             }
 
             if (caret === undefined) {
-                caret = this.editor_.getSelection().first;
+                caret = this.editor_.GetSelection().first;
             }
 
             let commit = this.pending_commit_;
 
             if (op === ww.ChangeOp.ChangeChangeOp) {
                 // calculate change
-                let text = this.editor_.getText();
+                let text = this.editor_.GetText();
                 let change = ww.Diff(this.revision_text_, text, caret);
                 if (change !== null) {
                     commit.AppendChange(change);
@@ -36,19 +47,19 @@
                 }
             }
             else if (op === ww.ChangeOp.EnterChangeOp) {
-                let line = this.editor_.getLineFromIndex(caret);
-                let range = this.editor_.getLineRange(line - 1);
+                let line = this.editor_.GetLineFromIndex(caret);
+                let range = this.editor_.GetIndexRangeFromLine(line - 1);
                 commit.AppendChange(new ww.Change(op, range.last, 2));
             }
             else if (op === ww.ChangeOp.FixupChangeOp) {
-                let line = this.editor_.getLineFromIndex(caret);
-                let range = this.editor_.getLineRange(line - 1);
+                let line = this.editor_.GetLineFromIndex(caret);
+                let range = this.editor_.GetIndexRangeFromLine(line - 1);
                 commit.AppendChange(new ww.Change(op, range.first, range.last - range.first));
             }
         }
 
         ApplyChanges(changes, is_server) {
-            this.editor_.applyChanges(changes, is_server);
+            this.editor_.ApplyChanges(changes, is_server);
         }
 
         Commit() {
@@ -111,7 +122,7 @@
                 this.ApplyChanges(serverCommit.Changes(), true);
 
                 // update revision text
-                this.revision_text_ = this.editor_.getText();
+                this.revision_text_ = this.editor_.GetText();
 
                 if (pending_commit) {
                     // rebase pending commit changes using server commit

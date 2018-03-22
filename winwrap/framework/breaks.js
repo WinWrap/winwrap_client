@@ -1,24 +1,44 @@
-﻿define(function () {
+﻿//FILE: breaks.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
 
     class Breaks {
-        constructor(ui) {
-            this.UI = ui;
+        constructor(decorate) {
+            this.Decorate = decorate;
             this.breaks = [];
         }
-        getBreaks(target) {
+        GetBreaks(target) {
             let breaks = this.breaks;
             breaks = breaks.filter(el => el.target === target);
             return breaks;
         }
-        setBreak(notification) {
+        IsBreak(name, aline) {
+            let breaks = this.breaks;
+            let abreak = breaks.find(el => {
+                let match = el.target === name && el.line === aline;
+                return match;
+            });
+            return abreak !== undefined;
+        }
+        SetBreak(notification) {
             let breaks = this.breaks;
             breaks = breaks.filter(el => el.line !== notification.line || el.target !== notification.target);
             if (notification.on === true) {
                 breaks.push({ 'target': notification.target, 'line': notification.line });
             }
             this.breaks = breaks;
+            this.Decorate.Display();
         }
-        setBreaks(notification) {
+        SetBreaks(notification) {
             let breaks = [];
             let newBreaks = notification.breaks;
             if (newBreaks !== undefined) {
@@ -29,15 +49,7 @@
                 });
             }
             this.breaks = breaks;
-            this.UI.Decorate.display();
-        }
-        isBreak(macro, aline) {
-            let breaks = this.breaks;
-            let abreak = breaks.find(el => {
-                let match = el.target === macro && el.line === aline;
-                return match;
-            });
-            return abreak !== undefined;
+            this.Decorate.Display();
         }
     }
 

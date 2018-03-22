@@ -1,4 +1,15 @@
-﻿define([
+﻿//FILE: basic.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define([
     './breaks',
     './channel',
     './commitrebase',
@@ -28,21 +39,21 @@
                         if (this.ClassName(element, prefix) === undefined) {
                             return; // protect against matching a prefix embedded class name
                         }
-                        let remote = this.Remote(this.ClassName(element, 'ww-remote-'));
+                        let remote = this.RemoteByName(this.ClassName(element, 'ww-remote-'));
                         let channel = undefined;
                         let ui = undefined;
                         if (key !== 'ww-remote') {
                             if (remote === undefined) {
-                                remote = this.Remote('ww-remote-1');
+                                remote = this.RemoteByName('ww-remote-1');
                                 if (remote === undefined) {
                                     remote = factory['ww-remote'](this, 'ww-remote-1');
                                     this._AddRemote(remote);
                                 }
                             }
-                            channel = remote.Channel(this.ClassName(element, 'ww-channel-'));
+                            channel = remote.ChannelByName(this.ClassName(element, 'ww-channel-'));
                             if (key !== 'ww-channel') {
                                 if (channel === undefined) {
-                                    channel = remote.Channel('ww-channel-1');
+                                    channel = remote.ChannelByName('ww-channel-1');
                                     if (channel === undefined) {
                                         channel = factory['ww-channel'](remote, 'ww-channel-1');
                                         remote.AddChannel(channel);
@@ -99,7 +110,7 @@
             _AddRemote(remote) {
                 this.remotes_[remote.Name] = remote;
             }
-            Remote(name) {
+            RemoteByName(name) {
                 return this.remotes_[name];
             }
         }

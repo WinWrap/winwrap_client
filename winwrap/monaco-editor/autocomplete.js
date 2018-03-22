@@ -1,4 +1,15 @@
-﻿define(function () {
+﻿//FILE: autocomplete.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
 
     class AutoComplete {
         constructor(autoauto) {
@@ -13,10 +24,10 @@
             monaco.languages.registerCompletionItemProvider('vb', {
                 triggerCharacters: [' ', '.', '#', '=', ',', '\t', '\xA0'], // '(', ')'
                 provideCompletionItems: async function (model, position) {
-                    let textUntilPosition = autoauto.Editor.textUntilPosition(model, position);
+                    let textUntilPosition = autoauto.textUntilPosition(model, position);
                     let match = textUntilPosition.match(this.re_auto); // limits traffic to server
                     if (match) {
-                        let response = await autoauto.SendAsync(model, position);
+                        let response = await autoauto.SendAndReceiveAsync(model, position);
                         return autoComplete._createDependencyProposals(response); // incomplete not used
                     }
                 }

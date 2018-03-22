@@ -1,11 +1,26 @@
-﻿define(function () {
+﻿//FILE: decorate.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
 
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodelwithdecorations.html
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.imodeldeltadecoration.html
     class Decorate {
-        constructor(ui) {
+        constructor(ui, monacoEditor) {
             this.UI = ui;
+            this.monacoEditor_ = monacoEditor;
             this.oldDecorations = '';
+            this.Breaks = new ww.Breaks(this);
+            this.Stack = new ww.Stack(this);
+            this.SyntaxError = new ww.SyntaxError(this);
         }
         _breakDecoration(line) {
             let decoration = {};
@@ -15,17 +30,17 @@
         }
         _breaksDecorations(target) {
             let decorations = [];
-            let this0 = this;
-            let breaks = this.UI.Breaks.getBreaks(target);
+            let this_ = this;
+            let breaks = this.Breaks.GetBreaks(target);
             breaks.forEach(abreak => {
-                let decoration = this0._breakDecoration(abreak.line);
+                let decoration = this_._breakDecoration(abreak.line);
                 decorations.push(decoration);
             });
             return decorations;
         }
         _pauseDecoration(target) {
             let decorations = [];
-            let line = this.UI.Stack.getPauseLine(target);
+            let line = this.Stack.GetPauseLine(target);
             if (line !== null) {
                 let decoration = {};
                 decoration.range = new monaco.Range(line, 1, line, 1);
@@ -40,8 +55,8 @@
         };*/
         _errorDecoration() {
             let decorations = [];
-            let syntaxError = this.UI.SyntaxError;
-            let theError = syntaxError.getError();
+            let syntaxError = this.SyntaxError;
+            let theError = syntaxError.GetError();
             if (theError !== null) {
                 if (theError !== undefined) {
                     let line = theError.line_num;
@@ -49,29 +64,27 @@
                     decoration.range = new monaco.Range(line, 1, line, 1);
                     decoration.options = { isWholeLine: true, className: 'myErrorClass' };
                     decorations.push(decoration);
-                    let editor = this.UI.EditorCode.editor_;
                     let position = { lineNumber: line, column: theError.offset+1 };
-                    editor.setPosition(position);
-                    editor.focus();
+                    this.monacoEditor_.setPosition(position);
+                    this.monacoEditor_.focus();
                 }
-                let syntaxMsg = syntaxError.getMessage();
+                let syntaxMsg = syntaxError.GetMessage();
                 this.UI.StatusBar.element_.text(`Error ${syntaxMsg}`);
             }
-            syntaxError.clearError();
+            syntaxError.ClearError();
             return decorations;
         }
-        display() {
-            let doc = this.UI.Channel.CommitRebase.ActiveDoc;
-            if (doc !== null) {
+        Display() {
+            let target = this.UI.Channel.CommitRebase.Name();
+            if (target !== null) {
                 let decorations = [];
-                let target = doc.Name();
                 decorations.push(...this._breaksDecorations(target));
                 decorations.push(...this._pauseDecoration(target));
                 decorations.push(...this._errorDecoration());
                 if (decorations.length >= 1) {
-                    this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations, decorations);
+                    this.oldDecorations = this.monacoEditor_.deltaDecorations(this.oldDecorations, decorations);
                 } else {
-                    this.oldDecorations = this.UI.EditorCode.editor().deltaDecorations(this.oldDecorations,
+                    this.oldDecorations = this.monacoEditor_.deltaDecorations(this.oldDecorations,
                         [{ range: new monaco.Range(1, 1, 1, 1), options: {} }]);
                 }
             }

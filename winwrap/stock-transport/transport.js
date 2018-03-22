@@ -1,8 +1,18 @@
-﻿define(function () {
+﻿//FILE: transport.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
 
     class Transport {
         constructor(serverip) {
-            this.Name = name;
             this.serverip_ = serverip;
             this.key_ = undefined;
             let hash = window.location.hash;
@@ -13,7 +23,7 @@
                 }
             }
         }
-        SendAsync(requests, id) { // called by _PollAsync and SendAsync
+        SendAndReceiveAsync(requests, id) {
             let url = 'http://' + this.serverip_ + '/winwrap/poll/' + id;
             if (this.key_) {
                 if (this.serverip_) {

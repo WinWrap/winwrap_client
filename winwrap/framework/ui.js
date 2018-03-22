@@ -1,4 +1,15 @@
-﻿define(function () {
+﻿//FILE: ui.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
 
     class UI {
         constructor(channel, name) {
@@ -16,17 +27,8 @@
             this.EditorImmediate = this.items_['ww-item-immediate'];
             this.EditorWatch = this.items_['ww-item-watch'];
             this.EditorCode = this.items_['ww-item-code'];
+            this.Decorate = this.EditorCode.Decorate;
             this.Channel.CommitRebase.SetEditor(this.EditorCode);
-            this.AutoAuto = new ww.AutoAuto(this, this.EditorCode);
-            this.Breaks = new ww.Breaks(this);
-            this.SyntaxError = new ww.SyntaxError(this);
-            this.Stack = new ww.Stack(this);
-            this.Decorate = new ww.Decorate(this);
-            $(window).resize(() => {
-                this.EditorImmediate.resize();
-                this.EditorWatch.resize();
-                this.EditorCode.resize();
-            });
         }
         AddItem(item, name) {
             if (item !== undefined) {
@@ -56,12 +58,8 @@
                 }
             });
             // update current line
-            this.Stack.setStack(response);
-            if (response.is_idle) {
-                this.EditorImmediate.hide();
-            } else {
-                this.EditorImmediate.show();
-            }
+            this.Decorate.Stack.SetStack(response);
+            this.EditorImmediate.SetVisible(!response.is_idle);
         }
         Process(response) {
             if (response.id === -1) {
@@ -75,8 +73,7 @@
         _ProcessNotification(notification) {
             switch (notification.response) { // each case => one requests
                 case '!break': // notification
-                    this.Breaks.setBreak(notification);
-                    this.Decorate.display();
+                    this.Decorate.Breaks.SetBreak(notification);
                     break;
                 case '!notify_begin': // notification
                     this.SetState(notification);
@@ -85,8 +82,8 @@
                     // need a this.EditorImmediate method to clear the immediate text
                     break;
                 case '!notify_debugprint': // notification
-                    this.EditorImmediate.appendText(notification.text);
-                    this.EditorImmediate.scrollToBottom();
+                    this.EditorImmediate.AppendText(notification.text);
+                    this.EditorImmediate.ScrollToBottom();
                     break;
                 case '!notify_end': // notification
                     this.SetState(notification);
@@ -96,31 +93,30 @@
                 case '!notify_errors': // notification
                     /*alert(notification.error.macro_name + '@' + notification.error.line_num + ': ' +
                         notification.error.line + '\n' + notification.error.desc);*/
-                    if (this.Channel.CommitRebase.ActiveDoc.Name() !== notification.error.macro_name) {
+                    if (this.Channel.CommitRebase.Name() !== notification.error.macro_name) {
                         this.Channel.PushPendingRequest({ command: '?read', target: notification.error.macro_name });
                     }
                     // should highlight the error line in red and scroll to it
                     // notification.error.line_num
                     // notification.error.offset (index into the line where the error occurred, -1 for runtime error)
-                    this.SyntaxError.setResponse(notification);
-                    this.Decorate.display();
+                    this.Decorate.SyntaxError.SetError(notification);
                     break;
                 case '!notify_macrobegin': // notification
                     break;
                 case '!notify_macroend': // notification
                     break;
                 case '!notify_pause': // notification
-                    if (this.Channel.CommitRebase.ActiveDoc.Name() !== notification.file_name) {
+                    if (this.Channel.CommitRebase.Name() !== notification.file_name) {
                         this.Channel.PushPendingRequest({ command: '?read', target: notification.file_name });
                     }
-                    let watches = this.EditorWatch.editor().getValue().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });
+                    let watches = this.EditorWatch.GetText().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });
                     if (watches.length >= 1) { // xxx
                         this.Channel.PushPendingRequest({ command: '?watch', watches: watches });
                     }
                     this.SetState(notification);
                     let pauseLine = notification.stack[0].linenum;
-                    let editor = this.Channel.UI.EditorCode.editor();
-                    editor.revealLineInCenter(pauseLine);
+                    let editor = this.Channel.UI.EditorCode;
+                    editor.ScrollToLine(pauseLine);
                     break;
                 case '!notify_resume': // notification
                     this.SetState(notification);
@@ -135,7 +131,7 @@
         _ProcessResponse(response) {
             switch (response.response) { // each case => one requests
                 case '!breaks': // response
-                    this.Breaks.setBreaks(response);
+                    this.Decorate.Breaks.SetBreaks(response);
                     break;
                 case '!commit':
                     this.Channel.CommitRebase.CommitDone(response);
@@ -158,21 +154,20 @@
                     this.SetState(response);
                     break;
                 case '!stack': // response
-                    this.Stack.setStack(response);
+                    this.Decorate.Stack.SetStack(response);
                     break;
                 case '!syntax': // response
                     /*if (response.okay) {
                         alert('No syntax errors.');
                     }*/
-                    this.SyntaxError.setResponse(response);
-                    this.Decorate.display();
+                    this.Decorate.SyntaxError.SetError(response);
                     break;
                 case '!watch': // response
                     let watchResults = response.results.map(item => {
                         let value = item.error !== undefined ? item.error : item.value;
                         return `${item.depth}: ${item.expr} -> ${value}`;
                     }).join('\n');
-                    this.EditorWatch.editor().setValue(watchResults);
+                    this.EditorWatch.SetText(watchResults);
                     break;
                 case '!write': // response
                     break;

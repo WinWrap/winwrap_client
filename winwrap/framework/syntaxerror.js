@@ -1,22 +1,26 @@
-﻿define(function () {
+﻿//FILE: syntaxerror.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
 
     class SyntaxError {
-        constructor(ui) {
-            this.UI = ui;
-            this.response = {};
+        constructor(decorate) {
+            this.Decorate = decorate;
+            this.response_ = {};
         }
-        clearError() {
-            this.response = {};
+        ClearError() {
+            this.response_ = {};
         }
-        getResponse() {
-            let response = this.response;
-            return response;
-        }
-        setResponse(response) {
-            this.response = response;
-        }
-        getError() {
-            let response = this.response;
+        GetError() {
+            let response = this.response_;
             let error;
             if (response.response !== undefined) {
                 error = response.error; // can be undefined (no error)
@@ -25,10 +29,10 @@
             }
             return error;
         }
-        getMessage() {
+        GetMessage() {
             /*alert(notification.error.macro_name + '@' + notification.error.line_num + ': ' +
     notification.error.line + '\n' + notification.error.desc);*/
-            let response = this.response;
+            let response = this.response_;
             let msg = "";
             switch (response.response) {
                 case "!syntax":
@@ -46,6 +50,10 @@
                     break;
             }
             return msg;
+        }
+        SetError(response) {
+            this.response_ = response;
+            this.Decorate.Display();
         }
         _makeMessage(theerror) {
             let msg = "";

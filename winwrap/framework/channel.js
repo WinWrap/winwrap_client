@@ -1,4 +1,15 @@
-﻿define(function () {
+﻿//FILE: channel.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
     class Channel {
         constructor(remote, name) {
             this.Remote = remote;
@@ -21,7 +32,7 @@
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
             try {
-                attach = await this.SendAsync(request, '!attach');
+                attach = await this.SendAndReceiveAsync(request, '!attach');
             } catch (err) {
                 console.log('ERROR channel.js InitializeAsync ', err);
                 let attachErrMsg = `${this.Name} ${request.command} threw error`;
@@ -47,12 +58,12 @@
                 this.Remote.PushPendingRequest(request);
             }
         }
-        async SendAsync(request, expected) {
+        async SendAndReceiveAsync(request, expected) {
             request.datetime = new Date().toLocaleString();
             request.id = this.AllocatedID;
             request.gen = this._NextGeneration();
-            let result = await this.Remote.SendAsync(request, expected, request.id);
-            //console.log(`Channel.SendAsync expected = ${expected}`);
+            let result = await this.Remote.SendAndReceiveAsync(request, expected, request.id);
+            //console.log(`Channel.SendAndReceiveAsync expected = ${expected}`);
             return result;
         }
         Poll() {

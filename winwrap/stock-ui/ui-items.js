@@ -1,4 +1,16 @@
-﻿define(function () {
+﻿//FILE: ui-items.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define([
+    './decorate'], function () {
 
     ww.CreateItem = (ui, element, name) => {
         switch (name) {
@@ -97,8 +109,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    //let code = ui.EditorCode.editor().getValue(); // xyz
-                    let name = channel.CommitRebase.ActiveDoc.Name();
+                    let name = channel.CommitRebase.Name();
                     let newname = ui.GetFileValue();
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
@@ -116,7 +127,7 @@
             this.button_ = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: '?syntax', target: channel.CommitRebase.ActiveDoc.Name() });
+                    channel.PushPendingRequest({ command: '?syntax', target: channel.CommitRebase.Name() });
                 });
         }
         SetState(response) {
@@ -130,7 +141,7 @@
             this.button_ = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: 'run', target: channel.CommitRebase.ActiveDoc.Name() });
+                    channel.PushPendingRequest({ command: 'run', target: channel.CommitRebase.Name() });
                 });
         }
         SetState(response) {
@@ -143,7 +154,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.ActiveDoc.Name() });
+                    channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.Name() });
                 });
         }
         SetState(response) {
@@ -156,7 +167,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.ActiveDoc.Name() });
+                    channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.Name() });
                 });
         }
         SetState(response) {
@@ -170,7 +181,7 @@
             this.button_ = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: 'into', target: channel.CommitRebase.ActiveDoc.Name() });
+                    channel.PushPendingRequest({ command: 'into', target: channel.CommitRebase.Name() });
                 });
         }
         SetState(response) {
@@ -184,7 +195,7 @@
             this.button_ = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: 'over', target: channel.CommitRebase.ActiveDoc.Name() });
+                    channel.PushPendingRequest({ command: 'over', target: channel.CommitRebase.Name() });
                 });
         }
         SetState(response) {
@@ -197,7 +208,7 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => {
-                    channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.ActiveDoc.Name() });
+                    channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.Name() });
                 });
         }
         SetState(response) {
@@ -210,20 +221,20 @@
             let channel = ui.Channel;
             this.button_ = new Button_Helper(element,
                 () => { // xxx
-                    let immediateShowing = ui.EditorImmediate.showing();
-                    let watchShowing = ui.EditorWatch.showing();
+                    let immediateShowing = ui.EditorImmediate.GetVisibile();
+                    let watchShowing = ui.EditorWatch.GetVisibile();
                     if (!immediateShowing && !watchShowing) {
-                        ui.EditorImmediate.hide();
-                        ui.EditorWatch.show();
+                        ui.EditorImmediate.SetVisible(false);
+                        ui.EditorWatch.SetVisible(true);
                     } else if (!immediateShowing && watchShowing) {
-                        ui.EditorImmediate.show();
-                        ui.EditorWatch.hide();
+                        ui.EditorImmediate.SetVisible(true);
+                        ui.EditorWatch.SetVisible(false);
                     } else if (immediateShowing && !watchShowing) {
-                        ui.EditorImmediate.show();
-                        ui.EditorWatch.show();
+                        ui.EditorImmediate.SetVisible(true);
+                        ui.EditorWatch.SetVisible(true);
                     } else if (immediateShowing && watchShowing) {
-                        ui.EditorImmediate.hide();
-                        ui.EditorWatch.hide();
+                        ui.EditorImmediate.SetVisible(false);
+                        ui.EditorWatch.SetVisible(false);
                     }
                 });
         }
@@ -274,8 +285,8 @@
     this.element_.click(() => {
         console.log(`StatusBar line clicked at ${new Date().toLocaleString()}.`);
         let editor = this0.UI.EditorCode;
-        editor.setSelection(3, 7);
-        let obj = editor.getSelection(); // necessary for console.log expansion
+        editor.SetSelection( { first: 3, last: 7 } );
+        let obj = editor.GetSelection(); // necessary for console.log expansion
         console.log(obj);
     });
 */

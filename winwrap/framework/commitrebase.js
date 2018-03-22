@@ -1,37 +1,51 @@
-﻿define(function () {
+﻿//FILE: commitrebase.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
 
     class CommitRebase {
         constructor(channel) {
             this.Channel = channel;
-            this.ActiveDoc = null;
+            this.doc_ = null;
         }
 
         SetEditor(editor) {
-            this.Editor = editor;
+            this.editor_ = editor;
         }
 
+        AppendPendingChange(op, caret) {
+            this.doc_.AppendPendingChange(op, caret);
+        }
         CommitDone(response) {
             if (response.success) {
-                if (response.target === this.ActiveDoc.Name()) {
+                if (response.target === this.Name()) {
                     let serverCommit = new ww.Commit();
                     response.visible.forEach(change => {
                         serverCommit.AppendChange(new ww.Change(ww.ChangeOp.ChangeChangeOp, change.index, change.delete, change.insert));
                     });
-                    this.ActiveDoc.Rebase(serverCommit);
-                    this.ActiveDoc.SetRevision(response.revision);
+                    this.doc_.Rebase(serverCommit);
+                    this.doc_.SetRevision(response.revision);
                     if (response.caret_index !== undefined) {
-                        this.Editor.editor().setSelection(response.caret_index);
+                        this.editor_.SetSelection({ first: response.caret_index, last: response.caret_index } );
                     }
                 }
             } else {
                 alert('Commit failed.');
             }
-            this.ActiveDoc.CommitDone();
+            this.doc_.CommitDone();
         }
 
         GetCommitRequest() {
             let request = null;
-            let commit = this.ActiveDoc.Commit();
+            let commit = this.doc_.Commit();
             if (commit !== null) {
                 //console.log("Send ?commit request");
                 let visibleChanges = [];
@@ -46,8 +60,8 @@
                 }
                 request = {
                     command: '?commit',
-                    target: this.ActiveDoc.Name(),
-                    revision: this.ActiveDoc.Revision(),
+                    target: this.Name(),
+                    revision: this.doc_.Revision(),
                     tab_width: 4,
                     tab_as_space: true,
                     visible: visibleChanges
@@ -56,24 +70,24 @@
             return request;
         }
 
+        Name() {
+            return this.doc_ !== null ? this.doc_.Name() : null;
+        }
+
         Read(file) {
-            let editor = this.Editor.editor();
-            editor.setValue(file.visible_code);
-            //editor.setScrollTop(0);
-            editor.revealLine(1);
-            this.ActiveDoc = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, this.Editor);
+            this.editor_.SetText(file.visible_code);
+            this.doc_ = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, this.editor_);
         }
 
         Rebase(notification) {
             if (!notification.visible) {
                 return; // hidden code is manipulated by this implementation
             }
-            if (this.ActiveDoc.InCommit(notification.target)) {
+            if (this.doc_.InCommit(notification.target)) {
                 return; // rebasing self commit - no extra work required
             }
-            this.ActiveDoc.NeedCommit();
+            this.doc_.NeedCommit();
         }
-
     }
 
     ww.CommitRebase = CommitRebase;

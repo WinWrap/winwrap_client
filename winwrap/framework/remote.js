@@ -1,4 +1,15 @@
-﻿define(function () {
+﻿//FILE: remote.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
 
     class Remote { // singleton, but created in startup sequence
         // xxx es6 named paramaters not available Edge 41.16299.15.0
@@ -27,11 +38,11 @@
         AddChannel(channel) {
             this.channels_[channel.Name] = channel;
         }
-        Channel(name) {
-            return this.channels_[name];
-        }
         ChannelById(id) {
             return Object.values(this.channels_).filter(channel => channel.AllocatedID === id)[0];
+        }
+        ChannelByName(name) {
+            return this.channels_[name];
         }
         PollBusy() {
             return this.pollBusy_;
@@ -66,17 +77,17 @@
                 }
             });
         }
-        async SendAsync(request, expected, id) {
+        async SendAndReceiveAsync(request, expected, id) {
             let requests = this._ExtractPendingRequestsForId(id);
             requests.push(request);
-            console.log('Remote.SendAsync(' + id + ')>>> ' + this._valuesmsg(requests, 'command'));
+            console.log('Remote.SendAndReceiveAsync(' + id + ')>>> ' + this._valuesmsg(requests, 'command'));
             let response = null;
             let responses = [];
             let start = new Date().getTime();
             let end = start;
             // retrys may not be necessary - haven't seen
             for (var trys = 1; trys < 10; trys++) { // xxx
-                let tryresponses = await this.transport_.SendAsync(trys === 1 ? requests : [], id);
+                let tryresponses = await this.transport_.SendAndReceiveAsync(trys === 1 ? requests : [], id);
                 end = new Date().getTime();
                 tryresponses.forEach(tryresponse => {
                     if (tryresponse.response === expected) {
@@ -90,7 +101,7 @@
                 }
                 await this._Wait(100);
             }
-            console.log('Remote.SendAsync(' + id + ')<<< ' + this._valuesmsg(responses.concat(response), 'response'));
+            console.log('Remote.SendAndReceiveAsync(' + id + ')<<< ' + this._valuesmsg(responses.concat(response), 'response'));
             this.Process(responses, id);
             console.log({
                 request: this._valuesmsg(requests, 'command'),
@@ -122,7 +133,7 @@
             }
             let responses = [];
             try {
-                responses = await this.transport_.SendAsync(requests, id);
+                responses = await this.transport_.SendAndReceiveAsync(requests, id);
             } catch (err) {
                 console.log('Remote._PollAsync(' + id + ') error: ' + err);
             }

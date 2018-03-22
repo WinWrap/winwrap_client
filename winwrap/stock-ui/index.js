@@ -1,4 +1,15 @@
-﻿var ww = ww || {};
+﻿//FILE: index.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+var ww = ww || {};
 
 require.config({ paths: { 'vs': 'scripts/monaco-editor/min/vs' } });
 $(function () {

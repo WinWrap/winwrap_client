@@ -1,4 +1,15 @@
-﻿define(function () {
+﻿//FILE: signaturehelp.js
+
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+//
+// This file contains confidential material.
+//
+// CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
+
+// Copyright 2017-2018 Polar Engineering, Inc.
+// All rights reserved.
+
+define(function () {
 
     class SignatureHelp {
         constructor(autoauto) {
@@ -8,7 +19,7 @@
                 // added ' ': WinWrap Basic doesn't require () around parameters
                 signatureHelpTriggerCharacters: ['(',' ',','],
                 provideSignatureHelp: async function (model, position) {
-                    let textUntilPosition = autoauto.Editor.textUntilPosition(model, position);
+                    let textUntilPosition = autoauto.textUntilPosition(model, position);
                     // 1/15/18 - Tom
                     // added ' '
                     // 1/18/18 - Ed
@@ -16,7 +27,7 @@
                     //let match = textUntilPosition.match(/[( ][^)]*$/);
                     let match = true;
                     if (match) { // was [{}]
-                        let response = await autoauto.SendAsync(model, position);
+                        let response = await autoauto.SendAndReceiveAsync(model, position);
                         return signatureHelp._createSignatureHelp(response);
                     }
                     return undefined;
