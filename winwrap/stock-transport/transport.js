@@ -29,7 +29,7 @@ define(function () {
                 if (this.serverip_) {
                     url = 'http://' + this.serverip_ + '/winwrap/route/' + this.key_ + '/' + id;
                 } else {
-                    url = 'http://www.winwrap.com/web/webchange/remote.asp?key=' + this.key_ + '&id=' + id;
+                    url = 'http://www.winwrap.com/web/webedit/remote.asp?key=' + this.key_ + '&id=' + id;
                 }
             }
 
