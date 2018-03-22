@@ -96,9 +96,8 @@ define(function () {
             this.need_commit_ = true;
         }
 
-        Rebase(serverCommit) {
-            if (serverCommit.AnyChanges()) {
-                serverCommit.Log('Rebase serverCommit:');
+        Rebase(serverChanges) {
+            if (serverChanges.AnyChanges()) {
                 // make sure all changes have been commited
                 this.AppendPendingChange();
 
@@ -118,14 +117,14 @@ define(function () {
                 }
 
                 // rebase text using server commit
-                this.ApplyChanges(serverCommit.Changes(), true);
+                this.ApplyChanges(serverChanges, true);
 
                 // update revision text
                 this.revision_text_ = this.editor_.GetText();
 
                 if (pending_commit) {
                     // rebase pending commit changes using server commit
-                    let pending_changes = pending_commit.Changes().MergeTransform(serverCommit.Changes());
+                    let pending_changes = pending_commit.Changes().MergeTransform(serverChanges);
                     // apply rebased pending changes
                     this.ApplyChanges(pending_changes, false);
                 }

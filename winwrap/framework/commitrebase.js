@@ -27,11 +27,11 @@ define(function () {
         CommitDone(response) {
             if (response.success) {
                 if (response.target === this.Name()) {
-                    let serverCommit = new ww.Commit();
+                    let serverChanges = new ww.Changes();
                     response.visible.forEach(change => {
-                        serverCommit.AppendChange(new ww.Change(ww.ChangeOp.EditChangeOp, change.index, change.delete, change.insert));
+                        serverChanges.AppendNoCombine(new ww.Change(ww.ChangeOp.EditChangeOp, change.index, change.delete, change.insert));
                     });
-                    this.doc_.Rebase(serverCommit);
+                    this.doc_.Rebase(serverChanges);
                     this.doc_.SetRevision(response.revision);
                     if (response.caret_index !== undefined) {
                         this.editor_.SetSelection({ first: response.caret_index, last: response.caret_index } );
