@@ -29,7 +29,7 @@ define(function () {
                 if (response.target === this.Name()) {
                     let serverCommit = new ww.Commit();
                     response.visible.forEach(change => {
-                        serverCommit.AppendChange(new ww.Change(ww.ChangeOp.ChangeChangeOp, change.index, change.delete, change.insert));
+                        serverCommit.AppendChange(new ww.Change(ww.ChangeOp.EditChangeOp, change.index, change.delete, change.insert));
                     });
                     this.doc_.Rebase(serverCommit);
                     this.doc_.SetRevision(response.revision);
@@ -51,7 +51,7 @@ define(function () {
                 let visibleChanges = [];
                 if (commit.AnyChanges()) {
                     commit.Changes().Changes().forEach(change => {
-                        if (change.Op() === ww.ChangeOp.ChangeChangeOp) {
+                        if (change.Op() === ww.ChangeOp.EditChangeOp) {
                             visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'delete': change.DeleteCount(), 'insert': change.Insert() });
                         } else if (change.Op() === ww.ChangeOp.EnterChangeOp || change.Op() === ww.ChangeOp.FixupChangeOp) {
                             visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'length': change.DeleteCount() });

@@ -26,7 +26,7 @@ define(function () {
 
         AppendPendingChange(op, caret) {
             if (op === undefined) {
-                op = ww.ChangeOp.ChangeChangeOp;
+                op = ww.ChangeOp.EditChangeOp;
             }
 
             if (caret === undefined) {
@@ -35,7 +35,7 @@ define(function () {
 
             let commit = this.pending_commit_;
 
-            if (op === ww.ChangeOp.ChangeChangeOp) {
+            if (op === ww.ChangeOp.EditChangeOp) {
                 // calculate change
                 let text = this.editor_.GetText();
                 let change = ww.Diff(this.revision_text_, text, caret);

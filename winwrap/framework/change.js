@@ -11,7 +11,7 @@
 
 define(function () {
     var ChangeOp = {
-        ChangeChangeOp: 0,
+        EditChangeOp: 0,
         EnterChangeOp: 1,
         FixupChangeOp: 2,
         ProcChangeOp: 3
@@ -42,7 +42,7 @@ define(function () {
         }
 
         CanCombine(nextchange) {
-            if (this.op_ !== ww.ChangeOp.ChangeChangeOp || nextchange.op_ !== ww.ChangeOp.ChangeChangeOp) {
+            if (this.op_ !== ww.ChangeOp.EditChangeOp || nextchange.op_ !== ww.ChangeOp.EditChangeOp) {
                 return this.op_ === nextchange.op_ && this.Equals(nextchange);
             }
             return this.index_ <= nextchange.DeleteIndex() && nextchange.index_ <= this.InsertIndex();
@@ -147,11 +147,11 @@ define(function () {
         }
 
         InsertLength() {
-            return this.op_ === ww.ChangeOp.ChangeChangeOp ? (this.insert_ === undefined ? 0 : this.insert_.length) : this.delete_count_;
+            return this.op_ === ww.ChangeOp.EditChangeOp ? (this.insert_ === undefined ? 0 : this.insert_.length) : this.delete_count_;
         }
 
         IsNull() {
-            return this.op_ === ww.ChangeOp.ChangeChangeOp && this.delete_count_ === 0 && (this.insert_ === undefined || this.insert_ === '');
+            return this.op_ === ww.ChangeOp.EditChangeOp && this.delete_count_ === 0 && (this.insert_ === undefined || this.insert_ === '');
         }
 
         MergeTransform(serverChange) {
@@ -214,7 +214,7 @@ define(function () {
         }
 
         RevertChange(s0) {
-            return new Change(ww.ChangeOp.ChangeChangeOp, this.index_, this.InsertLength(), s0.substring(this.index_, this.DeleteIndex()));
+            return new Change(ww.ChangeOp.EditChangeOp, this.index_, this.InsertLength(), s0.substring(this.index_, this.DeleteIndex()));
         }
 
         toString() {
@@ -273,7 +273,7 @@ define(function () {
 
         let deletecount = i0 - index;
         let insert = s1.substring(index, i1);
-        return new Change(ww.ChangeOp.ChangeChangeOp, index + offset, deletecount, insert);
+        return new Change(ww.ChangeOp.EditChangeOp, index + offset, deletecount, insert);
     };
 
     class Changes {

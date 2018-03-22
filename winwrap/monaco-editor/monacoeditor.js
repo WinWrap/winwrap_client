@@ -63,7 +63,7 @@ define([
                         let selection = this_.GetSelection();
                         let index = selection.first <= selection.last ? selection.first : selection.last;
                         let delete_count = selection.first <= selection.last ? selection.last - index : selection.first - index;
-                        let change = new ww.Change(ww.ChangeOp.ChangeChangeOp, index, delete_count, '\r\n');
+                        let change = new ww.Change(ww.ChangeOp.EditChangeOp, index, delete_count, '\r\n');
                         let changes = new ww.Changes([change]);
                         this_.ApplyChanges(changes);
                         index += 2;
