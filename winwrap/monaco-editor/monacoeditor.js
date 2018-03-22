@@ -12,7 +12,6 @@
 define([
     './autoauto',
     './autocomplete',
-    './monacoeditor',
     './signaturehelp'], function () {
 
     class MonacoEditor {
@@ -65,17 +64,17 @@ define([
                         let delete_count = selection.first <= selection.last ? selection.last - index : selection.first - index;
                         let change = new ww.Change(ww.ChangeOp.EditChangeOp, index, delete_count, '\r\n');
                         let changes = new ww.Changes([change]);
-                        this_.ApplyChanges(changes);
-                        index += 2;
-                        this_.SetSelection( { first: index, last: index } );
+                        this_.ApplyChanges(changes, false);
+                        let caret = index + 2;
                         let channel = this_.UI.Channel;
                         let target = channel.CommitRebase.Name();
                         if (target !== null) {
-                            channel.CommitRebase.AppendPendingChange();
-                            channel.CommitRebase.AppendPendingChange(ww.ChangeOp.FixupChangeOp, index); // should be -2, but this works (2/27/18)
-                            channel.CommitRebase.AppendPendingChange(ww.ChangeOp.EnterChangeOp, index + 2); // should be +0, but this works (2/27/18)
+                            channel.CommitRebase.AppendPendingChange(ww.ChangeOp.EditChangeOp, caret);
+                            channel.CommitRebase.AppendPendingChange(ww.ChangeOp.FixupChangeOp, index);
+                            channel.CommitRebase.AppendPendingChange(ww.ChangeOp.EnterChangeOp, caret);
                             channel.PushPendingCommit();
                         }
+                        return null;
                     }
                 });
             }
@@ -116,19 +115,14 @@ define([
 
             this.SetSelection(selection);
         }
-        GetIndexRangeFromLine(line) {
-            let model = this.monacoEditor_.getModel();
-            let first = model.getOffsetAt({ lineNumber: line, column: 1 });
-            let last = model.getOffsetAt({ lineNumber: line + 1, column: 1 });
-            if (last >= first + 2) {
-                last -= 2;
-            }
-            return { first: first, last: last - 2 };
-        }
-        GetLineFromIndex(index) {
+        GetIndexRangeOfLine(index) {
             let model = this.monacoEditor_.getModel();
             let position = model.getPositionAt(index);
-            return position.lineNumber;
+            position.column = 1;
+            let first = model.getOffsetAt(position);
+            let text = model.getLineContent(position.lineNumber);
+            let last = first + text.length;
+            return { first: first, last: last };
         }
         GetSelection() {
             let model = this.monacoEditor_.getModel();

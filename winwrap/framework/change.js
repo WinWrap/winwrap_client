@@ -236,8 +236,28 @@ define(function () {
     ww.Diff = (s0, s1, hint) => {
         let len0 = s0.length;
         let len1 = s1.length;
-        if (len0 === len1 && s0 === s1)
+        let delta = len1 - len0;
+        if (delta === 0 && s0 === s1)
             return null;
+
+        if (delta > 0 && hint >= delta && hint <= len1) {
+            // detect simple insertion before hint (caret)
+            let left = hint - delta;
+            if (s0.substring(0, left) === s1.substring(0, left) &&
+                s0.substring(left) === s1.substring(hint)) {
+                let insert = s1.substring(left, hint);
+                return new ww.Change(ww.ChangeOp.EditChangeOp, left, 0, insert);
+            }
+        }
+        else if (delta < 0 && hint >= 0 && hint <= len0) {
+            // detect simple deletion after hint (caret)
+            let right = hint - delta; // delta is negative
+            if (s0.substring(0, hint) == s1.substring(0, hint) &&
+                s0.substring(right) == s1.substring(hint)) {
+                let deletecount = -delta;
+                return new ww.Change(ww.ChangeOp.EditChangeOp, hint, deletecount, '');
+            }
+        }
 
         let min = Math.min(len0, len1);
         let offset = 0;

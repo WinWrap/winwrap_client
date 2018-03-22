@@ -40,6 +40,7 @@ define(function () {
                 let text = this.editor_.GetText();
                 let change = ww.Diff(this.revision_text_, text, caret);
                 if (change !== null) {
+                    change = ww.Diff(this.revision_text_, text, caret);
                     commit.AppendChange(change);
                     let revertChange = change.RevertChange(this.revision_text_);
                     commit.PrependRevertChange(revertChange);
@@ -47,13 +48,11 @@ define(function () {
                 }
             }
             else if (op === ww.ChangeOp.EnterChangeOp) {
-                let line = this.editor_.GetLineFromIndex(caret);
-                let range = this.editor_.GetIndexRangeFromLine(line - 1);
-                commit.AppendChange(new ww.Change(op, range.last, 2));
+                let range = this.editor_.GetIndexRangeOfLine(caret);
+                commit.AppendChange(new ww.Change(op, range.first - 2, 2));
             }
             else if (op === ww.ChangeOp.FixupChangeOp) {
-                let line = this.editor_.GetLineFromIndex(caret);
-                let range = this.editor_.GetIndexRangeFromLine(line - 1);
+                let range = this.editor_.GetIndexRangeOfLine(caret);
                 commit.AppendChange(new ww.Change(op, range.first, range.last - range.first));
             }
         }
