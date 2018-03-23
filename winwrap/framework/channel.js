@@ -10,7 +10,9 @@
 // All rights reserved.
 
 define(function () {
+
     class Channel {
+
         constructor(remote, name) {
             this.Remote = remote;
             this.Name = name;
@@ -26,6 +28,7 @@ define(function () {
             this.initHandlers_ = [];
             this.responseHandlers_ = [];
         }
+
         async InitializeAsync() {
             while (this.busy_)
                 this.Remote._Wait(100);
@@ -59,9 +62,11 @@ define(function () {
             this.PushPendingRequest({ command: '?stack' });
             // now UI is initialized
         }
+
         AddInitHandler(handler) {
             this.initHandlers_.push(handler);
         }
+
         AddResponseHandlers(handlers) {
             Object.keys(handlers).forEach(key => {
                 let response = '!' + key;
@@ -80,6 +85,7 @@ define(function () {
                 }
             });
         }
+
         PushPendingRequest(request) {
             if (request) {
                 request.datetime = new Date().toLocaleString();
@@ -88,6 +94,7 @@ define(function () {
                 this.Remote.PushPendingRequest(request);
             }
         }
+
         async SendAndReceiveAsync(request, expected) {
             request.datetime = new Date().toLocaleString();
             request.id = this.AllocatedID;
@@ -96,6 +103,7 @@ define(function () {
             //console.log(`Channel.SendAndReceiveAsync expected = ${expected}`);
             return result;
         }
+
         Poll() {
             if (++this.commitcounter_ === 20) {
                 // push any pending commits (approx once every 2 seconds)
@@ -103,20 +111,24 @@ define(function () {
                 this.commitcounter_ = 0;
             }
         }
+
         ProcessResponse(response) {
             let handlers = this.responseHandlers_[response.response];
             if (handlers !== undefined) {
                 handlers.forEach(handler => handler(response));
             }
         }
+
         PushPendingCommit() {
             this.PushPendingRequest(this.CommitRebase.GetCommitRequest());
         }
+
         SetStatusBarText(text) {
             if (this.StatusBar !== undefined) {
                 this.StatusBar.SetText(text);
             }
         }
+
         _NextGeneration() {
             if (++this.generation_ === 0x10000)
                 this.generation_ = 1; // 16 bit number (never 0)
@@ -125,4 +137,5 @@ define(function () {
     }
 
     ww.Channel = Channel;
+
 });

@@ -14,10 +14,10 @@ var ww = ww || {};
 require.config({ paths: { 'vs': 'scripts/monaco-editor/min/vs' } });
 $(function () {
     require(['vs/editor/editor.main',
-        'winwrap/framework/basic',
-        'winwrap/monaco-editor/monacoeditor',
-        'winwrap/stock-ui/ui-items',
-        'winwrap/stock-transport/transport'], require => {
+        'winwrap/framework/all',
+        'winwrap/monaco-editor/all',
+        'winwrap/stock-ui/all',
+        'winwrap/stock-transport/all'], require => {
 
         console.log('winwrap_change_client ' + new Date().toString());
 

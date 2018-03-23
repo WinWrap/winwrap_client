@@ -10,6 +10,7 @@
 // All rights reserved.
 
 define(function () {
+
     var ChangeOp = {
         EditChangeOp: 0,
         EnterChangeOp: 1,
@@ -20,6 +21,7 @@ define(function () {
     ww.ChangeOp = ChangeOp;
 
     class Change {
+
         constructor(op, index, deletecount, insert) {
             this.op_ = op;
             this.index_ = index;

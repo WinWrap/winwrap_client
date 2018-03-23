@@ -12,16 +12,19 @@
 define(function () {
 
     class UI {
+
         constructor(channel, name) {
             this.Channel = channel;
             this.Name = name;
             this.items_ = {};
         }
+
         AddItem(item, name) {
             if (item !== undefined) {
                 this.items_[name] = item;
             }
         }
+
         GetItem(name) {
             return this.items_[name];
         }

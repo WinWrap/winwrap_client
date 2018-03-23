@@ -12,10 +12,12 @@
 define(function () {
 
     class Stack {
+
         constructor(channel) {
             this.channel_ = channel;
             this.breaks = [];
         }
+
         GetPauseLine(name) {
             let line = null;
             if (this.stack.length > 0) {
@@ -26,6 +28,7 @@ define(function () {
             }
             return line;
         }
+
         StateResponseHandler(response) {
             if (response.response !== '!state') {
                 if (response.stack !== undefined) {

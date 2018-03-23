@@ -12,6 +12,7 @@
 define(function () {
 
     class CommitRebase {
+
         constructor(channel) {
             this.Channel = channel;
             this.doc_ = null;

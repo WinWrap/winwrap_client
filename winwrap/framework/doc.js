@@ -10,7 +10,9 @@
 // All rights reserved.
 
 define(function () {
+
     class Doc {
+
         constructor(sync_id, name, revision, editor) {
             this.sync_id_ = sync_id;
             this.name_ = name;
@@ -141,4 +143,5 @@ define(function () {
     }
 
     ww.Doc = Doc;
+
 });

@@ -9,26 +9,25 @@
 // Copyright 2017-2018 Polar Engineering, Inc.
 // All rights reserved.
 
-define([
-    './decorate'], function () {
+define(function () {
 
-    ww.CreateItem = (ui, element, name) => {
+    ww.CreateItem = (channel, element, name) => {
         switch (name) {
-            case 'ww-item-new': return new ButtonNew(ui, element);
-            case 'ww-item-files': return new InputMacro(ui, element);
-            case 'ww-item-save': return new ButtonSave(ui, element);
-            case 'ww-item-check': return new ButtonCheck(ui, element);
-            case 'ww-item-run': return new ButtonRun(ui, element);
-            case 'ww-item-pause': return new ButtonPause(ui, element);
-            case 'ww-item-end': return new ButtonEnd(ui, element);
-            case 'ww-item-into': return new ButtonInto(ui, element);
-            case 'ww-item-over': return new ButtonOver(ui, element);
-            case 'ww-item-out': return new ButtonOut(ui, element);
-            case 'ww-item-cycle': return new ButtonCycle(ui, element);
-            case 'ww-item-immediate': return new ww.MonacoEditor(ui, element, 'immediate');
-            case 'ww-item-watch': return new ww.MonacoEditor(ui, element, 'watch');
-            case 'ww-item-code': return new ww.MonacoEditor(ui, element, 'code');
-            case 'ww-item-statusbar': return new StatusBar(ui, element);
+            case 'ww-item-new': return new ButtonNew(channel, element);
+            case 'ww-item-files': return new InputMacro(channel, element);
+            case 'ww-item-save': return new ButtonSave(channel, element);
+            case 'ww-item-check': return new ButtonCheck(channel, element);
+            case 'ww-item-run': return new ButtonRun(channel, element);
+            case 'ww-item-pause': return new ButtonPause(channel, element);
+            case 'ww-item-end': return new ButtonEnd(channel, element);
+            case 'ww-item-into': return new ButtonInto(channel, element);
+            case 'ww-item-over': return new ButtonOver(channel, element);
+            case 'ww-item-out': return new ButtonOut(channel, element);
+            case 'ww-item-cycle': return new ButtonCycle(channel, element);
+            case 'ww-item-immediate': return new ww.MonacoImmediateEditor(channel, element);
+            case 'ww-item-watch': return new ww.MonacoWatchEditor(channel, element);
+            case 'ww-item-code': return new ww.MonacoCodeEditor(channel, element);
+            case 'ww-item-statusbar': return new StatusBar(channel, element);
         }
     };
 
@@ -47,8 +46,7 @@ define([
     }
 
     class ButtonNew {
-        constructor(ui, element) {
-            let channel = ui.Channel;
+        constructor(channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
@@ -63,10 +61,8 @@ define([
     }
 
     class InputMacro {
-        constructor(ui, element) {
-            //let button = new Button_Helper(element);
-            this.UI = ui;
-            let channel = ui.Channel;
+        constructor(channel, element) {
+            this.channel_ = channel;
             this.macros_ = []; // xxx Macros
             this.element_ = element;
             let this_ = this; // closure can't handle this in the lambdas below
@@ -113,24 +109,22 @@ define([
             let first = this.macros_.length === 0;
             this.macros_ = values;
             if (first) {
-                let channel = this.UI.Channel;
                 if (values.find(item => item === '\\Sample1.bas')) {
-                    channel.PushPendingRequest({ command: '?read', target: '\\Sample1.bas' });
+                    this.channel_.PushPendingRequest({ command: '?read', target: '\\Sample1.bas' });
                 }
                 else {
-                    channel.PushPendingRequest({ command: '?new', names: [] });
+                    this.channel_.PushPendingRequest({ command: '?new', names: [] });
                 }
             }
         }
     }
 
     class ButtonSave {
-        constructor(ui, element) {
-            let channel = ui.Channel;
+        constructor(channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     let name = channel.CommitRebase.Name();
-                    let inputMacro = ui.items_['ww-item-files'];
+                    let inputMacro = channel.UI.GetItem('ww-item-files');
                     let newname = inputMacro.GetFileValue();
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
@@ -146,8 +140,7 @@ define([
     }
 
     class ButtonCheck {
-        constructor(ui, element) {
-            let channel = ui.Channel;
+        constructor(channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
@@ -163,8 +156,7 @@ define([
     }
 
     class ButtonRun {
-        constructor(ui, element) {
-            let channel = ui.Channel;
+        constructor(channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
@@ -180,8 +172,7 @@ define([
     }
 
     class ButtonPause {
-        constructor(ui, element) {
-            let channel = ui.Channel;
+        constructor(channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.Name() });
@@ -196,8 +187,7 @@ define([
     }
 
     class ButtonEnd {
-        constructor(ui, element) {
-            let channel = ui.Channel;
+        constructor(channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.Name() });
@@ -212,8 +202,7 @@ define([
     }
 
     class ButtonInto {
-        constructor(ui, element) {
-            let channel = ui.Channel;
+        constructor(channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
@@ -229,8 +218,7 @@ define([
     }
 
     class ButtonOver {
-        constructor(ui, element) {
-            let channel = ui.Channel;
+        constructor(channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
@@ -246,8 +234,7 @@ define([
     }
 
     class ButtonOut {
-        constructor(ui, element) {
-            let channel = ui.Channel;
+        constructor(channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.Name() });
@@ -262,12 +249,11 @@ define([
     }
 
     class ButtonCycle {
-        constructor(ui, element) {
-            let channel = ui.Channel;
+        constructor(channel, element) {
             let button = new Button_Helper(element,
                 () => { // xxx
-                    let editorImmediate = ui.GetItem('ww-item-immediate');
-                    let editorWatch = ui.GetItem('ww-item-watch');
+                    let editorImmediate = channel.UI.GetItem('ww-item-immediate');
+                    let editorWatch = channel.UI.GetItem('ww-item-watch');
                     let immediateShowing = editorImmediate.GetVisibile();
                     let watchShowing = editorWatch.GetVisibile();
                     if (!immediateShowing && !watchShowing) {
@@ -294,11 +280,9 @@ define([
     }
 
     class StatusBar {
-        constructor(ui, element) {
-            this.UI = ui;
-            let this0 = this;
+        constructor(channel, element) {
             this.element_ = element;
-            this.UI.Channel.StatusBar = this;
+            channel.StatusBar = this;
         }
         Initialize() {
         }

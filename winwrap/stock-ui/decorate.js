@@ -14,9 +14,8 @@ define(function () {
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodelwithdecorations.html
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.imodeldeltadecoration.html
     class Decorate {
-        constructor(ui, monacoEditor) {
-            this.UI = ui;
-            let channel = ui.Channel;
+
+        constructor(channel, monacoEditor) {
             this.channel_ = channel;
             this.monacoEditor_ = monacoEditor;
             this.oldDecorations = '';
@@ -51,12 +50,14 @@ define(function () {
                 }
             });
         }
+
         _breakDecoration(line) {
             let decoration = {};
             decoration.range = new monaco.Range(line, 1, line, 1);
             decoration.options = { isWholeLine: true, 'glyphMarginClassName': 'myGlyphMarginClass' };
             return decoration;
         }
+
         _breaksDecorations(target) {
             let decorations = [];
             let this_ = this; // closure can't handle this in the lambdas below
@@ -67,6 +68,7 @@ define(function () {
             });
             return decorations;
         }
+
         _pauseDecoration(target) {
             let decorations = [];
             let line = this.Stack.GetPauseLine(target);
@@ -78,10 +80,12 @@ define(function () {
             }
             return decorations;
         }
+
         /*decoration.options = { // works as hover
             className: 'myContentClass',
             hoverMessage: 'hover message'
         };*/
+
         _errorDecoration() {
             let decorations = [];
             let syntaxError = this.SyntaxError;
@@ -103,8 +107,9 @@ define(function () {
             syntaxError.ClearError();
             return decorations;
         }
+
         _display() {
-            let target = this.UI.Channel.CommitRebase.Name();
+            let target = this.channel_.CommitRebase.Name();
             if (target !== null) {
                 let decorations = [];
                 decorations.push(...this._breaksDecorations(target));
