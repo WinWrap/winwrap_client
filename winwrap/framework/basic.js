@@ -79,7 +79,7 @@ define(function () {
                             break;
                         default:
                             let wrapped = $(element);
-                            ui.AddItem(factory[key](channel, wrapped, name), name);
+                            factory[key](ui, channel, wrapped, name);
                             break;
                     }
                 });

@@ -19,11 +19,29 @@ define(function () {
             this.items_ = {};
         }
 
-        AddItem(item, name) {
+        AddItem(channel, element, name) {
+            let item = undefined;
+            switch (name) {
+                case 'ww-item-new': item = new ButtonNew(channel, element); break;
+                case 'ww-item-files': item = new InputMacro(channel, element); break;
+                case 'ww-item-save': item = new ButtonSave(channel, element); break;
+                case 'ww-item-check': item = new ButtonCheck(channel, element); break;
+                case 'ww-item-run': item = new ButtonRun(channel, element); break;
+                case 'ww-item-pause': item = new ButtonPause(channel, element); break;
+                case 'ww-item-end': item = new ButtonEnd(channel, element); break;
+                case 'ww-item-into': item = new ButtonInto(channel, element); break;
+                case 'ww-item-over': item = new ButtonOver(channel, element); break;
+                case 'ww-item-out': item = new ButtonOut(channel, element); break;
+                case 'ww-item-cycle': item = new ButtonCycle(channel, element); break;
+                case 'ww-item-immediate': item = new ww.MonacoImmediateEditor(channel, element); break;
+                case 'ww-item-watch': item = new ww.MonacoWatchEditor(channel, element); break;
+                case 'ww-item-code': item = new ww.MonacoCodeEditor(channel, element); break;
+                case 'ww-item-statusbar': item = new StatusBar(channel, element); break;
+            }
             if (item !== undefined) {
                 this.items_[name] = item;
             }
-        }
+        };
 
         GetItem(name) {
             return this.items_[name];
@@ -31,26 +49,6 @@ define(function () {
     }
 
     ww.UI = UI;
-
-    ww.CreateItem = (channel, element, name) => {
-        switch (name) {
-            case 'ww-item-new': return new ButtonNew(channel, element);
-            case 'ww-item-files': return new InputMacro(channel, element);
-            case 'ww-item-save': return new ButtonSave(channel, element);
-            case 'ww-item-check': return new ButtonCheck(channel, element);
-            case 'ww-item-run': return new ButtonRun(channel, element);
-            case 'ww-item-pause': return new ButtonPause(channel, element);
-            case 'ww-item-end': return new ButtonEnd(channel, element);
-            case 'ww-item-into': return new ButtonInto(channel, element);
-            case 'ww-item-over': return new ButtonOver(channel, element);
-            case 'ww-item-out': return new ButtonOut(channel, element);
-            case 'ww-item-cycle': return new ButtonCycle(channel, element);
-            case 'ww-item-immediate': return new ww.MonacoImmediateEditor(channel, element);
-            case 'ww-item-watch': return new ww.MonacoWatchEditor(channel, element);
-            case 'ww-item-code': return new ww.MonacoCodeEditor(channel, element);
-            case 'ww-item-statusbar': return new StatusBar(channel, element);
-        }
-    };
 
     class Button_Helper {
         constructor(element, clickhandler) {
