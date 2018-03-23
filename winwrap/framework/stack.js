@@ -12,8 +12,8 @@
 define(function () {
 
     class Stack {
-        constructor(decorate) {
-            this.Decorate = decorate;
+        constructor(channel) {
+            this.channel_ = channel;
             this.breaks = [];
         }
         GetPauseLine(name) {
@@ -26,14 +26,13 @@ define(function () {
             }
             return line;
         }
-        SetStack(notification) {
-            if (notification.response !== '!state') {
-                if (notification.stack !== undefined) {
-                    this.stack = notification.stack;
+        StateResponseHandler(response) {
+            if (response.response !== '!state') {
+                if (response.stack !== undefined) {
+                    this.stack = response.stack;
                 } else {
                     this.stack = [];
                 }
-                this.Decorate.Display();
             }
         }
     }

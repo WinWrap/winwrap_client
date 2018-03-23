@@ -21,6 +21,7 @@ define(function () {
             this.generation_ = 0;
             this.commitcounter_ = 0;
             this.busy_ = false;
+            this.handlers_ = [];
         }
         async InitializeAsync() {
             while (this.busy_)
@@ -50,6 +51,24 @@ define(function () {
             this.PushPendingRequest({ command: '?stack' });
             // now UI is initialized
         }
+        AddResponseHandlers(handlers) {
+            Object.keys(handlers).forEach(key => {
+                let response = '!' + key;
+                if (this.handlers_[response] === undefined) {
+                    this.handlers_[response] = [];
+                }
+                let handler = handlers[key];
+                this.handlers_[response].push(handler);
+                if (key === 'state') {
+                    this.AddResponseHandlers({
+                        notify_begin: handler,
+                        notify_end: handler,
+                        notify_pause: handler,
+                        notify_resume: handler
+                    });
+                }
+            });
+        }
         PushPendingRequest(request) {
             if (request) {
                 request.datetime = new Date().toLocaleString();
@@ -71,6 +90,12 @@ define(function () {
                 // push any pending commits (approx once every 2 seconds)
                 this.PushPendingCommit();
                 this.commitcounter_ = 0;
+            }
+        }
+        ProcessResponse(response) {
+            let handlers = this.handlers_[response.response];
+            if (handlers !== undefined) {
+                handlers.forEach(handler => handler(response));
             }
         }
         PushPendingCommit() {

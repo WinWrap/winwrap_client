@@ -48,19 +48,23 @@ define([
 
     class ButtonNew {
         constructor(ui, element) {
-            this.button_ = new Button_Helper(element,
+            let channel = ui.Channel;
+            let button = new Button_Helper(element,
                 () => {
-                    ui.Channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
+                    channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
                 });
-        }
-        SetState(response) {
-            this.button_.Enabled(!response.macro_loaded);
+            this.button_ = button;
+            channel.AddResponseHandlers({
+                state: response => {
+                    button.Enabled(!response.macro_loaded);
+                }
+            });
         }
     }
 
     class InputMacro {
         constructor(ui, element) {
-            //this.button_ = new Button_Helper(element);
+            //let button = new Button_Helper(element);
             this.UI = ui;
             let channel = ui.Channel;
             this.macros_ = []; // xxx Macros
@@ -79,9 +83,11 @@ define([
             this.element_.on('autocompleteselect', (event, ui) => {
                 channel.PushPendingRequest({ command: '?read', target: ui.item.value });
             });
-        }
-        SetState(response) {
-            //this.button_.Enabled(!response.macro_loaded);
+            channel.AddResponseHandlers({
+                state: response => {
+                    //button.Enabled(!response.macro_loaded);
+                }
+            });
         }
         GetFileValue() {
             return this.element_.val();
@@ -107,7 +113,7 @@ define([
     class ButtonSave {
         constructor(ui, element) {
             let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
+            let button = new Button_Helper(element,
                 () => {
                     let name = channel.CommitRebase.Name();
                     let newname = ui.GetFileValue();
@@ -115,111 +121,135 @@ define([
                     channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
                     channel.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
                 });
-        }
-        SetState(response) {
-            this.button_.Enabled(true);
+            this.button_ = button;
+            channel.AddResponseHandlers({
+                state: response => {
+                    button.Enabled(true);
+                }
+            });
         }
     }
 
     class ButtonCheck {
         constructor(ui, element) {
             let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
+            let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?syntax', target: channel.CommitRebase.Name() });
                 });
-        }
-        SetState(response) {
-            this.button_.Enabled(!response.macro_loaded);
+            this.button_ = button;
+            channel.AddResponseHandlers({
+                state: response => {
+                    button.Enabled(!response.macro_loaded);
+                }
+            });
         }
     }
 
     class ButtonRun {
         constructor(ui, element) {
             let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
+            let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: 'run', target: channel.CommitRebase.Name() });
                 });
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.run);
+            this.button_ = button;
+            channel.AddResponseHandlers({
+                state: response => {
+                    button.Enabled(response.commands.run);
+                }
+            });
         }
     }
 
     class ButtonPause {
         constructor(ui, element) {
             let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
+            let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.Name() });
                 });
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.pause);
+            this.button_ = button;
+            channel.AddResponseHandlers({
+                state: response => {
+                    button.Enabled(response.commands.pause);
+                }
+            });
         }
     }
 
     class ButtonEnd {
         constructor(ui, element) {
             let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
+            let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.Name() });
                 });
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.end);
+            this.button_ = button;
+            channel.AddResponseHandlers({
+                state: response => {
+                    button.Enabled(response.commands.end);
+                }
+            });
         }
     }
 
     class ButtonInto {
         constructor(ui, element) {
             let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
+            let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: 'into', target: channel.CommitRebase.Name() });
                 });
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.into);
+            this.button_ = button;
+            channel.AddResponseHandlers({
+                state: response => {
+                    button.Enabled(response.commands.into);
+                }
+            });
         }
     }
 
     class ButtonOver {
         constructor(ui, element) {
             let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
+            let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: 'over', target: channel.CommitRebase.Name() });
                 });
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.over);
+            this.button_ = button;
+            channel.AddResponseHandlers({
+                state: response => {
+                    button.Enabled(response.commands.over);
+                }
+            });
         }
     }
 
     class ButtonOut {
         constructor(ui, element) {
             let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
+            let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.Name() });
                 });
-        }
-        SetState(response) {
-            this.button_.Enabled(response.commands.out);
+            this.button_ = button;
+            channel.AddResponseHandlers({
+                state: response => {
+                    button.Enabled(response.commands.out);
+                }
+            });
         }
     }
 
     class ButtonCycle {
         constructor(ui, element) {
             let channel = ui.Channel;
-            this.button_ = new Button_Helper(element,
+            let button = new Button_Helper(element,
                 () => { // xxx
                     let immediateShowing = ui.EditorImmediate.GetVisibile();
                     let watchShowing = ui.EditorWatch.GetVisibile();
@@ -237,9 +267,12 @@ define([
                         ui.EditorWatch.SetVisible(false);
                     }
                 });
-        }
-        SetState(response) {
-            this.button_.Enabled(true);
+            this.button_ = button;
+            channel.AddResponseHandlers({
+                state: response => {
+                    button.Enabled(true);
+                }
+            });
         }
     }
 

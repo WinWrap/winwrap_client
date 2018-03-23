@@ -12,8 +12,8 @@
 define(function () {
 
     class Breaks {
-        constructor(decorate) {
-            this.Decorate = decorate;
+        constructor(channel) {
+            this.channel_ = channel;
             this.breaks = [];
         }
         GetBreaks(target) {
@@ -29,18 +29,17 @@ define(function () {
             });
             return abreak !== undefined;
         }
-        SetBreak(notification) {
+        BreakResponseHandler(response) {
             let breaks = this.breaks;
-            breaks = breaks.filter(el => el.line !== notification.line || el.target !== notification.target);
-            if (notification.on === true) {
-                breaks.push({ 'target': notification.target, 'line': notification.line });
+            breaks = breaks.filter(el => el.line !== response.line || el.target !== response.target);
+            if (response.on === true) {
+                breaks.push({ 'target': response.target, 'line': response.line });
             }
             this.breaks = breaks;
-            this.Decorate.Display();
         }
-        SetBreaks(notification) {
+        BreaksResponseHandler(response) {
             let breaks = [];
-            let newBreaks = notification.breaks;
+            let newBreaks = response.breaks;
             if (newBreaks !== undefined) {
                 newBreaks.forEach(macroBreaks => {
                     macroBreaks.lines.forEach(line => {
@@ -49,7 +48,6 @@ define(function () {
                 });
             }
             this.breaks = breaks;
-            this.Decorate.Display();
         }
     }
 

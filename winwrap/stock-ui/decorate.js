@@ -16,11 +16,40 @@ define(function () {
     class Decorate {
         constructor(ui, monacoEditor) {
             this.UI = ui;
+            let channel = ui.Channel;
+            this.channel_ = channel;
             this.monacoEditor_ = monacoEditor;
             this.oldDecorations = '';
-            this.Breaks = new ww.Breaks(this);
-            this.Stack = new ww.Stack(this);
-            this.SyntaxError = new ww.SyntaxError(this);
+            this.Breaks = new ww.Breaks(channel);
+            this.Stack = new ww.Stack(channel);
+            this.SyntaxError = new ww.SyntaxError(channel);
+            let this_ = this;
+            channel.AddResponseHandlers({
+                break: response => {
+                    this_.Breaks.BreakResponseHandler(response);
+                    this_._display();
+                },
+                breaks: response => {
+                    this_.Breaks.BreaksResponseHandler(response);
+                    this_._display();
+                },
+                notify_errors: response => {
+                    this_.SyntaxError.ErrorResponseHandler(response);
+                    this_._display();
+                },
+                stack: response => {
+                    this_.Stack.StateResponseHandler(response);
+                    this_._display();
+                },
+                state: response => {
+                    this_.Stack.StateResponseHandler(response);
+                    this_._display();
+                },
+                syntax: response => {
+                    this_.SyntaxError.ErrorResponseHandler(response);
+                    this_._display();
+                }
+            });
         }
         _breakDecoration(line) {
             let decoration = {};
@@ -74,7 +103,7 @@ define(function () {
             syntaxError.ClearError();
             return decorations;
         }
-        Display() {
+        _display() {
             let target = this.UI.Channel.CommitRebase.Name();
             if (target !== null) {
                 let decorations = [];

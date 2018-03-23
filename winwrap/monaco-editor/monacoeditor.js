@@ -34,11 +34,44 @@ define([
                 selectionHighlight: false, // repeats of selected word are not highlighted
                 scrollbar: { vertical: 'visible' } // horizontal defaults auto
             });
-            if (this.container_ === 'code') {
+            let this_ = this; // closure can't handle this in the lambdas below
+            if (this.container_ === 'immediate') {
+                this.UI.Channel.AddResponseHandlers({
+                    state: response => {
+                        this_.monacoEditor_.updateOptions({ readOnly: response.is_active });
+                        this_.SetVisible(!response.is_idle);
+                    }
+                });
+            }
+            else if (this.container_ === 'watch') {
+                this.UI.Channel.AddResponseHandlers({
+                    state: response => {
+                        this_.monacoEditor_.updateOptions({ readOnly: response.is_active });
+                    },
+                    notify_pause: response => {
+                        let watches = this_.GetText().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });
+                        if (watches.length >= 1) { // xxx
+                            this_.UI.Channel.PushPendingRequest({ command: '?watch', watches: watches });
+                        }
+                    }
+                });
+            }
+            else if (this.container_ === 'code') {
+                this.UI.Channel.AddResponseHandlers({
+                    state: response => {
+                        this_.monacoEditor_.updateOptions({ readOnly: response.macro_loaded });
+                    },
+                    notify_pause: response => {
+                        if (this_.UI.Channel.CommitRebase.Name() !== response.file_name) {
+                            this_.UI.Channel.PushPendingRequest({ command: '?read', target: response.file_name });
+                        }
+                        let pauseLine = response.stack[0].linenum;
+                        this_.ScrollToLine(pauseLine);
+                    }
+                });
                 // helpers
                 this.AutoAuto = new ww.AutoAuto(this.UI.Channel);
                 this.Decorate = new ww.Decorate(this.UI, this.monacoEditor_);
-                let this_ = this; // closure can't handle this in the lambdas below
                 this.monacoEditor_.onMouseDown(function (e) {
                     if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) { // xxx below
                         let channel = this_.UI.Channel;
@@ -148,20 +181,6 @@ define([
             let rng = new monaco.Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column);
             this.monacoEditor_.setSelection(rng);
         }
-        SetState(response) {
-            let changeallowed = false;
-            switch (this.container_) {
-                case 'immediate':
-                case 'watch':
-                    changeallowed = response.is_idle || response.is_stopped;
-                    break;
-                case 'code':
-                    changeallowed = !response.macro_loaded;
-                    break;
-            }
-            this.monacoEditor_.updateOptions({ readOnly: !changeallowed });
-            console.log(`${this.container_} readOnly: ${!changeallowed}`);
-        }
         SetText(text) {
             this.monacoEditor_.setValue(text);
             this.monacoEditor_.revealLine(1);
@@ -177,7 +196,7 @@ define([
         GetVisibile() {
             return this.element_.css('display') !== 'none';
         }
-   }
+    }
 
     ww.MonacoEditor = MonacoEditor;
 

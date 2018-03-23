@@ -68,11 +68,12 @@ define(function () {
         PushPendingRequest(request) {
             this.pendingRequests.push(request);
         }
-        Process(responses, id) {
+        ProcessResponses(responses, id) {
             responses.forEach(response => {
                 response.datetimeClient = new Date().toLocaleString();
                 let channel = this.ChannelById(id);
                 if (channel !== undefined) {
+                    channel.ProcessResponse(response);
                     channel.UI.Process(response);
                 }
             });
@@ -102,7 +103,7 @@ define(function () {
                 await this._Wait(100);
             }
             console.log('Remote.SendAndReceiveAsync(' + id + ')<<< ' + this._valuesmsg(responses.concat(response), 'response'));
-            this.Process(responses, id);
+            this.ProcessResponses(responses, id);
             console.log({
                 request: this._valuesmsg(requests, 'command'),
                 expected: expected.toString(),
@@ -139,7 +140,7 @@ define(function () {
             }
             if (responses.length > 0) {
                 console.log('Remote._PollAsync(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
-                this.Process(responses, id);
+                this.ProcessResponses(responses, id);
             }
             this.pollBusy_ = false;
             this.StartPolling(); // waiting to poll

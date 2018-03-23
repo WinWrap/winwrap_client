@@ -12,8 +12,8 @@
 define(function () {
 
     class SyntaxError {
-        constructor(decorate) {
-            this.Decorate = decorate;
+        constructor(channel) {
+            this.channel_ = channel;
             this.response_ = {};
         }
         ClearError() {
@@ -51,9 +51,11 @@ define(function () {
             }
             return msg;
         }
-        SetError(response) {
+        ErrorResponseHandler(response) {
             this.response_ = response;
-            this.Decorate.Display();
+            if (channel.CommitRebase.Name() !== response.error.macro_name) {
+                channel.PushPendingRequest({ command: '?read', target: response.error.macro_name });
+            }
         }
         _makeMessage(theerror) {
             let msg = "";
