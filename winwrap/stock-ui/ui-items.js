@@ -282,12 +282,12 @@ define(function () {
     class StatusBar {
         constructor(channel, element) {
             this.element_ = element;
-            channel.StatusBar = this;
-        }
-        Initialize() {
-        }
-        SetText(text) {
-            this.element_.text(text);
+            let this_ = this; // closure can't handle this in the lambdas below
+            channel.AddResponseHandlers({
+                _statusbar: response => {
+                    this_.element_.text(response.text);
+                }
+            });
         }
     }
 

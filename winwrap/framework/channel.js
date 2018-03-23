@@ -18,7 +18,6 @@ define(function () {
             this.Name = name;
             this.UI = undefined; // set Basic async _InitializeAsync(factory)
             this.CommitRebase = undefined;
-            this.StatusBar = undefined;
             this.ClientID = ('0000000000' + Math.floor(Math.random() * 2147483647)).slice(-10).toString();
             this.AllocatedID = 0; // explicitly set in ?attach
             this.Version = undefined;
@@ -69,7 +68,7 @@ define(function () {
 
         AddResponseHandlers(handlers) {
             Object.keys(handlers).forEach(key => {
-                let response = '!' + key;
+                let response = key[0] == '_' ? key : '!' + key;
                 if (this.responseHandlers_[response] === undefined) {
                     this.responseHandlers_[response] = [];
                 }
@@ -124,9 +123,8 @@ define(function () {
         }
 
         SetStatusBarText(text) {
-            if (this.StatusBar !== undefined) {
-                this.StatusBar.SetText(text);
-            }
+            let response = { response: '_statusbar', text: text };
+            this.ProcessResponse(response);
         }
 
         _NextGeneration() {
