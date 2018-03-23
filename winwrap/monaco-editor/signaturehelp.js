@@ -57,7 +57,6 @@ define(function () {
                 activeSignature: response.prototype_index,
                 activeParameter: response.prototype_arg_index
             };
-            //ww.Browser.Log(result);
             return result;
         }
     }

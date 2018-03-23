@@ -53,8 +53,11 @@ define(function () {
         }
         ErrorResponseHandler(response) {
             this.response_ = response;
-            if (channel.CommitRebase.Name() !== response.error.macro_name) {
-                channel.PushPendingRequest({ command: '?read', target: response.error.macro_name });
+            if (response.response === '!syntax' && response.okay) {
+                // do nothing
+            }
+            else if (this.channel_.CommitRebase.Name() !== response.error.macro_name) {
+                this.channel_.PushPendingRequest({ command: '?read', target: response.error.macro_name });
             }
         }
         _makeMessage(theerror) {

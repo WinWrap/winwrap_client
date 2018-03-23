@@ -15,13 +15,16 @@ define(function () {
             this.Remote = remote;
             this.Name = name;
             this.UI = undefined; // set Basic async _InitializeAsync(factory)
+            this.CommitRebase = undefined;
+            this.StatusBar = undefined;
             this.ClientID = ('0000000000' + Math.floor(Math.random() * 2147483647)).slice(-10).toString();
             this.AllocatedID = 0; // explicitly set in ?attach
             this.Version = undefined;
             this.generation_ = 0;
             this.commitcounter_ = 0;
             this.busy_ = false;
-            this.handlers_ = [];
+            this.initHandlers_ = [];
+            this.responseHandlers_ = [];
         }
         async InitializeAsync() {
             while (this.busy_)
@@ -29,7 +32,10 @@ define(function () {
 
             this.busy_ = true;
             this.CommitRebase = new ww.CommitRebase(this);
-            this.UI.Initialize();
+
+            // complete initialization
+            this.initHandlers_.forEach(handler => handler());
+
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
             try {
@@ -37,7 +43,7 @@ define(function () {
             } catch (err) {
                 console.log('ERROR channel.js InitializeAsync ', err);
                 let attachErrMsg = `${this.Name} ${request.command} threw error`;
-                this.UI.StatusBar.SetText(attachErrMsg);
+                this.SetStatusBarText(attachErrMsg);
             }
             this.busy_ = false;
             if (attach.unique_name !== this.ClientID) {
@@ -46,19 +52,24 @@ define(function () {
             }
             this.AllocatedID = attach.allocated_id;
             this.Version = attach.version;
-            this.UI.StatusBar.SetVersionChannelInfo();
+            let versionInfo = `WinWrap Version = ${this.Version}`;
+            let channelInfo = `${this.Name} AllocatedID = ${this.AllocatedID}`;
+            this.SetStatusBarText(`${versionInfo}, ${channelInfo}`);
             this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
             this.PushPendingRequest({ command: '?stack' });
             // now UI is initialized
         }
+        AddInitHandler(handler) {
+            this.initHandlers_.push(handler);
+        }
         AddResponseHandlers(handlers) {
             Object.keys(handlers).forEach(key => {
                 let response = '!' + key;
-                if (this.handlers_[response] === undefined) {
-                    this.handlers_[response] = [];
+                if (this.responseHandlers_[response] === undefined) {
+                    this.responseHandlers_[response] = [];
                 }
                 let handler = handlers[key];
-                this.handlers_[response].push(handler);
+                this.responseHandlers_[response].push(handler);
                 if (key === 'state') {
                     this.AddResponseHandlers({
                         notify_begin: handler,
@@ -93,13 +104,18 @@ define(function () {
             }
         }
         ProcessResponse(response) {
-            let handlers = this.handlers_[response.response];
+            let handlers = this.responseHandlers_[response.response];
             if (handlers !== undefined) {
                 handlers.forEach(handler => handler(response));
             }
         }
         PushPendingCommit() {
             this.PushPendingRequest(this.CommitRebase.GetCommitRequest());
+        }
+        SetStatusBarText(text) {
+            if (this.StatusBar !== undefined) {
+                this.StatusBar.SetText(text);
+            }
         }
         _NextGeneration() {
             if (++this.generation_ === 0x10000)

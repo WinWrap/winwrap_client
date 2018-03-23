@@ -69,24 +69,38 @@ define([
             let channel = ui.Channel;
             this.macros_ = []; // xxx Macros
             this.element_ = element;
-            let inputMacro = this; // closure can't handle this in the lambdas below
+            let this_ = this; // closure can't handle this in the lambdas below
+            channel.AddResponseHandlers({
+                new: response => {
+                    channel.PushPendingRequest({ command: '?read', target: response.name });
+                },
+                opendialog: response => {
+                    this_.SetFileValues(response.names.map(item => item.name));
+                },
+                read: response => {
+                    // only read the first file
+                    let file = response.files[0];
+                    this_.SetFileValue(file.name);
+                    channel.CommitRebase.Read(file);
+                    channel.PushPendingRequest({ command: '?breaks', target: file.name });
+                    channel.PushPendingRequest({ command: '?state', target: file.name });
+                },
+                state: response => {
+                    //button.Enabled(!response.macro_loaded);
+                }
+            });
             this.element_.autocomplete({
                 source: (request, response) => {
                     let term = $.ui.autocomplete.escapeRegex(request.term);
                     //console.log(term);
                     let matcher = new RegExp(`^.*${term}.*$`, 'i');
-                    response($.grep(inputMacro.macros_, element => { // xxx
+                    response($.grep(this_.macros_, element => { // xxx
                         return matcher.test(element);
                     }));
                 }
             });
             this.element_.on('autocompleteselect', (event, ui) => {
                 channel.PushPendingRequest({ command: '?read', target: ui.item.value });
-            });
-            channel.AddResponseHandlers({
-                state: response => {
-                    //button.Enabled(!response.macro_loaded);
-                }
             });
         }
         GetFileValue() {
@@ -116,7 +130,8 @@ define([
             let button = new Button_Helper(element,
                 () => {
                     let name = channel.CommitRebase.Name();
-                    let newname = ui.GetFileValue();
+                    let inputMacro = ui.items_['ww-item-files'];
+                    let newname = inputMacro.GetFileValue();
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
                     channel.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
@@ -251,20 +266,22 @@ define([
             let channel = ui.Channel;
             let button = new Button_Helper(element,
                 () => { // xxx
-                    let immediateShowing = ui.EditorImmediate.GetVisibile();
-                    let watchShowing = ui.EditorWatch.GetVisibile();
+                    let editorImmediate = ui.GetItem('ww-item-immediate');
+                    let editorWatch = ui.GetItem('ww-item-watch');
+                    let immediateShowing = editorImmediate.GetVisibile();
+                    let watchShowing = editorWatch.GetVisibile();
                     if (!immediateShowing && !watchShowing) {
-                        ui.EditorImmediate.SetVisible(false);
-                        ui.EditorWatch.SetVisible(true);
+                        editorImmediate.SetVisible(false);
+                        editorWatch.SetVisible(true);
                     } else if (!immediateShowing && watchShowing) {
-                        ui.EditorImmediate.SetVisible(true);
-                        ui.EditorWatch.SetVisible(false);
+                        editorImmediate.SetVisible(true);
+                        editorWatch.SetVisible(false);
                     } else if (immediateShowing && !watchShowing) {
-                        ui.EditorImmediate.SetVisible(true);
-                        ui.EditorWatch.SetVisible(true);
+                        editorImmediate.SetVisible(true);
+                        editorWatch.SetVisible(true);
                     } else if (immediateShowing && watchShowing) {
-                        ui.EditorImmediate.SetVisible(false);
-                        ui.EditorWatch.SetVisible(false);
+                        editorImmediate.SetVisible(false);
+                        editorWatch.SetVisible(false);
                     }
                 });
             this.button_ = button;
@@ -281,34 +298,14 @@ define([
             this.UI = ui;
             let this0 = this;
             this.element_ = element;
+            this.UI.Channel.StatusBar = this;
         }
         Initialize() {
-            this.SetVersionChannelInfo();
-        }
-        SetVersionChannelInfo() {
-            let channel = this.UI.Channel;
-            let versionInfo = `WinWrap Version = ${channel.Version}`;
-            let channelInfo = `${channel.Name} AllocatedID = ${channel.AllocatedID}`;
-            this.SetText(`${versionInfo}, ${channelInfo}`);
         }
         SetText(text) {
             this.element_.text(text);
         }
     }
-
-    class Browser {
-        constructor() { }
-        Append(json) {
-            let text = JSON.stringify(json, undefined, 2);
-            $('#jsondata').append(text + '<br />');
-        }
-        SetText(json) {
-            let text = JSON.stringify(json, undefined, 2);
-            $('#jsondata').text(text); //
-        }
-    }
-
-    ww.Browser = new Browser();
 
 });
 

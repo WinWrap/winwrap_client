@@ -15,6 +15,21 @@ define(function () {
         constructor(channel) {
             this.Channel = channel;
             this.doc_ = null;
+            let this_ = this; // closure can't handle this in the lambdas below
+            channel.AddResponseHandlers({
+                commit: response => {
+                    this_.CommitDone(response);
+                },
+                rebase: response => {
+                    if (!response.visible) {
+                        return; // hidden code is manipulated by this implementation
+                    }
+                    if (this_.doc_.InCommit(response.target)) {
+                        return; // rebasing self commit - no extra work required
+                    }
+                    this_.doc_.NeedCommit();
+                }
+            });
         }
 
         SetEditor(editor) {
@@ -24,6 +39,7 @@ define(function () {
         AppendPendingChange(op, caret) {
             this.doc_.AppendPendingChange(op, caret);
         }
+
         CommitDone(response) {
             if (response.success) {
                 if (response.target === this.Name()) {
@@ -77,16 +93,6 @@ define(function () {
         Read(file) {
             this.editor_.SetText(file.visible_code);
             this.doc_ = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, this.editor_);
-        }
-
-        Rebase(notification) {
-            if (!notification.visible) {
-                return; // hidden code is manipulated by this implementation
-            }
-            if (this.doc_.InCommit(notification.target)) {
-                return; // rebasing self commit - no extra work required
-            }
-            this.doc_.NeedCommit();
         }
     }
 

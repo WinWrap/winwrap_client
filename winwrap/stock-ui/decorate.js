@@ -23,7 +23,7 @@ define(function () {
             this.Breaks = new ww.Breaks(channel);
             this.Stack = new ww.Stack(channel);
             this.SyntaxError = new ww.SyntaxError(channel);
-            let this_ = this;
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 break: response => {
                     this_.Breaks.BreakResponseHandler(response);
@@ -59,7 +59,7 @@ define(function () {
         }
         _breaksDecorations(target) {
             let decorations = [];
-            let this_ = this;
+            let this_ = this; // closure can't handle this in the lambdas below
             let breaks = this.Breaks.GetBreaks(target);
             breaks.forEach(abreak => {
                 let decoration = this_._breakDecoration(abreak.line);
@@ -98,7 +98,7 @@ define(function () {
                     this.monacoEditor_.focus();
                 }
                 let syntaxMsg = syntaxError.GetMessage();
-                this.UI.StatusBar.element_.text(`Error ${syntaxMsg}`);
+                this.channel_.SetStatusBarText(syntaxMsg);
             }
             syntaxError.ClearError();
             return decorations;

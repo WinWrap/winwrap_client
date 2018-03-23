@@ -48,11 +48,11 @@ define(function () {
                 }
             }
             else if (op === ww.ChangeOp.EnterChangeOp) {
-                let range = this.editor_.GetIndexRangeOfLine(caret);
+                let range = this.editor_.GetIndexRangeOfLineAt(caret);
                 commit.AppendChange(new ww.Change(op, range.first - 2, 2));
             }
             else if (op === ww.ChangeOp.FixupChangeOp) {
-                let range = this.editor_.GetIndexRangeOfLine(caret);
+                let range = this.editor_.GetIndexRangeOfLineAt(caret);
                 commit.AppendChange(new ww.Change(op, range.first, range.last - range.first));
             }
         }

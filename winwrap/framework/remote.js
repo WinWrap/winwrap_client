@@ -74,7 +74,6 @@ define(function () {
                 let channel = this.ChannelById(id);
                 if (channel !== undefined) {
                     channel.ProcessResponse(response);
-                    channel.UI.Process(response);
                 }
             });
         }
