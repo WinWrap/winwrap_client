@@ -308,28 +308,3 @@ define([
     }
 
 });
-
-// code snippets
-
-/* use in StatsBar constructor
-    this.element_.click(() => {
-        console.log(`StatusBar line clicked at ${new Date().toLocaleString()}.`);
-        let editor = this0.UI.EditorCode;
-        editor.SetSelection( { first: 3, last: 7 } );
-        let obj = editor.GetSelection(); // necessary for console.log expansion
-        console.log(obj);
-    });
-*/
-
-/*detect code editor "Enter" key
-    editor.onKeyUp(function (e) {
-        if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
-            console.log("e.keyCode === monaco.KeyCode.Enter");
-        }
-    });
-*/
-
-/*
-    editor.trigger('mysource', 'editor.action.triggerSuggest', {});
-    editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
-*/
