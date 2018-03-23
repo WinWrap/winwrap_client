@@ -85,29 +85,20 @@ define(function () {
             });
         }
 
+        Poll() {
+            if (++this.commitcounter_ === 20) {
+                // push any pending commits (approx once every 2 seconds)
+                this.PushPendingCommit();
+                this.commitcounter_ = 0;
+            }
+        }
+
         PushPendingRequest(request) {
             if (request) {
                 request.datetime = new Date().toLocaleString();
                 request.id = this.AllocatedID;
                 request.gen = this._NextGeneration();
                 this.Remote.PushPendingRequest(request);
-            }
-        }
-
-        async SendAndReceiveAsync(request, expected) {
-            request.datetime = new Date().toLocaleString();
-            request.id = this.AllocatedID;
-            request.gen = this._NextGeneration();
-            let result = await this.Remote.SendAndReceiveAsync(request, expected, request.id);
-            //console.log(`Channel.SendAndReceiveAsync expected = ${expected}`);
-            return result;
-        }
-
-        Poll() {
-            if (++this.commitcounter_ === 20) {
-                // push any pending commits (approx once every 2 seconds)
-                this.PushPendingCommit();
-                this.commitcounter_ = 0;
             }
         }
 
@@ -120,6 +111,15 @@ define(function () {
 
         PushPendingCommit() {
             this.PushPendingRequest(this.CommitRebase.GetCommitRequest());
+        }
+
+        async SendAndReceiveAsync(request, expected) {
+            request.datetime = new Date().toLocaleString();
+            request.id = this.AllocatedID;
+            request.gen = this._NextGeneration();
+            let result = await this.Remote.SendAndReceiveAsync(request, expected, request.id);
+            //console.log(`Channel.SendAndReceiveAsync expected = ${expected}`);
+            return result;
         }
 
         SetStatusBarText(text) {

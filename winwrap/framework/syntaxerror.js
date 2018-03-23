@@ -22,6 +22,16 @@ define(function () {
             this.response_ = {};
         }
 
+        ErrorResponseHandler(response) {
+            this.response_ = response;
+            if (response.response === '!syntax' && response.okay) {
+                // do nothing
+            }
+            else if (this.channel_.CommitRebase.Name() !== response.error.macro_name) {
+                this.channel_.PushPendingRequest({ command: '?read', target: response.error.macro_name });
+            }
+        }
+
         GetError() {
             let response = this.response_;
             let error;
@@ -54,16 +64,6 @@ define(function () {
                     break;
             }
             return msg;
-        }
-
-        ErrorResponseHandler(response) {
-            this.response_ = response;
-            if (response.response === '!syntax' && response.okay) {
-                // do nothing
-            }
-            else if (this.channel_.CommitRebase.Name() !== response.error.macro_name) {
-                this.channel_.PushPendingRequest({ command: '?read', target: response.error.macro_name });
-            }
         }
 
         _makeMessage(theerror) {

@@ -12,23 +12,12 @@
 define(function () {
 
     class Breaks {
+
         constructor(channel) {
             this.channel_ = channel;
             this.breaks = [];
         }
-        GetBreaks(target) {
-            let breaks = this.breaks;
-            breaks = breaks.filter(el => el.target === target);
-            return breaks;
-        }
-        IsBreak(name, aline) {
-            let breaks = this.breaks;
-            let abreak = breaks.find(el => {
-                let match = el.target === name && el.line === aline;
-                return match;
-            });
-            return abreak !== undefined;
-        }
+
         BreakResponseHandler(response) {
             let breaks = this.breaks;
             breaks = breaks.filter(el => el.line !== response.line || el.target !== response.target);
@@ -37,6 +26,7 @@ define(function () {
             }
             this.breaks = breaks;
         }
+
         BreaksResponseHandler(response) {
             let breaks = [];
             let newBreaks = response.breaks;
@@ -48,6 +38,21 @@ define(function () {
                 });
             }
             this.breaks = breaks;
+        }
+
+        GetBreaks(target) {
+            let breaks = this.breaks;
+            breaks = breaks.filter(el => el.target === target);
+            return breaks;
+        }
+
+        IsBreak(name, aline) {
+            let breaks = this.breaks;
+            let abreak = breaks.find(el => {
+                let match = el.target === name && el.line === aline;
+                return match;
+            });
+            return abreak !== undefined;
         }
     }
 
