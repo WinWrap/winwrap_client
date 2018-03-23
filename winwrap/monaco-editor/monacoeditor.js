@@ -12,7 +12,7 @@
 define(function () {
 
     class MonacoEditor {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             this.channel_ = channel;
             this.element_ = element;
         }
@@ -108,8 +108,8 @@ define(function () {
     ww.MonacoEditor = MonacoEditor;
 
     class MonacoImmediateEditor extends MonacoEditor {
-        constructor(channel, element) {
-            super(channel, element)
+        constructor(ui, channel, element) {
+            super(ui, channel, element)
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddInitHandler(() => this_._Init());
         }
@@ -139,8 +139,8 @@ define(function () {
     ww.MonacoImmediateEditor = MonacoImmediateEditor;
 
     class MonacoWatchEditor extends MonacoEditor {
-        constructor(channel, element) {
-            super(channel, element)
+        constructor(ui, channel, element) {
+            super(ui, channel, element)
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddInitHandler(() => this_._Init());
         }
@@ -188,8 +188,8 @@ define(function () {
 
     class MonacoCodeEditor extends MonacoEditor {
 
-        constructor(channel, element) {
-            super(channel, element)
+        constructor(ui, channel, element) {
+            super(ui, channel, element)
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddInitHandler(() => this_._Init());
         }

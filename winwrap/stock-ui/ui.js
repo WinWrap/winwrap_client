@@ -22,30 +22,26 @@ define(function () {
         AddItem(channel, element, name) {
             let item = undefined;
             switch (name) {
-                case 'ww-item-new': item = new ButtonNew(channel, element); break;
-                case 'ww-item-files': item = new InputMacro(channel, element); break;
-                case 'ww-item-save': item = new ButtonSave(channel, element); break;
-                case 'ww-item-check': item = new ButtonCheck(channel, element); break;
-                case 'ww-item-run': item = new ButtonRun(channel, element); break;
-                case 'ww-item-pause': item = new ButtonPause(channel, element); break;
-                case 'ww-item-end': item = new ButtonEnd(channel, element); break;
-                case 'ww-item-into': item = new ButtonInto(channel, element); break;
-                case 'ww-item-over': item = new ButtonOver(channel, element); break;
-                case 'ww-item-out': item = new ButtonOut(channel, element); break;
-                case 'ww-item-cycle': item = new ButtonCycle(channel, element); break;
-                case 'ww-item-immediate': item = new ww.MonacoImmediateEditor(channel, element); break;
-                case 'ww-item-watch': item = new ww.MonacoWatchEditor(channel, element); break;
-                case 'ww-item-code': item = new ww.MonacoCodeEditor(channel, element); break;
-                case 'ww-item-statusbar': item = new StatusBar(channel, element); break;
+                case 'ww-item-new': item = new ButtonNew(this, channel, element); break;
+                case 'ww-item-files': item = new InputMacro(this, channel, element); break;
+                case 'ww-item-save': item = new ButtonSave(this, channel, element); break;
+                case 'ww-item-check': item = new ButtonCheck(this, channel, element); break;
+                case 'ww-item-run': item = new ButtonRun(this, channel, element); break;
+                case 'ww-item-pause': item = new ButtonPause(this, channel, element); break;
+                case 'ww-item-end': item = new ButtonEnd(this, channel, element); break;
+                case 'ww-item-into': item = new ButtonInto(this, channel, element); break;
+                case 'ww-item-over': item = new ButtonOver(this, channel, element); break;
+                case 'ww-item-out': item = new ButtonOut(this, channel, element); break;
+                case 'ww-item-cycle': item = new ButtonCycle(this, channel, element); break;
+                case 'ww-item-immediate': item = new ww.MonacoImmediateEditor(this, channel, element); break;
+                case 'ww-item-watch': item = new ww.MonacoWatchEditor(this, channel, element); break;
+                case 'ww-item-code': item = new ww.MonacoCodeEditor(this, channel, element); break;
+                case 'ww-item-statusbar': item = new StatusBar(this, channel, element); break;
             }
             if (item !== undefined) {
                 this.items_[name] = item;
             }
         };
-
-        GetItem(name) {
-            return this.items_[name];
-        }
     }
 
     ww.UI = UI;
@@ -65,7 +61,7 @@ define(function () {
     }
 
     class ButtonNew {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
@@ -80,7 +76,7 @@ define(function () {
     }
 
     class InputMacro {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             this.channel_ = channel;
             this.macros_ = []; // xxx Macros
             this.element_ = element;
@@ -139,11 +135,11 @@ define(function () {
     }
 
     class ButtonSave {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     let name = channel.CommitRebase.Name();
-                    let inputMacro = channel.UI.GetItem('ww-item-files');
+                    let inputMacro = ui.items_['ww-item-files'];
                     let newname = inputMacro.GetFileValue();
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
@@ -159,7 +155,7 @@ define(function () {
     }
 
     class ButtonCheck {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
@@ -175,7 +171,7 @@ define(function () {
     }
 
     class ButtonRun {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
@@ -191,7 +187,7 @@ define(function () {
     }
 
     class ButtonPause {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.Name() });
@@ -206,7 +202,7 @@ define(function () {
     }
 
     class ButtonEnd {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.Name() });
@@ -221,7 +217,7 @@ define(function () {
     }
 
     class ButtonInto {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
@@ -237,7 +233,7 @@ define(function () {
     }
 
     class ButtonOver {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingCommit();
@@ -253,7 +249,7 @@ define(function () {
     }
 
     class ButtonOut {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => {
                     channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.Name() });
@@ -268,11 +264,11 @@ define(function () {
     }
 
     class ButtonCycle {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => { // xxx
-                    let editorImmediate = channel.UI.GetItem('ww-item-immediate');
-                    let editorWatch = channel.UI.GetItem('ww-item-watch');
+                    let editorImmediate = ui.items_['ww-item-immediate'];
+                    let editorWatch = ui.items_['ww-item-watch'];
                     let immediateShowing = editorImmediate.GetVisibile();
                     let watchShowing = editorWatch.GetVisibile();
                     if (!immediateShowing && !watchShowing) {
@@ -299,7 +295,7 @@ define(function () {
     }
 
     class StatusBar {
-        constructor(channel, element) {
+        constructor(ui, channel, element) {
             this.element_ = element;
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
