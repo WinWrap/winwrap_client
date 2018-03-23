@@ -13,12 +13,11 @@ define([
     './basic',
     './breaks',
     './channel',
-    './commitrebase',
-    './remote',
-    './stack',
-    './syntaxerror',
-    './ui',
     './change',
     './commit',
-    './doc'], function () {
+    './commitrebase',
+    './doc',
+    './remote',
+    './stack',
+    './syntaxerror'], function () {
     });

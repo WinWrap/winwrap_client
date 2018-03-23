@@ -11,5 +11,5 @@
 
 define([
     './decorate',
-    './ui-items'], function () {
+    './ui'], function () {
     });
