@@ -78,6 +78,11 @@ define(function () {
         GetText() {
             return this.monacoEditor_.getValue();
         }
+
+        GetVisibile() {
+            return this.element_.css('display') !== 'none';
+        }
+
         SetSelection(selection) {
             let model = this.monacoEditor_.getModel();
             let p1 = model.getPositionAt(selection.first);
@@ -98,10 +103,6 @@ define(function () {
             else {
                 this.element_.hide();
             }
-        }
-
-        GetVisibile() {
-            return this.element_.css('display') !== 'none';
         }
     }
 
