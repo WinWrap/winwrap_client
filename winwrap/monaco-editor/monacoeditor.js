@@ -12,14 +12,12 @@
 define(function () {
 
     class MonacoEditor {
-        constructor(channel, element, container) {
+        constructor(channel, element) {
             this.channel_ = channel;
             this.element_ = element;
-            this.container_ = container;
-            this.monacoEditor_ = null;
         }
 
-        _Init() {
+        _Init(container) {
             this.monacoEditor_ = monaco.editor.create(this.element_[0], {
                 language: 'vb',
                 theme: 'vs-dark',
@@ -34,7 +32,7 @@ define(function () {
             } else {
                 this.monacoEditor_.updateOptions({ fontSize: 14 });
             }
-            this.monacoEditor_.setValue(`\"${this.container_}\"\r\n`);
+            this.monacoEditor_.setValue(`\"${container}\"\r\n`);
             this.AutoAuto = new ww.AutoAuto(this.channel_);
         }
 
@@ -111,13 +109,13 @@ define(function () {
 
     class MonacoImmediateEditor extends MonacoEditor {
         constructor(channel, element) {
-            super(channel, element, 'immediate')
+            super(channel, element)
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddInitHandler(() => this_._Init());
         }
 
         _Init() {
-            super._Init();
+            super._Init('immediate');
             let this_ = this; // closure can't handle this in the lambdas below
             this.channel_.AddResponseHandlers({
                 notify_debugclear: response => {
@@ -142,13 +140,13 @@ define(function () {
 
     class MonacoWatchEditor extends MonacoEditor {
         constructor(channel, element) {
-            super(channel, element, 'watch')
+            super(channel, element)
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddInitHandler(() => this_._Init());
         }
 
         _Init() {
-            super._Init();
+            super._Init('watch');
             let this_ = this; // closure can't handle this in the lambdas below
             this.channel_.AddResponseHandlers({
                 notify_pause: response => {
@@ -191,13 +189,13 @@ define(function () {
     class MonacoCodeEditor extends MonacoEditor {
 
         constructor(channel, element) {
-            super(channel, element, 'code')
+            super(channel, element)
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddInitHandler(() => this_._Init());
         }
 
         _Init() {
-            super._Init();
+            super._Init('code');
             let this_ = this; // closure can't handle this in the lambdas below
             this.channel_.CommitRebase.SetEditor(this);
             this.channel_.AddResponseHandlers({
