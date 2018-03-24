@@ -12,13 +12,26 @@
 define(function () {
 
     class SyntaxError {
-        constructor(decorate) {
-            this.Decorate = decorate;
+
+        constructor(channel) {
+            this.channel_ = channel;
             this.response_ = {};
         }
+
         ClearError() {
             this.response_ = {};
         }
+
+        ErrorResponseHandler(response) {
+            this.response_ = response;
+            if (response.response === '!syntax' && response.okay) {
+                // do nothing
+            }
+            else if (this.channel_.CommitRebase.Name() !== response.error.macro_name) {
+                this.channel_.PushPendingRequest({ command: '?read', target: response.error.macro_name });
+            }
+        }
+
         GetError() {
             let response = this.response_;
             let error;
@@ -29,6 +42,7 @@ define(function () {
             }
             return error;
         }
+
         GetMessage() {
             /*alert(notification.error.macro_name + '@' + notification.error.line_num + ': ' +
     notification.error.line + '\n' + notification.error.desc);*/
@@ -51,10 +65,7 @@ define(function () {
             }
             return msg;
         }
-        SetError(response) {
-            this.response_ = response;
-            this.Decorate.Display();
-        }
+
         _makeMessage(theerror) {
             let msg = "";
             //errormsg = error.macro_name + '@' + error.line_num + ': ' + error.line + '\n' + error.desc;

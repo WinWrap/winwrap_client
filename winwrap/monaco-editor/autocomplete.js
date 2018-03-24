@@ -12,6 +12,7 @@
 define(function () {
 
     class AutoComplete {
+
         constructor(autoauto) {
             this.autoTypes_ = autotypes;
             this.re_auto = new RegExp([
@@ -33,6 +34,7 @@ define(function () {
                 }
             });
         }
+
         _createDependencyProposals(response) {
             //console.log("_createDependencyProposals");
             let deps = [];
@@ -69,7 +71,7 @@ define(function () {
         'Class', // MC_CLASS
         'Module', // MC_MODULE
         'Color', // MC_RECORD
-        'UI', // MC_INTERFACE
+        'Interface', // MC_INTERFACE
         'Function', // MC_DELEGATE
         'Color', // MC_PREDECLAREDID
         'Color', // MC_LIBRARY

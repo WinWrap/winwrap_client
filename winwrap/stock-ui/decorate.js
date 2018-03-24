@@ -14,23 +14,53 @@ define(function () {
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodelwithdecorations.html
     // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.imodeldeltadecoration.html
     class Decorate {
-        constructor(ui, monacoEditor) {
-            this.UI = ui;
+
+        constructor(channel, monacoEditor) {
+            this.channel_ = channel;
             this.monacoEditor_ = monacoEditor;
             this.oldDecorations = '';
-            this.Breaks = new ww.Breaks(this);
-            this.Stack = new ww.Stack(this);
-            this.SyntaxError = new ww.SyntaxError(this);
+            this.Breaks = new ww.Breaks(channel);
+            this.Stack = new ww.Stack(channel);
+            this.SyntaxError = new ww.SyntaxError(channel);
+            let this_ = this; // closure can't handle this in the lambdas below
+            channel.AddResponseHandlers({
+                break: response => {
+                    this_.Breaks.BreakResponseHandler(response);
+                    this_._display();
+                },
+                breaks: response => {
+                    this_.Breaks.BreaksResponseHandler(response);
+                    this_._display();
+                },
+                notify_errors: response => {
+                    this_.SyntaxError.ErrorResponseHandler(response);
+                    this_._display();
+                },
+                stack: response => {
+                    this_.Stack.StateResponseHandler(response);
+                    this_._display();
+                },
+                state: response => {
+                    this_.Stack.StateResponseHandler(response);
+                    this_._display();
+                },
+                syntax: response => {
+                    this_.SyntaxError.ErrorResponseHandler(response);
+                    this_._display();
+                }
+            });
         }
+
         _breakDecoration(line) {
             let decoration = {};
             decoration.range = new monaco.Range(line, 1, line, 1);
             decoration.options = { isWholeLine: true, 'glyphMarginClassName': 'myGlyphMarginClass' };
             return decoration;
         }
+
         _breaksDecorations(target) {
             let decorations = [];
-            let this_ = this;
+            let this_ = this; // closure can't handle this in the lambdas below
             let breaks = this.Breaks.GetBreaks(target);
             breaks.forEach(abreak => {
                 let decoration = this_._breakDecoration(abreak.line);
@@ -38,6 +68,7 @@ define(function () {
             });
             return decorations;
         }
+
         _pauseDecoration(target) {
             let decorations = [];
             let line = this.Stack.GetPauseLine(target);
@@ -49,10 +80,12 @@ define(function () {
             }
             return decorations;
         }
+
         /*decoration.options = { // works as hover
             className: 'myContentClass',
             hoverMessage: 'hover message'
         };*/
+
         _errorDecoration() {
             let decorations = [];
             let syntaxError = this.SyntaxError;
@@ -69,13 +102,14 @@ define(function () {
                     this.monacoEditor_.focus();
                 }
                 let syntaxMsg = syntaxError.GetMessage();
-                this.UI.StatusBar.element_.text(`Error ${syntaxMsg}`);
+                this.channel_.SetStatusBarText(syntaxMsg);
             }
             syntaxError.ClearError();
             return decorations;
         }
-        Display() {
-            let target = this.UI.Channel.CommitRebase.Name();
+
+        _display() {
+            let target = this.channel_.CommitRebase.Name();
             if (target !== null) {
                 let decorations = [];
                 decorations.push(...this._breaksDecorations(target));

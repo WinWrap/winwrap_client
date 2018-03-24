@@ -10,7 +10,9 @@
 // All rights reserved.
 
 define(function () {
+
     class Doc {
+
         constructor(sync_id, name, revision, editor) {
             this.sync_id_ = sync_id;
             this.name_ = name;
@@ -48,11 +50,11 @@ define(function () {
                 }
             }
             else if (op === ww.ChangeOp.EnterChangeOp) {
-                let range = this.editor_.GetIndexRangeOfLine(caret);
+                let range = this.editor_.GetIndexRangeOfLineAt(caret);
                 commit.AppendChange(new ww.Change(op, range.first - 2, 2));
             }
             else if (op === ww.ChangeOp.FixupChangeOp) {
-                let range = this.editor_.GetIndexRangeOfLine(caret);
+                let range = this.editor_.GetIndexRangeOfLineAt(caret);
                 commit.AppendChange(new ww.Change(op, range.first, range.last - range.first));
             }
         }
@@ -141,4 +143,5 @@ define(function () {
     }
 
     ww.Doc = Doc;
+
 });

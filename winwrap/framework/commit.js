@@ -24,10 +24,6 @@ define(function () {
             this.changes_.Append(nextchange);
         }
 
-        AppendChanges(changes) {
-            this.changes_.Append(changes);
-        }
-
         Changes() {
             return this.changes_;
         }

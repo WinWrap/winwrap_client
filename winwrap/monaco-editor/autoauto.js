@@ -12,6 +12,7 @@
 define(function () {
 
     class AutoAuto {
+
         constructor(channel) {
             this.channel_ = channel;
             this.AutoComplete = new ww.AutoComplete(this);
@@ -21,6 +22,11 @@ define(function () {
             this.ready1_ = false;
             this.sharedResponse_ = null;
         }
+
+        IsBusy() {
+            return this.busy1_ || this.busy2_;
+        }
+
         async SendAndReceiveAsync(model, position) { // xxx block polling during auto...
             let channel = this.channel_;
             let remote = channel.Remote;
@@ -56,6 +62,7 @@ define(function () {
             this.busy1_ = false; // first SendAndReceiveAsync call is done
             return response;
         }
+
         async _GetSharedResponseAsync() {
             console.log("AutoAuto.SendAndReceiveAsync call in progress (wait for shared response)...");
             let remote = this.channel_.Remote;
@@ -70,6 +77,7 @@ define(function () {
             this.ready1_ = false; // let first SendAndReceiveAsync complete
             return response;
         }
+
         async _SetSharedResponseAsync(response) {
             let remote = this.channel_.Remote;
             // share first SendAndReceiveAsync call's response with the send SendAndReceiveAsync call
@@ -82,6 +90,7 @@ define(function () {
             this.sharedResponse_ = null;
             console.log("AutoAuto.SendAndReceiveAsync response has been shared.");
         }
+
         textUntilPosition(model, position) {
             let text = model.getValueInRange({
                 startLineNumber: position.lineNumber,

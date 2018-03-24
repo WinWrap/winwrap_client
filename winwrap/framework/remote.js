@@ -12,6 +12,7 @@
 define(function () {
 
     class Remote { // singleton, but created in startup sequence
+
         // xxx es6 named paramaters not available Edge 41.16299.15.0
         // https://medium.com/dailyjs/named-and-optional-arguments-in-javascript-using-es6-destructuring-292a683d5b4e
         constructor(basic, name, transport) {
@@ -25,6 +26,7 @@ define(function () {
             this.pollBusy_ = false; // not in Poll
             this.pendingRequests = [];
         }
+
         async InitializeAsync() {
             for (let channel of Object.values(this.channels_)) {
                 await channel.InitializeAsync();
@@ -35,18 +37,23 @@ define(function () {
             });*/
             this.StartPolling();
         }
+
         AddChannel(channel) {
             this.channels_[channel.Name] = channel;
         }
+
         ChannelById(id) {
             return Object.values(this.channels_).filter(channel => channel.AllocatedID === id)[0];
         }
+
         ChannelByName(name) {
             return this.channels_[name];
         }
+
         PollBusy() {
             return this.pollBusy_;
         }
+
         StartPolling() { // stop during autocomplete and signaturehelp
             if (!this.polling_) {
                 this.polling_ = true; // waiting to poll
@@ -58,6 +65,7 @@ define(function () {
                 }
             }
         }
+
         StopPolling() {
             this.polling_ = false; // not waiting to poll
             if (this.timerId_ !== null) {
@@ -65,18 +73,21 @@ define(function () {
                 this.timerId_ = null;
             }
         }
+
         PushPendingRequest(request) {
             this.pendingRequests.push(request);
         }
-        Process(responses, id) {
+
+        ProcessResponses(responses, id) {
             responses.forEach(response => {
                 response.datetimeClient = new Date().toLocaleString();
                 let channel = this.ChannelById(id);
                 if (channel !== undefined) {
-                    channel.UI.Process(response);
+                    channel.ProcessResponse(response);
                 }
             });
         }
+
         async SendAndReceiveAsync(request, expected, id) {
             let requests = this._ExtractPendingRequestsForId(id);
             requests.push(request);
@@ -102,7 +113,7 @@ define(function () {
                 await this._Wait(100);
             }
             console.log('Remote.SendAndReceiveAsync(' + id + ')<<< ' + this._valuesmsg(responses.concat(response), 'response'));
-            this.Process(responses, id);
+            this.ProcessResponses(responses, id);
             console.log({
                 request: this._valuesmsg(requests, 'command'),
                 expected: expected.toString(),
@@ -112,6 +123,7 @@ define(function () {
             });
             return response;
         }
+
         async _PollAsync() {
             if (!this.polling_ || this.pollBusy_) {
                 return;
@@ -139,14 +151,16 @@ define(function () {
             }
             if (responses.length > 0) {
                 console.log('Remote._PollAsync(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
-                this.Process(responses, id);
+                this.ProcessResponses(responses, id);
             }
             this.pollBusy_ = false;
             this.StartPolling(); // waiting to poll
         }
+
         _Wait(ms) {
             return new Promise(r => setTimeout(r, ms));
         }
+
         _ExtractPendingRequestsForId(id) {
             let pendingRequests = this.pendingRequests;
             this.pendingRequests = [];
@@ -160,6 +174,7 @@ define(function () {
             });
             return requests;
         }
+
         _valuesmsg(data, key) {
             let xdata = [].concat(data).filter(item => item !== null && item !== undefined);
             let datas = xdata.map(o => o[key]);

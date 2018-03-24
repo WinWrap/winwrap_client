@@ -12,6 +12,7 @@
 define(function () {
 
     class SignatureHelp {
+
         constructor(autoauto) {
             let signatureHelp = this; // can't pass this through closure to the lambdas below
             monaco.languages.registerSignatureHelpProvider('vb', {
@@ -34,6 +35,7 @@ define(function () {
                 }
             });
         }
+
         _createSignatureHelp(response) {
             //console.log("_createSignatureHelp");
             if (response === null) {
@@ -57,7 +59,6 @@ define(function () {
                 activeSignature: response.prototype_index,
                 activeParameter: response.prototype_arg_index
             };
-            //ww.Browser.Log(result);
             return result;
         }
     }

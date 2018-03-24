@@ -12,6 +12,7 @@
 define(function () {
 
     class Transport {
+
         constructor(serverip) {
             this.serverip_ = serverip;
             this.key_ = undefined;
@@ -23,6 +24,7 @@ define(function () {
                 }
             }
         }
+
         SendAndReceiveAsync(requests, id) {
             let url = 'http://' + this.serverip_ + '/winwrap/poll/' + id;
             if (this.key_) {
