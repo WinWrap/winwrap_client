@@ -42,6 +42,11 @@ define(function () {
                 this.items_[name] = item;
             }
         };
+
+        GetItem(name) {
+            return this.items_[name];
+        }
+
     }
 
     ww.UI = UI;
@@ -139,7 +144,7 @@ define(function () {
             let button = new Button_Helper(element,
                 () => {
                     let name = channel.CommitRebase.Name();
-                    let inputMacro = ui.items_['ww-item-files'];
+                    let inputMacro = ui.GetItem('ww-item-files');
                     let newname = inputMacro.GetFileValue();
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
@@ -267,8 +272,8 @@ define(function () {
         constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => { // xxx
-                    let editorImmediate = ui.items_['ww-item-immediate'];
-                    let editorWatch = ui.items_['ww-item-watch'];
+                    let editorImmediate = ui.GetItem('ww-item-immediate');
+                    let editorWatch = ui.GetItem('ww-item-watch');
                     let immediateShowing = editorImmediate.GetVisibile();
                     let watchShowing = editorWatch.GetVisibile();
                     if (!immediateShowing && !watchShowing) {
