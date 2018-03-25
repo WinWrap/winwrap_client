@@ -154,6 +154,16 @@ define(function () {
             channel.AddResponseHandlers({
                 state: response => {
                     button.Enabled(true);
+                },
+                write: response => {
+                    if (response.success) {
+                        let inputMacro = ui.GetItem('ww-item-files');
+                        inputMacro.SetFileValue(response.name);
+                        channel.CommitRebase.Rename(response.name);
+                    }
+                    else {
+                        alert(response.error);
+                    }
                 }
             });
         }
@@ -293,7 +303,7 @@ define(function () {
             this.button_ = button;
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(true);
+                    button.Enabled(!response.edit_only);
                 }
             });
         }

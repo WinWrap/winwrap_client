@@ -95,6 +95,10 @@ define(function () {
             this.editor_.SetText(file.visible_code);
             this.doc_ = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, this.editor_);
         }
+
+        Rename(name) {
+            this.doc_.Rename(name);
+        }
     }
 
     ww.CommitRebase = CommitRebase;
