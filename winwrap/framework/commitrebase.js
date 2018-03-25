@@ -87,6 +87,10 @@ define(function () {
             return request;
         }
 
+        HandleSavedResponse(response) {
+            this.doc_ = new ww.Doc(this.Channel.AllocatedID, response.name, response.revision, this.editor_);
+        }
+
         Name() {
             return this.doc_ !== null ? this.doc_.Name() : null;
         }
@@ -94,10 +98,6 @@ define(function () {
         Read(file) {
             this.editor_.SetText(file.visible_code);
             this.doc_ = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, this.editor_);
-        }
-
-        Rename(name) {
-            this.doc_.Rename(name);
         }
     }
 

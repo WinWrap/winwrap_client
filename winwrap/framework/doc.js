@@ -133,10 +133,6 @@ define(function () {
             }
         }
 
-        Rename(name) {
-            this.name_ = name;
-        }
-
         Revision() {
             return this.revision_;
         }
