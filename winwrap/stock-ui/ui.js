@@ -91,18 +91,29 @@ define(function () {
                     channel.PushPendingRequest({ command: '?read', target: response.name });
                 },
                 opendialog: response => {
-                    this_.SetFileValues(response.names.map(item => item.name));
+                    this_._SetFileValues(response.names.map(item => item.name));
                 },
                 read: response => {
                     // only read the first file
                     let file = response.files[0];
-                    this_.SetFileValue(file.name);
+                    this_._SetFileValue(file.name);
                     channel.CommitRebase.Read(file);
                     channel.PushPendingRequest({ command: '?breaks', target: file.name });
                     channel.PushPendingRequest({ command: '?state', target: file.name });
                 },
                 state: response => {
                     //button.Enabled(!response.macro_loaded);
+                },
+                _save: response => {
+                    let name = channel.CommitRebase.Name();
+                    let newname = this_._GetFileValue();
+                    channel.PushPendingCommit();
+                    channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
+                    channel.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
+                },
+                _saved: response => {
+                    this_._SetFileValue(response.name);
+                    channel.CommitRebase.HandleSavedResponse(response);
                 }
             });
             this.element_.autocomplete({
@@ -119,13 +130,13 @@ define(function () {
                 channel.PushPendingRequest({ command: '?read', target: ui.item.value });
             });
         }
-        GetFileValue() {
+        _GetFileValue() {
             return this.element_.val();
         }
-        SetFileValue(value) {
+        _SetFileValue(value) {
             this.element_.val(value);
         }
-        SetFileValues(values) {
+        _SetFileValues(values) {
             let first = this.macros_.length === 0;
             this.macros_ = values;
             if (first) {
@@ -143,17 +154,22 @@ define(function () {
         constructor(ui, channel, element) {
             let button = new Button_Helper(element,
                 () => {
-                    let name = channel.CommitRebase.Name();
-                    let inputMacro = ui.GetItem('ww-item-files');
-                    let newname = inputMacro.GetFileValue();
-                    channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
-                    channel.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
+                    let response = { response: "_save" };
+                    channel.ProcessResponse(response);
                 });
             this.button_ = button;
             channel.AddResponseHandlers({
                 state: response => {
                     button.Enabled(true);
+                },
+                write: response => {
+                    if (response.success) {
+                        let response2 = { response: "_saved", name: response.name, revision: response.revision };
+                        channel.ProcessResponse(response2);
+                    }
+                    else {
+                        alert(response.error);
+                    }
                 }
             });
         }
@@ -293,7 +309,7 @@ define(function () {
             this.button_ = button;
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(true);
+                    button.Enabled(!response.edit_only);
                 }
             });
         }

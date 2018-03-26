@@ -87,6 +87,10 @@ define(function () {
             return request;
         }
 
+        HandleSavedResponse(response) {
+            this.doc_ = new ww.Doc(this.Channel.AllocatedID, response.name, response.revision, this.editor_);
+        }
+
         Name() {
             return this.doc_ !== null ? this.doc_.Name() : null;
         }
