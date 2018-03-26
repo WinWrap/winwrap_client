@@ -15,6 +15,7 @@ define(function () {
         constructor(ui, channel, element) {
             this.channel_ = channel;
             this.element_ = element;
+            this.autoEnter_ = true; // false: prevent enter insertion during auto completion
         }
 
         _Init(container) {
@@ -22,7 +23,9 @@ define(function () {
                 language: 'vb',
                 theme: 'vs-dark',
                 glyphMargin: true,
-                //autoIndent: false, // doc says it defaults to false, but...
+                autoIndent: false, // doc says it defaults to false, but...
+                formatOnPaste: false,
+                formatOnType: false,
                 automaticLayout: true, // check if its container dom node size has changed
                 selectionHighlight: false, // repeats of selected word are not highlighted
                 scrollbar: { vertical: 'visible' } // horizontal defaults auto
@@ -61,8 +64,8 @@ define(function () {
             let model = this.monacoEditor_.getModel();
             let position = model.getPositionAt(index);
             position.column = 1;
-            let first = model.getOffsetAt(position);
             let text = model.getLineContent(position.lineNumber);
+            let first = model.getOffsetAt(position);
             let last = first + text.length;
             return { first: first, last: last };
         }
@@ -134,6 +137,11 @@ define(function () {
                     this_.SetVisible(!response.is_idle);
                 }
             });
+            this.monacoEditor_.onKeyUp(function (e) {
+                if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
+                    // to do
+                }
+            });
         }
     }
 
@@ -167,17 +175,8 @@ define(function () {
                     this_.SetText(watchResults + '\n');
                 }
             });
-            this.monacoEditor_.addAction({
-                id: 'ww-enter',
-                label: 'enter',
-                keybindings: [monaco.KeyCode.Enter],
-                run: function (ed) {
-                    let selection = this_.GetSelection();
-                    let index = selection.first <= selection.last ? selection.first : selection.last;
-                    let delete_count = selection.first <= selection.last ? selection.last - index : selection.first - index;
-                    let change = new ww.Change(ww.ChangeOp.EditChangeOp, index, delete_count, '\r\n');
-                    let changes = new ww.Changes([change]);
-                    this_.ApplyChanges(changes, false);
+            this.monacoEditor_.onKeyUp(function (e) {
+                if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
                     let watches = this_.GetText().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });
                     this_.channel_.PushPendingRequest({ command: '?watch', watches: watches });
                 }
@@ -228,25 +227,48 @@ define(function () {
                     channel.PushPendingRequest(request);
                 }
             });
-            this.monacoEditor_.addAction({
-                id: 'ww-enter',
-                label: 'enter',
-                keybindings: [monaco.KeyCode.Enter],
-                run: function (ed) {
-                    let selection = this_.GetSelection();
-                    let index = selection.first <= selection.last ? selection.first : selection.last;
-                    let delete_count = selection.first <= selection.last ? selection.last - index : selection.first - index;
+            this.monacoEditor_.onKeyUp(function (e) {
+                if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
+                    let target = this_.channel_.CommitRebase.Name();
+                    if (target === null) {
+                        return;
+                    }
+                    // need to recognize on of two cases:
+                    // case 1: enter pressed without auto completion list visible
+                    //         - the cr-lf has already been inserted and
+                    //           the leading spaces to auto indent have also been inserted
+                    //         - remove the leading spaces
+                    // case 2: enter pressed with auto completion list visible
+                    //         - only the auto completion text has been inserted
+                    //           no cr-lf has been inserted
+                    //         - insert the cr-lf
+                    let rng = this_.monacoEditor_.getSelection();
+                    let model = this_.monacoEditor_.getModel();
+                    let left = model.getValueInRange({
+                        startLineNumber: rng.startLineNumber,
+                        startColumn: 1,
+                        endLineNumber: rng.endLineNumber,
+                        endColumn: rng.endColumn
+                    });
+                    let pos = { lineNumber: rng.startLineNumber, column: rng.startColumn };
+                    let index = model.getOffsetAt(pos);
+                    let delete_count = 0;
+                    if (left.trim() === '') {
+                        // case 1
+                        delete_count = left.length + 2;
+                        index -= delete_count;
+                    }
+                    else if (!this_.autoEnter_) {
+                        return;
+                    }
                     let change = new ww.Change(ww.ChangeOp.EditChangeOp, index, delete_count, '\r\n');
                     let changes = new ww.Changes([change]);
                     this_.ApplyChanges(changes, false);
-                    let caret = index + 2;
-                    let target = this_.channel_.CommitRebase.Name();
-                    if (target !== null) {
-                        this_.channel_.CommitRebase.AppendPendingChange(ww.ChangeOp.EditChangeOp, caret);
-                        this_.channel_.CommitRebase.AppendPendingChange(ww.ChangeOp.FixupChangeOp, index);
-                        this_.channel_.CommitRebase.AppendPendingChange(ww.ChangeOp.EnterChangeOp, caret);
-                        this_.channel_.PushPendingCommit();
-                    }
+                    index += 2; // advance caret
+                    this_.channel_.CommitRebase.AppendPendingChange(ww.ChangeOp.EditChangeOp, index);
+                    this_.channel_.CommitRebase.AppendPendingChange(ww.ChangeOp.FixupChangeOp, index - 2);
+                    this_.channel_.CommitRebase.AppendPendingChange(ww.ChangeOp.EnterChangeOp, index);
+                    this_.channel_.PushPendingCommit();
                 }
             });
         }
