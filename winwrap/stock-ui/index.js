@@ -21,7 +21,7 @@ $(function () {
 
         console.log('winwrap_change_client ' + new Date().toString());
 
-        monaco.languages.register({ id: 'vb' });
+        ww.MonacoShared.Initialize();
 
         let serverip = getSearchParams('serverip');
         let transport = new ww.Transport(serverip);
