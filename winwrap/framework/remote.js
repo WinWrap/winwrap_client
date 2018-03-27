@@ -32,9 +32,6 @@ define(function () {
                 await channel.InitializeAsync();
                 //console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
             }
-            /*Object.values(this.channels_).forEach(async channel => {
-                await channel.InitializeAsync();
-            });*/
             this.StartPolling();
         }
 
@@ -52,26 +49,6 @@ define(function () {
 
         PollBusy() {
             return this.pollBusy_;
-        }
-
-        StartPolling() { // stop during autocomplete and signaturehelp
-            if (!this.polling_) {
-                this.polling_ = true; // waiting to poll
-                if (this.timerId_ === null) {
-                    let remote = this; // closure can't handle this in the lambdas below
-                    this.timerId_ = setTimeout(async () => {
-                        await remote._PollAsync();
-                    }, 100); // waiting to poll
-                }
-            }
-        }
-
-        StopPolling() {
-            this.polling_ = false; // not waiting to poll
-            if (this.timerId_ !== null) {
-                clearTimeout(this.timerId_);
-                this.timerId_ = null;
-            }
         }
 
         PushPendingRequest(request) {
@@ -119,9 +96,33 @@ define(function () {
                 expected: expected.toString(),
                 results: this._valuesmsg(response, 'response'),
                 trys: trys,
-                elapsedms: end-start
+                elapsedms: end - start
             });
             return response;
+        }
+
+        SetStatusBarText(text) {
+            channels_.forEach(channel => channel.SetStatusBarText(text));
+        }
+
+        StartPolling() { // stop during autocomplete and signaturehelp
+            if (!this.polling_) {
+                this.polling_ = true; // waiting to poll
+                if (this.timerId_ === null) {
+                    let remote = this; // closure can't handle this in the lambdas below
+                    this.timerId_ = setTimeout(async () => {
+                        await remote._PollAsync();
+                    }, 100); // waiting to poll
+                }
+            }
+        }
+
+        StopPolling() {
+            this.polling_ = false; // not waiting to poll
+            if (this.timerId_ !== null) {
+                clearTimeout(this.timerId_);
+                this.timerId_ = null;
+            }
         }
 
         async _PollAsync() {

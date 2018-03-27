@@ -47,7 +47,7 @@ define(function () {
             let fragment = '';
             if (editor.Container !== 'code') {
                 rule = editor.Container;
-                fragment = this.textUntilPosition(model, position);
+                fragment = this.TextUntilPosition(model, position);
             }
             let request = {
                 command: '?auto',
@@ -103,7 +103,7 @@ define(function () {
             console.log("AutoAuto.SendAndReceiveAsync response has been shared.");
         }
 
-        textUntilPosition(model, position) {
+        TextUntilPosition(model, position) {
             let text = model.getValueInRange({
                 startLineNumber: position.lineNumber,
                 startColumn: 1,

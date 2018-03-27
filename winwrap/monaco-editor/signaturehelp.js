@@ -14,13 +14,13 @@ define(function () {
     class SignatureHelp {
 
         constructor(autoauto) {
-            let signatureHelp = this; // can't pass this through closure to the lambdas below
+            let this_ = this; // can't pass this through closure to the lambdas below
             monaco.languages.registerSignatureHelpProvider('vb', {
                 // 1/15/18 - Tom
                 // added ' ': WinWrap Basic doesn't require () around parameters
                 signatureHelpTriggerCharacters: ['(',' ',','],
                 provideSignatureHelp: async function (model, position) {
-                    let textUntilPosition = autoauto.textUntilPosition(model, position);
+                    let textUntilPosition = autoauto.TextUntilPosition(model, position);
                     // 1/15/18 - Tom
                     // added ' '
                     // 1/18/18 - Ed
@@ -29,14 +29,14 @@ define(function () {
                     let match = true;
                     if (match) { // was [{}]
                         let response = await autoauto.SendAndReceiveAsync(model, position);
-                        return signatureHelp._createSignatureHelp(response);
+                        return this_._CreateSignatureHelp(response);
                     }
                     return undefined;
                 }
             });
         }
 
-        _createSignatureHelp(response) {
+        _CreateSignatureHelp(response) {
             //console.log("_createSignatureHelp");
             if (response === null) {
                 console.log("ww-error: _createSignatureHelp no response"); // xxx

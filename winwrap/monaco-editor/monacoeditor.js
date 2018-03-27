@@ -161,10 +161,13 @@ define(function () {
                 if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
                     let rng = this_.monacoEditor_.getSelection();
                     let model = this_.monacoEditor_.getModel();
-                    let text = model.getLineContent(rng.startLineNumber - 1);
-                    let depth = 0;
-                    let language = 2;
-                    this_.Channel.PushPendingRequest({ command: '?debug', depth: 0, language: language, text: text });
+                    let text = model.getLineContent(rng.startLineNumber);
+                    if (text.trim() === '') {
+                        text = model.getLineContent(rng.startLineNumber - 1);
+                        let depth = 0;
+                        let language = 2;
+                        this_.Channel.PushPendingRequest({ command: '?debug', depth: 0, language: language, text: text });
+                    }
                 }
             });
         }
