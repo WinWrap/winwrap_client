@@ -13,5 +13,6 @@ define([
     './autoauto',
     './autocomplete',
     './monacoeditor',
+    './monacoshared',
     './signaturehelp'], function () {
     });

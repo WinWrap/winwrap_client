@@ -21,21 +21,21 @@ define(function () {
                 /\./        // member
             ].map(r => r.source).join('|'));
             // ? = CallersLine (global)
-            let autoComplete = this; // can't pass this through closure to the lambdas below
+            let this_ = this; // can't pass this through closure to the lambdas below
             monaco.languages.registerCompletionItemProvider('vb', {
                 triggerCharacters: [' ', '.', '#', '=', ',', '\t', '\xA0'], // '(', ')'
                 provideCompletionItems: async function (model, position) {
-                    let textUntilPosition = autoauto.textUntilPosition(model, position);
+                    let textUntilPosition = autoauto.TextUntilPosition(model, position);
                     let match = textUntilPosition.match(this.re_auto); // limits traffic to server
                     if (match) {
                         let response = await autoauto.SendAndReceiveAsync(model, position);
-                        return autoComplete._createDependencyProposals(response); // incomplete not used
+                        return this_._CreateDependencyProposals(response); // incomplete not used
                     }
                 }
             });
         }
 
-        _createDependencyProposals(response) {
+        _CreateDependencyProposals(response) {
             //console.log("_createDependencyProposals");
             let deps = [];
             if (response === null) {

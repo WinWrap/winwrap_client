@@ -13,8 +13,7 @@ define(function () {
 
     class AutoAuto {
 
-        constructor(channel) {
-            this.channel_ = channel;
+        constructor() {
             this.AutoComplete = new ww.AutoComplete(this);
             this.SignatureHelp = new ww.SignatureHelp(this);
             this.busy1_ = false;
@@ -28,7 +27,8 @@ define(function () {
         }
 
         async SendAndReceiveAsync(model, position) { // xxx block polling during auto...
-            let channel = this.channel_;
+            let editor = ww.MonacoShared.GetEditor(model);
+            let channel = editor.Channel;
             let remote = channel.Remote;
             // wait for Channel.Poll to finish
             while (remote.PollBusy())
@@ -45,16 +45,15 @@ define(function () {
             channel.PushPendingCommit();
             let rule = '';
             let fragment = '';
-            let container = 'code';
-            if (container !== 'code') {
-                rule = container;
-                fragment = this.textUntilPosition(model, position);
+            if (editor.Container !== 'code') {
+                rule = editor.Container;
+                fragment = this.TextUntilPosition(model, position);
             }
             let request = {
                 command: '?auto',
                 target: channel.CommitRebase.Name(),
                 first: 0,
-                offset: model.getOffsetAt(position),
+                offset: editor.CodeEditor.GetSelection().first,
                 rule: rule,
                 fragment: fragment
             };
@@ -74,7 +73,9 @@ define(function () {
 
         async _GetSharedResponseAsync() {
             console.log("AutoAuto.SendAndReceiveAsync call in progress (wait for shared response)...");
-            let remote = this.channel_.Remote;
+            let editor = ww.MonacoShared.GetEditor(model);
+            let channel = editor.Channel;
+            let remote = this.channel.Remote;
             // wait until first SendAndReceiveAsync call has a response
             this.busy2_ = true; // second SendAndReceiveAsync call is busy
             // wait for first SendAndReceiveAsync to get a response
@@ -88,7 +89,9 @@ define(function () {
         }
 
         async _SetSharedResponseAsync(response) {
-            let remote = this.channel_.Remote;
+            let editor = ww.MonacoShared.GetEditor(model);
+            let channel = editor.Channel;
+            let remote = this.channel.Remote;
             // share first SendAndReceiveAsync call's response with the send SendAndReceiveAsync call
             this.sharedResponse_ = response;
             this.ready1_ = true; // first SendAndReceiveAsync call has a response
@@ -100,7 +103,7 @@ define(function () {
             console.log("AutoAuto.SendAndReceiveAsync response has been shared.");
         }
 
-        textUntilPosition(model, position) {
+        TextUntilPosition(model, position) {
             let text = model.getValueInRange({
                 startLineNumber: position.lineNumber,
                 startColumn: 1,

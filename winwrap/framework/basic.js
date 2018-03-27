@@ -88,9 +88,6 @@ define(function () {
                 await remote.InitializeAsync();
                 //console.log(`Basic._InitializeAsync remote.Name = ${remote.Name}`);
             }
-            /*Object.values(this.remotes_).forEach(async remote => {
-                await remote.InitializeAsync();
-            });*/
         }
 
         ClassName(element, prefix, defaultName) {
