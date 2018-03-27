@@ -13,9 +13,8 @@ define(function () {
 
     class AutoAuto {
 
-        constructor(channel, container) {
+        constructor(channel) {
             this.channel_ = channel;
-            this.container_ = container;
             this.AutoComplete = new ww.AutoComplete(this);
             this.SignatureHelp = new ww.SignatureHelp(this);
             this.busy1_ = false;
@@ -46,8 +45,9 @@ define(function () {
             channel.PushPendingCommit();
             let rule = '';
             let fragment = '';
-            if (this.container_ !== 'code') {
-                rule = this.container_;
+            let container = 'code';
+            if (container !== 'code') {
+                rule = container;
                 fragment = this.textUntilPosition(model, position);
             }
             let request = {
