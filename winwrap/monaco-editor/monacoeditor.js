@@ -36,7 +36,6 @@ define(function () {
                 this.monacoEditor_.updateOptions({ fontSize: 14 });
             }
             this.monacoEditor_.setValue(`\"${container}\"\r\n`);
-            this.AutoAuto = new ww.AutoAuto(this.channel_, container);
         }
 
         ApplyChanges(changes, is_server) {
@@ -216,6 +215,7 @@ define(function () {
 
         _Init() {
             super._Init('code');
+            this.AutoAuto = new ww.AutoAuto(this.channel_);
             let this_ = this; // closure can't handle this in the lambdas below
             this.channel_.CommitRebase.SetEditor(this);
             this.channel_.AddResponseHandlers({
