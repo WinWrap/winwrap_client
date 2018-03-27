@@ -36,7 +36,7 @@ define(function () {
                 this.monacoEditor_.updateOptions({ fontSize: 14 });
             }
             this.monacoEditor_.setValue(`\"${container}\"\r\n`);
-            this.AutoAuto = new ww.AutoAuto(this.channel_);
+            this.AutoAuto = new ww.AutoAuto(this.channel_, container);
         }
 
         ApplyChanges(changes, is_server) {
