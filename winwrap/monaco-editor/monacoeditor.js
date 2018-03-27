@@ -122,8 +122,23 @@ define(function () {
             super._Init('immediate');
             let this_ = this; // closure can't handle this in the lambdas below
             this.channel_.AddResponseHandlers({
+                debug: response => {
+                    let text = undefined;
+                    if (response.error_desc !== '') {
+                        text = 'Error: ' + response.error_desc;
+                    }
+                    else if (response.action === 'get') {
+                        text = response.value;
+                    }
+                    if (text !== undefined) {
+                        let index = this_.GetSelection().first;
+                        let change = new ww.Change(ww.ChangeOp.EditChangeOp, index, 0, text + '\r\n');
+                        let changes = new ww.Changes([change]);
+                        this_.ApplyChanges(changes, false);
+                    }
+                },
                 notify_debugclear: response => {
-                    this_.SetText('');
+                    this_.SetText('"immediate"\r\n');
                 },
                 notify_debugprint: response => {
                     // https://microsoft.github.io/monaco-editor/api/uis/monaco.editor.icodeeditor.html#executechanges
@@ -139,7 +154,12 @@ define(function () {
             });
             this.monacoEditor_.onKeyUp(function (e) {
                 if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
-                    // to do
+                    let rng = this_.monacoEditor_.getSelection();
+                    let model = this_.monacoEditor_.getModel();
+                    let text = model.getLineContent(rng.startLineNumber - 1);
+                    let depth = 0;
+                    let language = 2;
+                    this_.channel_.PushPendingRequest({ command: '?debug', depth: 0, language: language, text: text });
                 }
             });
         }
