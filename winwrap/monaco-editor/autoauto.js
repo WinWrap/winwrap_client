@@ -13,8 +13,9 @@ define(function () {
 
     class AutoAuto {
 
-        constructor(channel) {
+        constructor(channel, container) {
             this.channel_ = channel;
+            this.container_ = container;
             this.AutoComplete = new ww.AutoComplete(this);
             this.SignatureHelp = new ww.SignatureHelp(this);
             this.busy1_ = false;
@@ -43,11 +44,19 @@ define(function () {
             this.busy1_ = true; // first SendAndReceiveAsync call is busy
             remote.StopPolling();
             channel.PushPendingCommit();
+            let rule = '';
+            let fragment = '';
+            if (this.container_ !== 'code') {
+                rule = this.container_;
+                fragment = this.textUntilPosition(model, position);
+            }
             let request = {
                 command: '?auto',
                 target: channel.CommitRebase.Name(),
                 first: 0,
-                offset: model.getOffsetAt(position)
+                offset: model.getOffsetAt(position),
+                rule: rule,
+                fragment: fragment
             };
             let response = null;
             try {
