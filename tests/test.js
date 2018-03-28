@@ -2,9 +2,6 @@
 
 (function () {
 
-    // editor.trigger('source - use any string you like', 'editor.action.triggerSuggest', {});
-    // editor.trigger('source - use any string you like', 'editor.action.triggerParameterHints', {});
-
     class TestPrototype {
         constructor(codeeditor) {
             this.Editor = codeeditor.editor();
@@ -37,3 +34,18 @@
     ww.TestPrototype = TestPrototype;
 
 })();
+
+// code samples - do not remove
+
+/*detect code editor "Enter" key
+    editor.onKeyUp(function (e) {
+        if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
+            console.log("e.keyCode === monaco.KeyCode.Enter");
+        }
+    });
+*/
+
+/*
+    editor.trigger('mysource', 'editor.action.triggerSuggest', {});
+    editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
+*/
