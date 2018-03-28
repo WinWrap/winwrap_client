@@ -102,7 +102,7 @@ define(function () {
         }
 
         SetStatusBarText(text) {
-            channels_.forEach(channel => channel.SetStatusBarText(text));
+            this.channels_.forEach(channel => channel.SetStatusBarText(text));
         }
 
         StartPolling() { // stop during autocomplete and signaturehelp
