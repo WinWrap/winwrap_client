@@ -149,6 +149,8 @@ define(function () {
                 responses = await this.transport_.SendAndReceiveAsync(requests, id);
             } catch (err) {
                 console.log('Remote._PollAsync(' + id + ') error: ' + err);
+                let pollErrMsg = `${this.Name} polling error at ${new Date().toLocaleString()}`;
+                this.SetStatusBarText(pollErrMsg);
             }
             if (responses.length > 0) {
                 console.log('Remote._PollAsync(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
