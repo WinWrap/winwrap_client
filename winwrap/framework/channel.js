@@ -44,7 +44,8 @@ define(function () {
                 attach = await this.SendAndReceiveAsync(request, '!attach');
             } catch (err) {
                 console.log('ERROR channel.js InitializeAsync ', err);
-                let attachErrMsg = `${this.Name} ${request.command} threw error`;
+                //let attachErrMsg = `${this.Name} ${request.command} threw error`;
+                let attachErrMsg = `${this.Name} is not connected to the server`;
                 this.SetStatusBarText(attachErrMsg);
             }
             this.busy_ = false;
