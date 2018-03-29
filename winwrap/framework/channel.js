@@ -98,7 +98,9 @@ define(function () {
             if (request) {
                 request.datetime = new Date().toLocaleString();
                 request.id = this.AllocatedID;
-                request.gen = this._NextGeneration();
+                if (request.command.substring(0, 1) === '?') {
+                    request.gen = this._NextGeneration();
+                }
                 this.Remote.PushPendingRequest(request);
             }
         }
