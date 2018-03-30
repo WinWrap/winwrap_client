@@ -33,6 +33,7 @@ define(function () {
                 case 'ww-item-over': item = new ButtonOver(this, channel, element); break;
                 case 'ww-item-out': item = new ButtonOut(this, channel, element); break;
                 case 'ww-item-cycle': item = new ButtonCycle(this, channel, element); break;
+                case 'ww-item-detach': item = new ButtonDetach(this, channel, element); break;
                 case 'ww-item-immediate': item = new ww.MonacoImmediateEditor(this, channel, element); break;
                 case 'ww-item-watch': item = new ww.MonacoWatchEditor(this, channel, element); break;
                 case 'ww-item-code': item = new ww.MonacoCodeEditor(this, channel, element); break;
@@ -52,30 +53,36 @@ define(function () {
 
     ww.UI = UI;
 
-    class Button_Helper {
-        constructor(element, clickhandler) {
+    class Button {
+        constructor(ui, channel, element, clickhandler) {
             this.element_ = element;
             this.element_.button(); // make sure the button is initialized
-            if (clickhandler !== undefined) {
-                this.element_.click(clickhandler);
-            }
+            this.element_.click(clickhandler);
             this.Enabled(false);
+            let this_ = this; // closure can't handle this in the lambdas below
+            channel.AddResponseHandlers({
+                detached: response => {
+                    if (response.detached_id === channel.AllocatedID) {
+                        this_.Enabled(false);
+                    }
+                }
+            });
         }
+
         Enabled(enable) {
             this.element_.button(enable ? 'enable' : 'disable');
         }
     }
 
-    class ButtonNew {
+    class ButtonNew extends Button {
         constructor(ui, channel, element) {
-            let button = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
-                });
-            this.button_ = button;
+            super(ui, channel, element, () => {
+                channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(!response.macro_loaded);
+                    this_.Enabled(!response.macro_loaded);
                 }
             });
         }
@@ -88,6 +95,11 @@ define(function () {
             this.element_ = element;
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
+                detached: response => {
+                    if (response.detached_id === 0 || response.detached_id === channel.AllocatedID) {
+                        // disable the input box
+                    }
+                },
                 new: response => {
                     channel.PushPendingRequest({ command: '?read', target: response.name });
                 },
@@ -103,7 +115,7 @@ define(function () {
                     channel.PushPendingRequest({ command: '?state', target: file.name });
                 },
                 state: response => {
-                    //button.Enabled(!response.macro_loaded);
+                    //this_.Enabled(!response.macro_loaded);
                 },
                 _save: response => {
                     let name = channel.CommitRebase.Name();
@@ -151,17 +163,16 @@ define(function () {
         }
     }
 
-    class ButtonSave {
+    class ButtonSave extends Button {
         constructor(ui, channel, element) {
-            let button = new Button_Helper(element,
-                () => {
-                    let response = { response: "_save" };
-                    channel.ProcessResponse(response);
-                });
-            this.button_ = button;
+            super(ui, channel, element, () => {
+                let response = { response: "_save" };
+                channel.ProcessResponse(response);
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(true);
+                    this_.Enabled(true);
                 },
                 write: response => {
                     if (response.success) {
@@ -176,141 +187,147 @@ define(function () {
         }
     }
 
-    class ButtonCheck {
+    class ButtonCheck extends Button {
         constructor(ui, channel, element) {
-            let button = new Button_Helper(element,
-                () => {
-                    channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: '?syntax', target: channel.CommitRebase.Name() });
-                });
-            this.button_ = button;
+            super(ui, channel, element, () => {
+                channel.PushPendingCommit();
+                channel.PushPendingRequest({ command: '?syntax', target: channel.CommitRebase.Name() });
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(!response.macro_loaded);
+                    this_.Enabled(!response.macro_loaded);
                 }
             });
         }
     }
 
-    class ButtonRun {
+    class ButtonRun extends Button {
         constructor(ui, channel, element) {
-            let button = new Button_Helper(element,
-                () => {
-                    channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: 'run', target: channel.CommitRebase.Name() });
-                });
-            this.button_ = button;
+            super(ui, channel, element, () => {
+                channel.PushPendingCommit();
+                channel.PushPendingRequest({ command: 'run', target: channel.CommitRebase.Name() });
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(response.commands.run);
+                    this_.Enabled(response.commands.run);
                 }
             });
         }
     }
 
-    class ButtonPause {
+    class ButtonPause extends Button {
         constructor(ui, channel, element) {
-            let button = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.Name() });
-                });
-            this.button_ = button;
+            super(ui, channel, element, () => {
+                channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.Name() });
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(response.commands.pause);
+                    this_.Enabled(response.commands.pause);
                 }
             });
         }
     }
 
-    class ButtonEnd {
+    class ButtonEnd extends Button {
         constructor(ui, channel, element) {
-            let button = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.Name() });
-                });
-            this.button_ = button;
+            super(ui, channel, element, () => {
+                channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.Name() });
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(response.commands.end);
+                    this_.Enabled(response.commands.end);
                 }
             });
         }
     }
 
-    class ButtonInto {
+    class ButtonInto extends Button {
         constructor(ui, channel, element) {
-            let button = new Button_Helper(element,
-                () => {
-                    channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: 'into', target: channel.CommitRebase.Name() });
-                });
-            this.button_ = button;
+            super(ui, channel, element, () => {
+                channel.PushPendingCommit();
+                channel.PushPendingRequest({ command: 'into', target: channel.CommitRebase.Name() });
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(response.commands.into);
+                    this_.Enabled(response.commands.into);
                 }
             });
         }
     }
 
-    class ButtonOver {
+    class ButtonOver extends Button {
         constructor(ui, channel, element) {
-            let button = new Button_Helper(element,
-                () => {
-                    channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: 'over', target: channel.CommitRebase.Name() });
-                });
-            this.button_ = button;
+            super(ui, channel, element, () => {
+                channel.PushPendingCommit();
+                channel.PushPendingRequest({ command: 'over', target: channel.CommitRebase.Name() });
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(response.commands.over);
+                    this_.Enabled(response.commands.over);
                 }
             });
         }
     }
 
-    class ButtonOut {
+    class ButtonOut extends Button {
         constructor(ui, channel, element) {
-            let button = new Button_Helper(element,
-                () => {
-                    channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.Name() });
-                });
-            this.button_ = button;
+            super(ui, channel, element, () => {
+                channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.Name() });
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(response.commands.out);
+                    this_.Enabled(response.commands.out);
                 }
             });
         }
     }
 
-    class ButtonCycle {
+    class ButtonCycle extends Button {
         constructor(ui, channel, element) {
-            let button = new Button_Helper(element,
-                () => { // xxx
-                    let editorImmediate = ui.GetItem('ww-item-immediate');
-                    let editorWatch = ui.GetItem('ww-item-watch');
-                    let immediateShowing = editorImmediate.GetVisibile();
-                    let watchShowing = editorWatch.GetVisibile();
-                    if (!immediateShowing && !watchShowing) {
-                        editorImmediate.SetVisible(false);
-                        editorWatch.SetVisible(true);
-                    } else if (!immediateShowing && watchShowing) {
-                        editorImmediate.SetVisible(true);
-                        editorWatch.SetVisible(false);
-                    } else if (immediateShowing && !watchShowing) {
-                        editorImmediate.SetVisible(true);
-                        editorWatch.SetVisible(true);
-                    } else if (immediateShowing && watchShowing) {
-                        editorImmediate.SetVisible(false);
-                        editorWatch.SetVisible(false);
-                    }
-                });
-            this.button_ = button;
+            super(ui, channel, element, () => { // xxx
+                let editorImmediate = ui.GetItem('ww-item-immediate');
+                let editorWatch = ui.GetItem('ww-item-watch');
+                let immediateShowing = editorImmediate.GetVisibile();
+                let watchShowing = editorWatch.GetVisibile();
+                if (!immediateShowing && !watchShowing) {
+                    editorImmediate.SetVisible(false);
+                    editorWatch.SetVisible(true);
+                } else if (!immediateShowing && watchShowing) {
+                    editorImmediate.SetVisible(true);
+                    editorWatch.SetVisible(false);
+                } else if (immediateShowing && !watchShowing) {
+                    editorImmediate.SetVisible(true);
+                    editorWatch.SetVisible(true);
+                } else if (immediateShowing && watchShowing) {
+                    editorImmediate.SetVisible(false);
+                    editorWatch.SetVisible(false);
+                }
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    button.Enabled(!response.edit_only);
+                    this_.Enabled(!response.edit_only);
+                }
+            });
+        }
+    }
+
+    class ButtonDetach extends Button {
+        constructor(ui, channel, element) {
+            super(ui, channel, element, () => {
+                channel.PushPendingRequest({ command: 'detach' });
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
+            channel.AddResponseHandlers({
+                state: response => {
+                    this_.Enabled(true);
                 }
             });
         }

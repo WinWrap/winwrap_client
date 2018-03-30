@@ -99,7 +99,7 @@ define(function () {
                 request.datetime = new Date().toLocaleString();
                 request.id = this.AllocatedID;
                 if (request.command.substring(0, 1) === '?') {
-                    request.gen = this._NextGeneration();
+                    request.gen = this._NextGeneration(false);
                 }
                 this._Log('=>', request);
                 this.Remote.PushPendingRequest(request);
@@ -121,7 +121,7 @@ define(function () {
         async SendAndReceiveAsync(request, expected) {
             request.datetime = new Date().toLocaleString();
             request.id = this.AllocatedID;
-            request.gen = this._NextGeneration();
+            request.gen = this._NextGeneration(request.command === '?attach');
             this._Log('=>', request);
             let result = await this.Remote.SendAndReceiveAsync(request, expected, request.id);
             //console.log(`Channel.SendAndReceiveAsync expected = ${expected}`);
@@ -144,9 +144,12 @@ define(function () {
             }
         }
 
-        _NextGeneration() {
-            if (++this.generation_ === 0x10000)
+        _NextGeneration(reset) {
+            if (reset) {
+                this.generation_ = 0;
+            } else if (++this.generation_ === 0x10000) {
                 this.generation_ = 1; // 16 bit number (never 0)
+            }
             return this.generation_;
         }
     }
