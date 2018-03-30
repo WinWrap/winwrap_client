@@ -42,6 +42,14 @@ define(function () {
             this.monacoEditor_.setValue(`\"${container}\"\r\n`);
             this.CodeEditor = this.ui_.GetItem('ww-item-code');
             ww.MonacoShared.RegisterModel(this.monacoEditor_.getModel(), this);
+            let this_ = this; // closure can't handle this in the lambdas below
+            this.Channel.AddResponseHandlers({
+                detached: response => {
+                    if (response.detached_id === 0 || response.detached_id === this_.Channel.AllocatedID) {
+                        this_.Enabled(false);
+                    }
+                }
+            });
         }
 
         ApplyChanges(changes, is_server) {
@@ -63,6 +71,10 @@ define(function () {
             });
 
             this.SetSelection(selection);
+        }
+
+        Enabled(enable) {
+            this.monacoEditor_.updateOptions({ readOnly: !enable });
         }
 
         GetIndexRangeOfLineAt(index) {
@@ -153,7 +165,7 @@ define(function () {
                     this.monacoEditor_.revealLine(lastLine);
                 },
                 state: response => {
-                    this_.monacoEditor_.updateOptions({ readOnly: !response.is_idle && !response.is_stopped });
+                    this_.Enabled(response.is_idle || response.is_stopped);
                     this_.SetVisible(!response.is_idle);
                 }
             });
@@ -193,7 +205,7 @@ define(function () {
                     }
                 },
                 state: response => {
-                    this_.monacoEditor_.updateOptions({ readOnly: !response.is_idle && !response.is_stopped });
+                    this_.Enabled(response.is_idle || response.is_stopped);
                 },
                 watch: response => {
                     let watchResults = response.results.map(item => {
@@ -228,7 +240,7 @@ define(function () {
             this.Channel.CommitRebase.SetEditor(this);
             this.Channel.AddResponseHandlers({
                 state: response => {
-                    this_.monacoEditor_.updateOptions({ readOnly: !response.is_idle });
+                    this_.Enabled(response.is_idle);
                 },
                 notify_pause: response => {
                     if (this_.Channel.CommitRebase.Name() !== response.file_name) {
