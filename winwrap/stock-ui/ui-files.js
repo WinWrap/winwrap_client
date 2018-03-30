@@ -86,4 +86,6 @@ define(function () {
         }
     }
 
+    ww.InputMacro = InputMacro;
+
 });

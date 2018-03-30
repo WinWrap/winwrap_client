@@ -23,7 +23,7 @@ define(function () {
             let item = undefined;
             switch (name) {
                 case 'ww-item-new': item = new ButtonNew(this, channel, element); break;
-                case 'ww-item-files': item = new InputMacro(this, channel, element); break;
+                case 'ww-item-files': item = new ww.InputMacro(this, channel, element); break;
                 case 'ww-item-save': item = new ButtonSave(this, channel, element); break;
                 case 'ww-item-check': item = new ButtonCheck(this, channel, element); break;
                 case 'ww-item-run': item = new ButtonRun(this, channel, element); break;
