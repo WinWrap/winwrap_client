@@ -12,5 +12,6 @@
 define([
     './decorate',
     './ui',
+    './ui-files',
     './ui-log'], function () {
     });
