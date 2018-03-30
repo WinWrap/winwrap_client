@@ -26,6 +26,7 @@ define(function () {
             this.busy_ = false;
             this.initHandlers_ = [];
             this.responseHandlers_ = [];
+            this.logger_ = undefined;
         }
 
         async InitializeAsync() {
@@ -100,11 +101,13 @@ define(function () {
                 if (request.command.substring(0, 1) === '?') {
                     request.gen = this._NextGeneration();
                 }
+                this._Log('=>', request);
                 this.Remote.PushPendingRequest(request);
             }
         }
 
         ProcessResponse(response) {
+            this._Log('<=', response);
             let handlers = this.responseHandlers_[response.response];
             if (handlers !== undefined) {
                 handlers.forEach(handler => handler(response));
@@ -119,14 +122,26 @@ define(function () {
             request.datetime = new Date().toLocaleString();
             request.id = this.AllocatedID;
             request.gen = this._NextGeneration();
+            this._Log('=>', request);
             let result = await this.Remote.SendAndReceiveAsync(request, expected, request.id);
             //console.log(`Channel.SendAndReceiveAsync expected = ${expected}`);
+            this._Log('<=', result);
             return result;
+        }
+
+        SetLogger(logger) {
+            this.logger_ = logger;
         }
 
         SetStatusBarText(text) {
             let response = { response: '_statusbar', text: text };
             this.ProcessResponse(response);
+        }
+
+        _Log(label, data) {
+            if (this.logger_ !== undefined) {
+                this.logger_(label, data);
+            }
         }
 
         _NextGeneration() {

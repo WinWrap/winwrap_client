@@ -38,7 +38,7 @@ define(function () {
                 return null;
             }
             if (this.busy1_) { // share response from first SendAndReceiveAsync
-                return await this._GetSharedResponseAsync(editor);
+                return await this._GetSharedResponseAsync(remote);
             }
             this.busy1_ = true; // first SendAndReceiveAsync call is busy
             remote.StopPolling();
@@ -64,17 +64,15 @@ define(function () {
                 console.log("ww-error: AutoAuto.SendAndReceiveAsync failed");
             }
             if (this.busy2_) { // share response to second SendAndReceiveAsync
-                await this._SetSharedResponseAsync(editor, response);
+                await this._SetSharedResponseAsync(remote, response);
             }
             remote.StartPolling();
             this.busy1_ = false; // first SendAndReceiveAsync call is done
             return response;
         }
 
-        async _GetSharedResponseAsync(editor) {
+        async _GetSharedResponseAsync(remote) {
             console.log("AutoAuto.SendAndReceiveAsync call in progress (wait for shared response)...");
-            let channel = editor.Channel;
-            let remote = this.channel.Remote;
             // wait until first SendAndReceiveAsync call has a response
             this.busy2_ = true; // second SendAndReceiveAsync call is busy
             // wait for first SendAndReceiveAsync to get a response
@@ -87,9 +85,7 @@ define(function () {
             return response;
         }
 
-        async _SetSharedResponseAsync(editor, response) {
-            let channel = editor.Channel;
-            let remote = this.channel.Remote;
+        async _SetSharedResponseAsync(remote, response) {
             // share first SendAndReceiveAsync call's response with the send SendAndReceiveAsync call
             this.sharedResponse_ = response;
             this.ready1_ = true; // first SendAndReceiveAsync call has a response
