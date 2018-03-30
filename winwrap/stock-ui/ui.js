@@ -22,9 +22,9 @@ define(function () {
         AddItem(channel, element, name) {
             let item = undefined;
             switch (name) {
-                case 'ww-item-new': item = new ButtonNew(this, channel, element); break;
+                case 'ww-item-new': item = new ww.ButtonNew(this, channel, element); break;
                 case 'ww-item-files': item = new ww.InputMacro(this, channel, element); break;
-                case 'ww-item-save': item = new ButtonSave(this, channel, element); break;
+                case 'ww-item-save': item = new ww.ButtonSave(this, channel, element); break;
                 case 'ww-item-check': item = new ButtonCheck(this, channel, element); break;
                 case 'ww-item-run': item = new ButtonRun(this, channel, element); break;
                 case 'ww-item-pause': item = new ButtonPause(this, channel, element); break;
@@ -71,44 +71,6 @@ define(function () {
 
         Enabled(enable) {
             this.element_.button(enable ? 'enable' : 'disable');
-        }
-    }
-
-    class ButtonNew extends Button {
-        constructor(ui, channel, element) {
-            super(ui, channel, element, () => {
-                channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
-            });
-            let this_ = this; // closure can't handle this in the lambdas below
-            channel.AddResponseHandlers({
-                state: response => {
-                    this_.Enabled(!response.macro_loaded);
-                }
-            });
-        }
-    }
-
-    class ButtonSave extends Button {
-        constructor(ui, channel, element) {
-            super(ui, channel, element, () => {
-                let response = { response: "_save" };
-                channel.ProcessResponse(response);
-            });
-            let this_ = this; // closure can't handle this in the lambdas below
-            channel.AddResponseHandlers({
-                state: response => {
-                    this_.Enabled(true);
-                },
-                write: response => {
-                    if (response.success) {
-                        let response2 = { response: "_saved", name: response.name, revision: response.revision };
-                        channel.ProcessResponse(response2);
-                    }
-                    else {
-                        alert(response.error);
-                    }
-                }
-            });
         }
     }
 

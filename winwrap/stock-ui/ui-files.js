@@ -88,4 +88,46 @@ define(function () {
 
     ww.InputMacro = InputMacro;
 
+    class ButtonNew extends Button {
+        constructor(ui, channel, element) {
+            super(ui, channel, element, () => {
+                channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
+            channel.AddResponseHandlers({
+                state: response => {
+                    this_.Enabled(!response.macro_loaded);
+                }
+            });
+        }
+    }
+
+    ww.ButtonNew = ButtonNew;
+
+    class ButtonSave extends Button {
+        constructor(ui, channel, element) {
+            super(ui, channel, element, () => {
+                let response = { response: "_save" };
+                channel.ProcessResponse(response);
+            });
+            let this_ = this; // closure can't handle this in the lambdas below
+            channel.AddResponseHandlers({
+                state: response => {
+                    this_.Enabled(true);
+                },
+                write: response => {
+                    if (response.success) {
+                        let response2 = { response: "_saved", name: response.name, revision: response.revision };
+                        channel.ProcessResponse(response2);
+                    }
+                    else {
+                        alert(response.error);
+                    }
+                }
+            });
+        }
+    }
+
+    ww.ButtonSave = ButtonSave;
+
 });
