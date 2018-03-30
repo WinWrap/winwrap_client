@@ -37,6 +37,7 @@ define(function () {
                 case 'ww-item-watch': item = new ww.MonacoWatchEditor(this, channel, element); break;
                 case 'ww-item-code': item = new ww.MonacoCodeEditor(this, channel, element); break;
                 case 'ww-item-statusbar': item = new StatusBar(this, channel, element); break;
+                case 'ww-item-log': item = new ww.Log(this, channel, element); break;
             }
             if (item !== undefined) {
                 this.items_[name] = item;
