@@ -62,7 +62,7 @@ define(function () {
 
         GetCommitRequest() {
             let request = null;
-            let commit = this.doc_.Commit();
+            let commit = this.doc_ !== null ? this.doc_.Commit() : null;
             if (commit !== null) {
                 //console.log("Send ?commit request");
                 let visibleChanges = [];
