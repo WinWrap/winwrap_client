@@ -38,7 +38,7 @@ define(function () {
                 return null;
             }
             if (this.busy1_) { // share response from first SendAndReceiveAsync
-                return await this._GetSharedResponseAsync();
+                return await this._GetSharedResponseAsync(editor);
             }
             this.busy1_ = true; // first SendAndReceiveAsync call is busy
             remote.StopPolling();
@@ -64,16 +64,15 @@ define(function () {
                 console.log("ww-error: AutoAuto.SendAndReceiveAsync failed");
             }
             if (this.busy2_) { // share response to second SendAndReceiveAsync
-                await this._SetSharedResponseAsync(response);
+                await this._SetSharedResponseAsync(editor, response);
             }
             remote.StartPolling();
             this.busy1_ = false; // first SendAndReceiveAsync call is done
             return response;
         }
 
-        async _GetSharedResponseAsync() {
+        async _GetSharedResponseAsync(editor) {
             console.log("AutoAuto.SendAndReceiveAsync call in progress (wait for shared response)...");
-            let editor = ww.MonacoShared.GetEditor(model);
             let channel = editor.Channel;
             let remote = this.channel.Remote;
             // wait until first SendAndReceiveAsync call has a response
@@ -88,8 +87,7 @@ define(function () {
             return response;
         }
 
-        async _SetSharedResponseAsync(response) {
-            let editor = ww.MonacoShared.GetEditor(model);
+        async _SetSharedResponseAsync(editor, response) {
             let channel = editor.Channel;
             let remote = this.channel.Remote;
             // share first SendAndReceiveAsync call's response with the send SendAndReceiveAsync call
