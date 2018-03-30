@@ -35,7 +35,7 @@ define(function () {
                 });
                 list.appendTo(item);
             }
-            else if (typeof data === 'object') {
+            else if (data !== null && typeof data === 'object') {
                 item.text(label);
                 let list = $('<ul/>');
                 Object.keys(data).forEach(key => {
@@ -44,8 +44,9 @@ define(function () {
                 });
                 list.appendTo(item);
             }
-            else
+            else {
                 item.text(label +': ' + JSON.stringify(data));
+            }
             return item;
         }
     }
