@@ -74,6 +74,8 @@ define(function () {
         }
     }
 
+    ww.Button = Button;
+
     class ButtonCheck extends Button {
         constructor(ui, channel, element) {
             super(ui, channel, element, () => {

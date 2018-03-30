@@ -88,7 +88,7 @@ define(function () {
 
     ww.InputMacro = InputMacro;
 
-    class ButtonNew extends Button {
+    class ButtonNew extends ww.Button {
         constructor(ui, channel, element) {
             super(ui, channel, element, () => {
                 channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
@@ -104,7 +104,7 @@ define(function () {
 
     ww.ButtonNew = ButtonNew;
 
-    class ButtonSave extends Button {
+    class ButtonSave extends ww.Button {
         constructor(ui, channel, element) {
             super(ui, channel, element, () => {
                 let response = { response: "_save" };
