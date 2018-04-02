@@ -43,6 +43,10 @@ define(function () {
                 _save: response => {
                     let name = channel.CommitRebase.Name();
                     let newname = this_._GetFileValue();
+                    if (newname !== '?A1' && name !== newname) {
+                        alert(`To save ${name} to ${newname}, copy ${name} contents into a new file, set name to ${newname}, then Save.`);
+                        this_._SetFileValue(name);
+                    }
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
                     channel.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
