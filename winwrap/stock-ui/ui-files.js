@@ -44,7 +44,7 @@ define(function () {
                     let name = channel.CommitRebase.Name();
                     let newname = this_._GetFileValue();
                     if (name !== '?A1' && name !== newname) {
-                        alert(`To save ${name} to ${newname}, copy ${name} contents into a new file, set name to ${newname}, then Save.`);
+                        alert(`To save ${name} as ${newname}, copy ${name} contents into a new file, set name to ${newname}, then Save.`);
                         this_._SetFileValue(name);
                     }
                     channel.PushPendingCommit();
