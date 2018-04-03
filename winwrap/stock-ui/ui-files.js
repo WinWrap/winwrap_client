@@ -48,7 +48,7 @@ define(function () {
                         this_._SetFileValue(name);
                     }
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: '?write', target: name, new_name: newname }); // xyz
+                    channel.PushPendingRequest({ command: '?write', target: name, new_name: newname });
                     channel.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
                 },
                 _saved: response => {
