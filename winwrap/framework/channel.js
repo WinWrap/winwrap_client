@@ -47,6 +47,8 @@ define(function () {
                 console.log('ERROR channel.js InitializeAsync ', err);
                 let attachErrMsg = `${this.Name} is not connected to the server`;
                 this.SetStatusBarText(attachErrMsg);
+                this.busy_ = false;
+                return;
             }
             this.busy_ = false;
             if (attach.unique_name !== this.ClientID) {
