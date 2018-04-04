@@ -9,7 +9,7 @@
 // Copyright 2017-2018 Polar Engineering, Inc.
 // All rights reserved.
 
-define(function () {
+define(['./ui'], function () {
 
     class InputMacro {
         constructor(ui, channel, element) {
