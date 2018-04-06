@@ -13,6 +13,7 @@ define(['./ui'], function () {
 
     class InputMacro {
         constructor(ui, channel, element) {
+            this.ui_ = ui;
             this.channel_ = channel;
             this.macros_ = [];
             this.element_ = element;
