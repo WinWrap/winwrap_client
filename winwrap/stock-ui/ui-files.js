@@ -61,7 +61,7 @@ define(['./ui'], function () {
             });
             this.element_.autocomplete({
                 source: (request, response) => {
-                    if (!newmacro) {
+                    if (!this_.newmacro) {
                         let buttonSave = this_.ui_.items_['ww-item-save'];
                         buttonSave.Enabled(false);
                     }
