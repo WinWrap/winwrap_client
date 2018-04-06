@@ -180,7 +180,7 @@ define(function () {
 
     class ButtonCycle extends Button {
         constructor(ui, channel, element) {
-            super(ui, channel, element, () => { // xxx
+            super(ui, channel, element, () => {
                 let editorImmediate = ui.GetItem('ww-item-immediate');
                 let editorWatch = ui.GetItem('ww-item-watch');
                 let immediateShowing = editorImmediate.GetVisibile();

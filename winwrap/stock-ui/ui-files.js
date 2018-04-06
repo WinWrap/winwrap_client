@@ -14,7 +14,7 @@ define(['./ui'], function () {
     class InputMacro {
         constructor(ui, channel, element) {
             this.channel_ = channel;
-            this.macros_ = []; // xxx Macros
+            this.macros_ = [];
             this.element_ = element;
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
@@ -60,9 +60,8 @@ define(['./ui'], function () {
             this.element_.autocomplete({
                 source: (request, response) => {
                     let term = $.ui.autocomplete.escapeRegex(request.term);
-                    //console.log(term);
                     let matcher = new RegExp(`^.*${term}.*$`, 'i');
-                    response($.grep(this_.macros_, element => { // xxx
+                    response($.grep(this_.macros_, element => {
                         return matcher.test(element);
                     }));
                 }
