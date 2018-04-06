@@ -46,6 +46,7 @@ define(['./ui'], function () {
                     if (name !== '?A1' && name !== newname) {
                         alert(`To save ${name} as ${newname}, copy ${name} contents into a new file, set name to ${newname}, then Save.`);
                         this_._SetFileValue(name);
+                        return;
                     }
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ command: '?write', target: name, new_name: newname });
