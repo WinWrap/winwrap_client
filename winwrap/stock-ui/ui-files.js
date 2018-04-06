@@ -81,7 +81,7 @@ define(['./ui'], function () {
         }
         _SetFileValue(value) {
             this.element_.val(value);
-            if (value = '?A1') {
+            if (value === '?A1') {
                 this.newmacro = true;
             }
         }
