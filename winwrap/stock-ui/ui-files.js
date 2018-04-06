@@ -64,6 +64,9 @@ define(['./ui'], function () {
                     response($.grep(this_.macros_, element => {
                         return matcher.test(element);
                     }));
+                },
+                change: (event, ui) => {
+                    console.log(`autocomplete.change`);
                 }
             });
             this.element_.on('autocompleteselect', (event, ui) => {
