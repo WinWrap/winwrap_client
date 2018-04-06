@@ -17,6 +17,7 @@ define(['./ui'], function () {
             this.channel_ = channel;
             this.macros_ = [];
             this.element_ = element;
+            this.newmacro = false;
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 detached: response => {
@@ -60,8 +61,10 @@ define(['./ui'], function () {
             });
             this.element_.autocomplete({
                 source: (request, response) => {
-                    let buttonSave = this_.ui_.items_['ww-item-save'];
-                    buttonSave.Enabled(false);
+                    if (!newmacro) {
+                        let buttonSave = this_.ui_.items_['ww-item-save'];
+                        buttonSave.Enabled(false);
+                    }
                     let term = $.ui.autocomplete.escapeRegex(request.term);
                     let matcher = new RegExp(`^.*${term}.*$`, 'i');
                     response($.grep(this_.macros_, element => {
@@ -78,6 +81,9 @@ define(['./ui'], function () {
         }
         _SetFileValue(value) {
             this.element_.val(value);
+            if (value = '?A1') {
+                this.newmacro = true;
+            }
         }
         _SetFileValues(values) {
             let first = this.macros_.length === 0;
