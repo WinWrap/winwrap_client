@@ -68,6 +68,7 @@ define(['./ui'], function () {
                 },
             });
             this.element_.on('autocompleteselect', (event, ui) => {
+                let ui__ = this_.ui_;
                 channel.PushPendingRequest({ command: '?read', target: ui.item.value });
             });
         }
