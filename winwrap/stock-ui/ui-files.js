@@ -60,7 +60,8 @@ define(['./ui'], function () {
             });
             this.element_.autocomplete({
                 source: (request, response) => {
-                    this_.ui_['ww-item-save'].Enable('disable');
+                    let buttonSave = this_.ui_.items_['ww-item-save'];
+                    buttonSave.Enable('disable');
                     let term = $.ui.autocomplete.escapeRegex(request.term);
                     let matcher = new RegExp(`^.*${term}.*$`, 'i');
                     response($.grep(this_.macros_, element => {
@@ -69,7 +70,6 @@ define(['./ui'], function () {
                 },
             });
             this.element_.on('autocompleteselect', (event, ui) => {
-                this_.ui_['ww-item-save'].Enable('enable');
                 channel.PushPendingRequest({ command: '?read', target: ui.item.value });
             });
         }
