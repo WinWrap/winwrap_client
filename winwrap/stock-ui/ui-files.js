@@ -61,7 +61,7 @@ define(['./ui'], function () {
             this.element_.autocomplete({
                 source: (request, response) => {
                     let buttonSave = this_.ui_.items_['ww-item-save'];
-                    buttonSave.Enabled('disable');
+                    buttonSave.Enabled(false);
                     let term = $.ui.autocomplete.escapeRegex(request.term);
                     let matcher = new RegExp(`^.*${term}.*$`, 'i');
                     response($.grep(this_.macros_, element => {
