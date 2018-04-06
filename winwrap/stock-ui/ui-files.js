@@ -65,12 +65,12 @@ define(['./ui'], function () {
                         return matcher.test(element);
                     }));
                 },
-                change: (event, ui) => {
-                    console.log(`autocomplete.change`);
-                }
             });
             this.element_.on('autocompleteselect', (event, ui) => {
                 channel.PushPendingRequest({ command: '?read', target: ui.item.value });
+            });
+            this.element_.on("autocompletechange", (event, ui) => {
+                console.log(`autocompletechange`);
             });
         }
         _GetFileValue() {
