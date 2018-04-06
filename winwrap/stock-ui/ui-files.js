@@ -26,7 +26,7 @@ define(['./ui'], function () {
                     }
                 },
                 new: response => {
-                    this.newmacro = true;
+                    this_.newmacro = true;
                     channel.PushPendingRequest({ command: '?read', target: response.name });
                 },
                 opendialog: response => {
