@@ -44,6 +44,7 @@ define(['./ui'], function () {
                     //this_.Enabled(!response.macro_loaded);
                 },
                 _save: response => {
+                    this_.newmacro = false;
                     let name = channel.CommitRebase.Name();
                     let newname = this_._GetFileValue();
                     channel.PushPendingCommit();
