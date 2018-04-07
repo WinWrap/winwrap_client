@@ -44,7 +44,6 @@ define(['./ui'], function () {
                     //this_.Enabled(!response.macro_loaded);
                 },
                 _save: response => {
-                    this_.newmacro = false;
                     let name = channel.CommitRebase.Name();
                     let newname = this_._GetFileValue();
                     channel.PushPendingCommit();
@@ -52,6 +51,7 @@ define(['./ui'], function () {
                     channel.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
                 },
                 _saved: response => {
+                    this_.newmacro = false;
                     this_._SetFileValue(response.name);
                     channel.CommitRebase.HandleSavedResponse(response);
                 }
