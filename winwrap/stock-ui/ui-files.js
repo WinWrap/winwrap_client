@@ -22,7 +22,7 @@ define(['./ui'], function () {
             channel.AddResponseHandlers({
                 detached: response => {
                     if (response.detached_id === 0 || response.detached_id === channel.AllocatedID) {
-                        // disable the input box
+                        // disable the input box selection list
                         this.element_.autocomplete('disable');
                     }
                 },
