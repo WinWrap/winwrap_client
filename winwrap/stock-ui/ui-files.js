@@ -23,7 +23,7 @@ define(['./ui'], function () {
                 detached: response => {
                     if (response.detached_id === 0 || response.detached_id === channel.AllocatedID) {
                         // disable the input box
-                        this.element_.autocomplete('disable');
+                        //this.element_.autocomplete('disable');
                     }
                 },
                 new: response => {
