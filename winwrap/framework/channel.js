@@ -47,6 +47,8 @@ define(function () {
                 console.log('ERROR channel.js InitializeAsync ', err);
                 let attachErrMsg = `${this.Name} is not connected to the server`;
                 this.SetStatusBarText(attachErrMsg);
+                this.busy_ = false;
+                return;
             }
             this.busy_ = false;
             if (attach.unique_name !== this.ClientID) {
@@ -124,7 +126,6 @@ define(function () {
             request.gen = this._NextGeneration(request.command === '?attach');
             this._Log('=>', request);
             let result = await this.Remote.SendAndReceiveAsync(request, expected, request.id);
-            //console.log(`Channel.SendAndReceiveAsync expected = ${expected}`);
             this._Log('<=', result);
             return result;
         }
