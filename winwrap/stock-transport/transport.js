@@ -25,7 +25,7 @@ define(function () {
             }
         }
 
-        SendAndReceiveAsync(requests, id) {
+        async SendAndReceiveAsync(requests, id) {
             let url = 'http://' + this.serverip_ + '/winwrap/poll/' + id;
             if (this.key_) {
                 if (this.serverip_) {
@@ -35,6 +35,36 @@ define(function () {
                 }
             }
 
+            return this._SendAsync(url, requests);
+        }
+
+        async SendAsync(requests, id) {
+            let url = 'http://' + this.serverip_ + '/winwrap/request/' + id;
+            if (this.key_) {
+                if (this.serverip_) {
+                    url = 'http://' + this.serverip_ + '/winwrap/route/request/' + this.key_ + '/' + id;
+                } else {
+                    url = 'http://www.winwrap.com/web/webedit/request.asp?key=' + this.key_ + '&id=' + id;
+                }
+            }
+
+            return this._SendAsync(url, requests);
+        }
+
+        async GetResponseAsync(id) {
+            let url = 'http://' + this.serverip_ + '/winwrap/response/' + id;
+            if (this.key_) {
+                if (this.serverip_) {
+                    url = 'http://' + this.serverip_ + '/winwrap/route/response/' + this.key_ + '/' + id;
+                } else {
+                    url = 'http://www.winwrap.com/web/webedit/response.asp?key=' + this.key_ + '&id=' + id;
+                }
+            }
+
+            return _SendAsync(url, '');
+        }
+
+        _SendAsync(url, requests) {
             let json = JSON.stringify(requests);
             let options = {
                 type: 'POST',
