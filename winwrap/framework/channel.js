@@ -57,10 +57,7 @@ define(function () {
             }
             this.AllocatedID = attach.allocated_id;
             this.Version = attach.version;
-            //let versionInfo = `WinWrap Version = ${this.Version}`;
-            //let channelInfo = `${this.Name} AllocatedID = ${this.AllocatedID}`;
-            //this.SetStatusBarText(`${versionInfo}, ${channelInfo}`);
-            this.SetStatusBarText(this._VersionMsg());
+            this.SetStatusBarText(this.VersionInfo());
             this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
             this.PushPendingRequest({ command: '?stack' });
             // now UI is initialized
@@ -140,6 +137,12 @@ define(function () {
             this.ProcessResponse(response);
         }
 
+        VersionInfo() {
+            let versionInfo = `WinWrap Version = ${this.Version}`;
+            let channelInfo = `${this.Name} AllocatedID = ${this.AllocatedID}`;
+            return `${versionInfo}, ${channelInfo}`;
+        }
+
         _Log(label, data) {
             if (this.logger_ !== undefined) {
                 this.logger_(label, data);
@@ -153,12 +156,6 @@ define(function () {
                 this.generation_ = 1; // 16 bit number (never 0)
             }
             return this.generation_;
-        }
-
-        _VersionMsg() {
-            let versionInfo = `WinWrap Version = ${this.Version}`;
-            let channelInfo = `${this.Name} AllocatedID = ${this.AllocatedID}`;
-            return `${versionInfo}, ${channelInfo}`;
         }
     }
 
