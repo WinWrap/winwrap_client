@@ -38,7 +38,9 @@ define(['./ui'], function () {
                     let file = response.files[0];
                     this_._SetFileValue(file.name);
                     channel.CommitRebase.Read(file);
-                    this.channel_.SetStatusBarText(`Macro ${ file.name } displayed.`);
+                    let versionInfo = `WinWrap Version = ${this.channel_.Version}`;
+                    let channelInfo = `${this.channel_.Name} AllocatedID = ${this.channel_.AllocatedID}`;
+                    this.channel_.SetStatusBarText(`${versionInfo}, ${channelInfo}`);
                     channel.PushPendingRequest({ command: '?breaks', target: file.name });
                     channel.PushPendingRequest({ command: '?state', target: file.name });
                 },
