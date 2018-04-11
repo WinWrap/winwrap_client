@@ -38,6 +38,7 @@ define(['./ui'], function () {
                     let file = response.files[0];
                     this_._SetFileValue(file.name);
                     channel.CommitRebase.Read(file);
+                    this.channel_.SetStatusBarText(`Macro ${ file.name } displayed.`);
                     channel.PushPendingRequest({ command: '?breaks', target: file.name });
                     channel.PushPendingRequest({ command: '?state', target: file.name });
                 },
