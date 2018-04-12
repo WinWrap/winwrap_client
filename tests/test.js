@@ -49,3 +49,11 @@
     editor.trigger('mysource', 'editor.action.triggerSuggest', {});
     editor.trigger('mysource', 'editor.action.triggerParameterHints', {});
 */
+
+/*
+    decoration.options = { // works as hover
+        className: 'myContentClass',
+        hoverMessage: 'hover message'
+    };
+*/
+

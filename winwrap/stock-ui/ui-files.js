@@ -22,7 +22,8 @@ define(['./ui'], function () {
             channel.AddResponseHandlers({
                 detached: response => {
                     if (response.detached_id === 0 || response.detached_id === channel.AllocatedID) {
-                        // disable the input box
+                        // disable the input box selection list
+                        this.element_.autocomplete('disable');
                     }
                 },
                 new: response => {
@@ -37,6 +38,7 @@ define(['./ui'], function () {
                     let file = response.files[0];
                     this_._SetFileValue(file.name);
                     channel.CommitRebase.Read(file);
+                    channel.SetStatusBarText(channel.VersionInfo());
                     channel.PushPendingRequest({ command: '?breaks', target: file.name });
                     channel.PushPendingRequest({ command: '?state', target: file.name });
                 },

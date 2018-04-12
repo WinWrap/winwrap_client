@@ -57,9 +57,7 @@ define(function () {
             }
             this.AllocatedID = attach.allocated_id;
             this.Version = attach.version;
-            let versionInfo = `WinWrap Version = ${this.Version}`;
-            let channelInfo = `${this.Name} AllocatedID = ${this.AllocatedID}`;
-            this.SetStatusBarText(`${versionInfo}, ${channelInfo}`);
+            this.SetStatusBarText(this.VersionInfo());
             this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
             this.PushPendingRequest({ command: '?stack' });
             // now UI is initialized
@@ -137,6 +135,12 @@ define(function () {
         SetStatusBarText(text) {
             let response = { response: '_statusbar', text: text };
             this.ProcessResponse(response);
+        }
+
+        VersionInfo() {
+            let versionInfo = `WinWrap Version = ${this.Version}`;
+            let channelInfo = `${this.Name} AllocatedID = ${this.AllocatedID}`;
+            return `${versionInfo}, ${channelInfo}`;
         }
 
         _Log(label, data) {

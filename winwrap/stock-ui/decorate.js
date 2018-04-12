@@ -81,11 +81,6 @@ define(function () {
             return decorations;
         }
 
-        /*decoration.options = { // works as hover
-            className: 'myContentClass',
-            hoverMessage: 'hover message'
-        };*/
-
         _errorDecoration() {
             let decorations = [];
             let syntaxError = this.SyntaxError;
