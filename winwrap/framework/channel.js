@@ -22,7 +22,6 @@ define(function () {
             this.AllocatedID = 0; // explicitly set in ?attach
             this.Version = undefined;
             this.generation_ = 0;
-            this.commitcounter_ = 0;
             this.busy_ = false;
             this.initHandlers_ = [];
             this.responseHandlers_ = [];
@@ -42,7 +41,7 @@ define(function () {
             let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
             try {
-                attach = await this.SendAndReceiveAsync(request, '!attach');
+                attach = await this.SendRequestAndGetResponseAsync(request);
             } catch (err) {
                 console.log('ERROR channel.js InitializeAsync ', err);
                 let attachErrMsg = `${this.Name} is not connected to the server`;
@@ -86,14 +85,6 @@ define(function () {
             });
         }
 
-        Poll() {
-            if (++this.commitcounter_ === 20) {
-                // push any pending commits (approx once every 2 seconds)
-                this.PushPendingCommit();
-                this.commitcounter_ = 0;
-            }
-        }
-
         PushPendingRequest(request) {
             if (request) {
                 request.datetime = new Date().toLocaleString();
@@ -118,12 +109,12 @@ define(function () {
             this.PushPendingRequest(this.CommitRebase.GetCommitRequest());
         }
 
-        async SendAndReceiveAsync(request, expected) {
+        async SendRequestAndGetResponseAsync(request) {
             request.datetime = new Date().toLocaleString();
             request.id = this.AllocatedID;
             request.gen = this._NextGeneration(request.command === '?attach');
             this._Log('=>', request);
-            let result = await this.Remote.SendAndReceiveAsync(request, expected, request.id);
+            let result = await this.Remote.SendRequestAndGetResponseAsync(request);
             this._Log('<=', result);
             return result;
         }
