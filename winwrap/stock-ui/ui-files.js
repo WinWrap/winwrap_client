@@ -20,11 +20,9 @@ define(['./ui'], function () {
             this.newmacro = false;
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
-                detached: response => {
-                    if (response.detached_id === 0 || response.detached_id === channel.AllocatedID) {
-                        // disable the input box selection list
-                        this.element_.autocomplete('disable');
-                    }
+                detach: response => {
+                    // disable the input box selection list
+                    this.element_.autocomplete('disable');
                 },
                 new: response => {
                     this_.newmacro = true;

@@ -59,6 +59,12 @@ define(function () {
             this.SetStatusBarText(this.VersionInfo());
             this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
             this.PushPendingRequest({ command: '?stack' });
+            let this_ = this; // closure can't handle this in the lambdas below
+            this.AddResponseHandlers({
+                detach: response => {
+                    this_.Detach();
+                }
+            });
             // now UI is initialized
         }
 
@@ -83,6 +89,10 @@ define(function () {
                     });
                 }
             });
+        }
+
+        Detach() {
+            this.Remote.DetachChannel(this);
         }
 
         PushPendingRequest(request) {

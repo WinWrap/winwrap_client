@@ -44,10 +44,8 @@ define(function () {
             ww.MonacoShared.RegisterModel(this.monacoEditor_.getModel(), this);
             let this_ = this; // closure can't handle this in the lambdas below
             this.Channel.AddResponseHandlers({
-                detached: response => {
-                    if (response.detached_id === 0 || response.detached_id === this_.Channel.AllocatedID) {
-                        this_.Enabled(false);
-                    }
+                detach: response => {
+                    this_.Enabled(false);
                 }
             });
         }
