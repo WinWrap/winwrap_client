@@ -42,7 +42,7 @@ define(function () {
         }
 
         SetIds(ids) {
-            this.ids_ = ids;
+            this.ids_ = ids.join('-');
         }
 
         async SendRequestsAsync(requests) {
