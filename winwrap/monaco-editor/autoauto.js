@@ -59,7 +59,7 @@ define(function () {
             };
             let response = null;
             try {
-                response = await channel.SendAndReceiveAsync(request, '!auto');
+                response = await channel.SendRequestAndGetResponseAsync(request);
             } catch (e) {
                 console.log("ww-error: AutoAuto.SendAndReceiveAsync failed");
             }

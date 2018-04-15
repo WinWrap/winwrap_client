@@ -20,19 +20,37 @@ define(function () {
             this.Name = name;
             this.transport_ = transport;
             this.channels_ = {};
-            this.pollingIndex_ = -1;
+            this.commitcounter_ = 0;
             this.polling_ = false; // not waiting to poll
-            this.timerId_ = null;
+            this.pollTimerId_ = null;
             this.pollBusy_ = false; // not in Poll
-            this.pendingRequests = [];
+            this.pendingRequests_ = [];
+            this.pendingResponses_ = [];
+            this.expected_ = { gen: 0, response: '' };
+            this.expectedResponse_ = null;
         }
 
         async InitializeAsync() {
-            for (let channel of Object.values(this.channels_)) {
+            let channels = this._Channels();
+            if (!channels.length) {
+                return;
+            }
+            // initialize transport
+            await this.transport_.InitializeAsync(this);
+            // initialize channels
+            for (let channel of channels) {
                 await channel.InitializeAsync();
                 //console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
             }
-            this.StartPolling();
+            // set the channel ids
+            let ids = this._Channels().map(channel => channel.AllocatedID);
+            this.transport_.SetIds(ids.join('-'));
+            // start polling timer
+            let this_ = this; // closure can't handle this in the lambdas below
+            this.pollTimerId_ = setInterval(async () => {
+                await this_._PollAsync();
+            }, 100); // waiting to poll
+            this.polling_ = true;
         }
 
         AddChannel(channel) {
@@ -40,7 +58,7 @@ define(function () {
         }
 
         ChannelById(id) {
-            return Object.values(this.channels_).filter(channel => channel.AllocatedID === id)[0];
+            return this._Channels().filter(channel => channel.AllocatedID === id)[0];
         }
 
         ChannelByName(name) {
@@ -52,133 +70,123 @@ define(function () {
         }
 
         PushPendingRequest(request) {
-            this.pendingRequests.push(request);
+            this.pendingRequests_.push(request);
         }
 
-        ProcessResponses(responses, id) {
+        PushPendingResponses(responses) {
             responses.forEach(response => {
                 response.datetimeClient = new Date().toLocaleString();
-                let channel = this.ChannelById(id);
-                if (channel !== undefined) {
-                    channel.ProcessResponse(response);
+                if (response.gen === this.expected_.gen && response.response === this.expected_.response) {
+                    this.expectedResponse_ = response;
+                } else {
+                    this.pendingResponses_.push(response);
                 }
             });
         }
 
-        async SendAndReceiveAsync(request, expected, id) {
-            let requests = this._ExtractPendingRequestsForId(id);
+        async SendRequestAndGetResponseAsync(request) {
+            this.expected_ = { gen: request.gen, response: '!' + request.command.substring(1) };
+            let requests = this.pendingRequests_;
+            this.pendingRequests_ = [];
             requests.push(request);
-            console.log('Remote.SendAndReceiveAsync(' + id + ')>>> ' + this._valuesmsg(requests, 'command'));
-            let response = null;
-            let responses = [];
+            console.log('Remote.SendRequestAndGetResponseAsync>>> ' + this._ValueMsg(requests, 'command'));
+            try {
+                await this._SendRequestsAsync(requests);
+            } catch(err) {
+                console.log('Remote.SendRequestAndGetResponseAsync error: ' + err);
+                let pollErrMsg = `${this.Name} send error at ${new Date().toLocaleString()}`;
+                this.SetStatusBarText(pollErrMsg);
+                return [];
+            }
+
+            // retrys may not be necessary - haven't seen
             let start = new Date().getTime();
             let end = start;
-            // retrys may not be necessary - haven't seen
-            for (var trys = 1; trys < 10; trys++) { // xxx
-                let tryresponses = await this.transport_.SendAndReceiveAsync(trys === 1 ? requests : [], id);
+            let response = null;
+            for (var trys = 1; response === null && trys < 20; trys++) {
+                await this._Wait(50);
                 end = new Date().getTime();
-                tryresponses.forEach(tryresponse => {
-                    if (tryresponse.response === expected) {
-                        response = tryresponse;
-                    } else {
-                        responses.push(tryresponse);
-                    }
-                });
-                if (response !== null) {
-                    break;
-                }
-                await this._Wait(100);
+                response = this.expectedResponse_;
+                this.expectedResponse_ = null;
             }
-            console.log('Remote.SendAndReceiveAsync(' + id + ')<<< ' + this._valuesmsg(responses.concat(response), 'response'));
-            this.ProcessResponses(responses, id);
+            console.log('Remote.SendRequestAndGetResponseAsync<<< ' + this._ValueMsg([response], 'response'));
             console.log({
-                request: this._valuesmsg(requests, 'command'),
-                expected: expected.toString(),
-                results: this._valuesmsg(response, 'response'),
+                request: this._ValueMsg(request, 'command'),
+                expected: this.expected_.response,
+                results: this._ValueMsg(response, 'response'),
                 trys: trys,
                 elapsedms: end - start
             });
+            this.expected_ = { gen: 0, response: '' };
             return response;
         }
 
         SetStatusBarText(text) {
-            Object.values(this.channels_).forEach(channel => channel.SetStatusBarText(text));
+            this._Channels().forEach(channel => channel.SetStatusBarText(text));
         }
 
-        StartPolling() { // stop during autocomplete and signaturehelp
-            if (!this.polling_) {
-                this.polling_ = true; // waiting to poll
-                if (this.timerId_ === null) {
-                    let remote = this; // closure can't handle this in the lambdas below
-                    this.timerId_ = setTimeout(async () => {
-                        await remote._PollAsync();
-                    }, 100); // waiting to poll
-                }
-            }
+        StartPolling() {
+            this.polling_ = true; // waiting to poll
         }
 
-        StopPolling() {
+        StopPolling() { // stop during autocomplete and signaturehelp
             this.polling_ = false; // not waiting to poll
-            if (this.timerId_ !== null) {
-                clearTimeout(this.timerId_);
-                this.timerId_ = null;
-            }
+        }
+
+        _Channels() {
+            return Object.values(this.channels_);
         }
 
         async _PollAsync() {
-            if (!this.polling_ || this.pollBusy_) {
-                return;
+            if (this.polling_ && !this.pollBusy_) {
+                this.pollBusy_ = true;
+                if (++this.commitcounter_ === 20) {
+                    // push any pending commits (approx once every 2 seconds)
+                    this._Channels().forEach(channel => channel.PushPendingCommit());
+                    this.commitcounter_ = 0;
+                }
+                if (this.pendingRequests_.length > 0) {
+                    // send pending requests
+                    let requests = this.pendingRequests_;
+                    this.pendingRequests_ = [];
+                    await this._SendRequestsAsync(requests);
+                }
+                if (this.pendingResponses_.length > 0) {
+                    // process pending responses
+                    let responses = this.pendingResponses_;
+                    this.pendingResponses_ = [];
+                    responses.forEach(response => {
+                        if (response.id === -1) {
+                            this._Channels().forEach(channel => channel.ProcessResponse(response));
+                        } else {
+                            let channel = this.ChannelById(response.id);
+                            if (channel !== undefined) {
+                                channel.ProcessResponse(response);
+                            }
+                        }
+                    });
+                }
+                this.pollBusy_ = false;
             }
-            this.pollBusy_ = true;
-            this.StopPolling(); // not waiting to poll
-            Object.values(this.channels_).forEach(channel => channel.Poll());
-            let id = 0;
-            let requests = [];
-            if (this.pendingRequests.length > 0) {
-                id = this.pendingRequests[0].id;
-                requests = this._ExtractPendingRequestsForId(id);
-                console.log('Remote._PollAsync(' + id + ')>>> ' + this._valuesmsg(requests, 'command'));
-            } else {
-                let channels = Object.values(this.channels_);
-                if (++this.pollingIndex_ >= channels.length)
-                    this.pollingIndex_ = 0;
-                id = this.pollingIndex_ < channels.length ? channels[this.pollingIndex_].AllocatedID : 0;
+        }
+
+        async _SendRequestsAsync(requests) {
+            if (requests.length > 0) {
+                try {
+                    await this.transport_.SendRequestsAsync(requests);
+                } catch (err) {
+                    console.log('Remote._SendRequestsAsync error: ' + err);
+                    let pollErrMsg = `${this.Name} send error at ${new Date().toLocaleString()}`;
+                    this.SetStatusBarText(pollErrMsg);
+                }
             }
-            let responses = [];
-            try {
-                responses = await this.transport_.SendAndReceiveAsync(requests, id);
-            } catch (err) {
-                console.log('Remote._PollAsync(' + id + ') error: ' + err);
-                let pollErrMsg = `${this.Name} polling error at ${new Date().toLocaleString()}`;
-                this.SetStatusBarText(pollErrMsg);
-            }
-            if (responses.length > 0) {
-                console.log('Remote._PollAsync(' + id + ')<<< ' + this._valuesmsg(responses, 'response'));
-                this.ProcessResponses(responses, id);
-            }
-            this.pollBusy_ = false;
-            this.StartPolling(); // waiting to poll
         }
 
         _Wait(ms) {
             return new Promise(r => setTimeout(r, ms));
         }
 
-        _ExtractPendingRequestsForId(id) {
-            let pendingRequests = this.pendingRequests;
-            this.pendingRequests = [];
-            let requests = [];
-            pendingRequests.forEach(request => {
-                if (request.id === id) {
-                    requests.push(request);
-                } else {
-                    this.pendingRequests.push(request);
-                }
-            });
-            return requests;
-        }
-
-        _valuesmsg(data, key) {
+        _ValueMsg(data, key) {
             let xdata = [].concat(data).filter(item => item !== null && item !== undefined);
             let datas = xdata.map(o => o[key]);
             return datas.toString();
