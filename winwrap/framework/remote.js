@@ -44,7 +44,7 @@ define(function () {
             }
             // set the channel ids
             let ids = this._Channels().map(channel => channel.AllocatedID);
-            this.transport_.SetIds(ids.join('-'));
+            this.transport_.SetIds(ids);
             // start polling timer
             let this_ = this; // closure can't handle this in the lambdas below
             this.pollTimerId_ = setInterval(async () => {
