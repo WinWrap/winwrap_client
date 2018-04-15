@@ -61,10 +61,8 @@ define(function () {
             this.Enabled(false);
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
-                detached: response => {
-                    if (response.detached_id === channel.AllocatedID) {
-                        this_.Enabled(false);
-                    }
+                detach: response => {
+                    this_.Enabled(false);
                 }
             });
         }

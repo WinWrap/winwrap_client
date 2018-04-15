@@ -43,8 +43,7 @@ define(function () {
                 //console.log(`Remote.InitializeAsync channel.Name = ${channel.Name}`);
             }
             // set the channel ids
-            let ids = this._Channels().map(channel => channel.AllocatedID);
-            this.transport_.SetIds(ids);
+            this._SetTransportIds();
             // start polling timer
             let this_ = this; // closure can't handle this in the lambdas below
             this.pollTimerId_ = setInterval(async () => {
@@ -63,6 +62,11 @@ define(function () {
 
         ChannelByName(name) {
             return this.channels_[name];
+        }
+
+        DetachChannel(channel) {
+            delete this.channels_[channel.Name];
+            this._SetTransportIds();
         }
 
         PollBusy() {
@@ -138,7 +142,7 @@ define(function () {
         }
 
         async _PollAsync() {
-            if (this.polling_ && !this.pollBusy_) {
+            if (this.polling_ && !this.pollBusy_ && this.transport_.Attached()) {
                 this.pollBusy_ = true;
                 if (++this.commitcounter_ === 20) {
                     // push any pending commits (approx once every 2 seconds)
@@ -180,6 +184,11 @@ define(function () {
                     this.SetStatusBarText(pollErrMsg);
                 }
             }
+        }
+
+        _SetTransportIds() {
+            let ids = this._Channels().map(channel => channel.AllocatedID);
+            this.transport_.SetIds(ids);
         }
 
         _Wait(ms) {

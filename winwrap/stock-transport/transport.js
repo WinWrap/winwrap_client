@@ -29,6 +29,10 @@ define(function () {
             }
         }
 
+        Attached() {
+            return this.longpollBusy_;
+        }
+
         async InitializeAsync(remote) {
             this.remote_ = remote;
             let this_ = this; // closure can't handle this in the lambdas below
@@ -39,10 +43,6 @@ define(function () {
             while (!this.longpollBusy_) {
                 await this._Wait(100);
             }
-        }
-
-        SetIds(ids) {
-            this.ids_ = ids.join('-');
         }
 
         async SendRequestsAsync(requests) {
@@ -58,9 +58,17 @@ define(function () {
             return await this._SendAsync(url, requests);
         }
 
+        SetIds(ids) {
+            this.ids_ = ids.join('-');
+            if (ids.length === 0) {
+                // detach
+                this.longpollBusy_ = false;
+            }
+        }
+
         async _LongPollAsync() {
             this.longpollBusy_ = true;
-            while (true) {
+            while (this.longpollBusy_) {
                 try {
                     let responses = await this._ReceiveResponsesAsync();
                     this.remote_.PushPendingResponses(responses);
