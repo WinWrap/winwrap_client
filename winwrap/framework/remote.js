@@ -45,9 +45,8 @@ define(function () {
             // set the channel ids
             this._SetTransportIds();
             // start polling timer
-            let this_ = this; // closure can't handle this in the lambdas below
             this.pollTimerId_ = setInterval(async () => {
-                await this_._PollAsync();
+                await this._PollAsync();
             }, 100); // waiting to poll
             this.polling_ = true;
         }

@@ -16,19 +16,18 @@ define(function () {
         constructor(channel) {
             this.Channel = channel;
             this.doc_ = null;
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 commit: response => {
-                    this_.CommitDone(response);
+                    this.CommitDone(response);
                 },
                 rebase: response => {
                     if (!response.visible) {
                         return; // hidden code is manipulated by this implementation
                     }
-                    if (this_.doc_.InCommit(response.target)) {
+                    if (this.doc_.InCommit(response.target)) {
                         return; // rebasing self commit - no extra work required
                     }
-                    this_.doc_.NeedCommit();
+                    this.doc_.NeedCommit();
                 }
             });
         }

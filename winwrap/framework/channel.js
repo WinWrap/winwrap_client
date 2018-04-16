@@ -59,10 +59,9 @@ define(function () {
             this.SetStatusBarText(this.VersionInfo());
             this.PushPendingRequest({ request: '?opendialog', dir: '\\', exts: 'wwd|bas' });
             this.PushPendingRequest({ request: '?stack' });
-            let this_ = this; // closure can't handle this in the lambdas below
             this.AddResponseHandlers({
                 detach: response => {
-                    this_.Detach();
+                    this.Detach();
                 }
             });
             // now UI is initialized
