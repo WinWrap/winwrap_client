@@ -37,6 +37,7 @@ define(function () {
         }
 
         _CreateSignatureHelp(response) {
+            let this_ = this;
             //console.log("_createSignatureHelp");
             if (response === null) {
                 console.log("ww-error: _createSignatureHelp no response"); // xxx
