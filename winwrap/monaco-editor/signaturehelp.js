@@ -56,6 +56,7 @@ define(function () {
                             return { label: parameter };
                         })*/
                         //parameters: this_._CreateParameters(prototype)
+                        parameters: []
                     };
                 }),
                 activeSignature: response.prototype_index,
