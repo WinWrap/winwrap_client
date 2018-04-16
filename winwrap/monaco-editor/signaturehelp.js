@@ -14,7 +14,6 @@ define(function () {
     class SignatureHelp {
 
         constructor(autoauto) {
-            //let this_ = this; // can't pass this through closure to the lambdas below
             monaco.languages.registerSignatureHelpProvider('vb', {
                 // 1/15/18 - Tom
                 // added ' ': WinWrap Basic doesn't require () around parameters
