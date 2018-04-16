@@ -55,7 +55,7 @@ define(function () {
                             let parameter = prototype.text.substring(item[0], item[0] + item[1]);
                             return { label: parameter };
                         })*/
-                        parameters: this_._CreateParameters(prototype)
+                        //parameters: this_._CreateParameters(prototype)
                     };
                 }),
                 activeSignature: response.prototype_index,
