@@ -38,7 +38,7 @@ define(function () {
             // complete initialization
             this.initHandlers_.forEach(handler => handler());
 
-            let request = { command: '?attach', version: '10.40.001', unique_name: this.ClientID };
+            let request = { request: '?attach', version: '10.40.001', unique_name: this.ClientID };
             let attach = undefined;
             try {
                 attach = await this.SendRequestAndGetResponseAsync(request);
@@ -51,14 +51,14 @@ define(function () {
             }
             this.busy_ = false;
             if (attach.unique_name !== this.ClientID) {
-                alert(`${this.Name} ${request.command} failed ${attach.unique_name} !== ${this.ClientID}`);
+                alert(`${this.Name} ${request.request} failed ${attach.unique_name} !== ${this.ClientID}`);
                 return;
             }
             this.AllocatedID = attach.allocated_id;
             this.Version = attach.version;
             this.SetStatusBarText(this.VersionInfo());
-            this.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
-            this.PushPendingRequest({ command: '?stack' });
+            this.PushPendingRequest({ request: '?opendialog', dir: '\\', exts: 'wwd|bas' });
+            this.PushPendingRequest({ request: '?stack' });
             let this_ = this; // closure can't handle this in the lambdas below
             this.AddResponseHandlers({
                 detach: response => {
@@ -92,6 +92,7 @@ define(function () {
         }
 
         Detach() {
+            this.SetStatusBarText('Detached at ' + new Date().toLocaleString());
             this.Remote.DetachChannel(this);
         }
 
@@ -99,7 +100,7 @@ define(function () {
             if (request) {
                 request.datetime = new Date().toLocaleString();
                 request.id = this.AllocatedID;
-                if (request.command.substring(0, 1) === '?') {
+                if (request.request != undefined) {
                     request.gen = this._NextGeneration(false);
                 }
                 this._Log('=>', request);
@@ -122,7 +123,7 @@ define(function () {
         async SendRequestAndGetResponseAsync(request) {
             request.datetime = new Date().toLocaleString();
             request.id = this.AllocatedID;
-            request.gen = this._NextGeneration(request.command === '?attach');
+            request.gen = this._NextGeneration(request.request === '?attach');
             this._Log('=>', request);
             let result = await this.Remote.SendRequestAndGetResponseAsync(request);
             this._Log('<=', result);

@@ -76,7 +76,7 @@ define(function () {
                     });
                 }
                 request = {
-                    command: '?commit',
+                    request: '?commit',
                     target: this.Name(),
                     revision: this.doc_.Revision(),
                     tab_width: 4,

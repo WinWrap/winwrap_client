@@ -78,7 +78,7 @@ define(function () {
         constructor(ui, channel, element) {
             super(ui, channel, element, () => {
                 channel.PushPendingCommit();
-                channel.PushPendingRequest({ command: '?syntax', target: channel.CommitRebase.Name() });
+                channel.PushPendingRequest({ request: '?syntax', target: channel.CommitRebase.Name() });
             });
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({

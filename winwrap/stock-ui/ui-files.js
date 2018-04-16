@@ -26,7 +26,7 @@ define(['./ui'], function () {
                 },
                 new: response => {
                     this_.newmacro = true;
-                    channel.PushPendingRequest({ command: '?read', target: response.name });
+                    channel.PushPendingRequest({ request: '?read', target: response.name });
                 },
                 opendialog: response => {
                     this_._SetFileValues(response.names.map(item => item.name));
@@ -37,8 +37,8 @@ define(['./ui'], function () {
                     this_._SetFileValue(file.name);
                     channel.CommitRebase.Read(file);
                     channel.SetStatusBarText(channel.VersionInfo());
-                    channel.PushPendingRequest({ command: '?breaks', target: file.name });
-                    channel.PushPendingRequest({ command: '?state', target: file.name });
+                    channel.PushPendingRequest({ request: '?breaks', target: file.name });
+                    channel.PushPendingRequest({ request: '?state', target: file.name });
                 },
                 state: response => {
                     //this_.Enabled(!response.macro_loaded);
@@ -47,8 +47,8 @@ define(['./ui'], function () {
                     let name = channel.CommitRebase.Name();
                     let newname = this_._GetFileValue();
                     channel.PushPendingCommit();
-                    channel.PushPendingRequest({ command: '?write', target: name, new_name: newname });
-                    channel.PushPendingRequest({ command: '?opendialog', dir: '\\', exts: 'wwd|bas' });
+                    channel.PushPendingRequest({ request: '?write', target: name, new_name: newname });
+                    channel.PushPendingRequest({ request: '?opendialog', dir: '\\', exts: 'wwd|bas' });
                 },
                 _saved: response => {
                     this_.newmacro = false;
@@ -70,7 +70,7 @@ define(['./ui'], function () {
                 },
             });
             this.element_.on('autocompleteselect', (event, ui) => {
-                channel.PushPendingRequest({ command: '?read', target: ui.item.value });
+                channel.PushPendingRequest({ request: '?read', target: ui.item.value });
             });
         }
         _GetFileValue() {
@@ -84,10 +84,10 @@ define(['./ui'], function () {
             this.macros_ = values;
             if (first) {
                 if (values.find(item => item === '\\Sample1.bas')) {
-                    this.channel_.PushPendingRequest({ command: '?read', target: '\\Sample1.bas' });
+                    this.channel_.PushPendingRequest({ request: '?read', target: '\\Sample1.bas' });
                 }
                 else {
-                    this.channel_.PushPendingRequest({ command: '?new', names: [] });
+                    this.channel_.PushPendingRequest({ request: '?new', names: [] });
                 }
             }
         }
@@ -98,7 +98,7 @@ define(['./ui'], function () {
     class ButtonNew extends ww.Button {
         constructor(ui, channel, element) {
             super(ui, channel, element, () => {
-                channel.PushPendingRequest({ command: '?new', kind: 'Macro', has_main: true, names: [] });
+                channel.PushPendingRequest({ request: '?new', kind: 'Macro', has_main: true, names: [] });
             });
             let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({

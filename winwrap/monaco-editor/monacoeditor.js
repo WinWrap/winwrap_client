@@ -176,7 +176,7 @@ define(function () {
                         text = model.getLineContent(rng.startLineNumber - 1);
                         let depth = 0;
                         let language = 2;
-                        this_.Channel.PushPendingRequest({ command: '?debug', depth: 0, language: language, text: text });
+                        this_.Channel.PushPendingRequest({ request: '?debug', depth: 0, language: language, text: text });
                     }
                 }
             });
@@ -199,7 +199,7 @@ define(function () {
                 notify_pause: response => {
                     let watches = this_.GetText().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });
                     if (watches.length >= 1) { // xxx
-                        this_.Channel.PushPendingRequest({ command: '?watch', watches: watches });
+                        this_.Channel.PushPendingRequest({ request: '?watch', watches: watches });
                     }
                 },
                 state: response => {
@@ -216,7 +216,7 @@ define(function () {
             this.monacoEditor_.onKeyUp(function (e) {
                 if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
                     let watches = this_.GetText().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });
-                    this_.Channel.PushPendingRequest({ command: '?watch', watches: watches });
+                    this_.Channel.PushPendingRequest({ request: '?watch', watches: watches });
                 }
             });
         }
@@ -242,7 +242,7 @@ define(function () {
                 },
                 notify_pause: response => {
                     if (this_.Channel.CommitRebase.Name() !== response.file_name) {
-                        this_.Channel.PushPendingRequest({ command: '?read', target: response.file_name });
+                        this_.Channel.PushPendingRequest({ request: '?read', target: response.file_name });
                     }
                     let pauseLine = response.stack[0].linenum;
                     this_.monacoEditor_.revealLine(pauseLine);
@@ -256,7 +256,7 @@ define(function () {
                     let isBreak = this_.Decorate.Breaks.IsBreak(channel.CommitRebase.Name(), e.target.position.lineNumber);
                     let doBreak = isBreak ? false : true;
                     let request = {
-                        command: 'break',
+                        request: 'break',
                         //target: channel.CommitRebase.Name,
                         target: channel.CommitRebase.Name(),
                         line: e.target.position.lineNumber,

@@ -89,11 +89,11 @@ define(function () {
         }
 
         async SendRequestAndGetResponseAsync(request) {
-            this.expected_ = { gen: request.gen, response: '!' + request.command.substring(1) };
+            this.expected_ = { gen: request.gen, response: '!' + request.request.substring(1) };
             let requests = this.pendingRequests_;
             this.pendingRequests_ = [];
             requests.push(request);
-            console.log('Remote.SendRequestAndGetResponseAsync>>> ' + this._ValueMsg(requests, 'command'));
+            console.log('Remote.SendRequestAndGetResponseAsync>>> ' + this._ValueMsg(requests, 'request'));
             try {
                 await this._SendRequestsAsync(requests);
             } catch(err) {
@@ -115,7 +115,7 @@ define(function () {
             }
             console.log('Remote.SendRequestAndGetResponseAsync<<< ' + this._ValueMsg([response], 'response'));
             console.log({
-                request: this._ValueMsg(request, 'command'),
+                request: this._ValueMsg(request, 'request'),
                 expected: this.expected_.response,
                 results: this._ValueMsg(response, 'response'),
                 trys: trys,

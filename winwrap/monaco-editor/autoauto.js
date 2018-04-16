@@ -50,7 +50,7 @@ define(function () {
                 fragment = this.TextUntilPosition(model, position);
             }
             let request = {
-                command: '?auto',
+                request: '?auto',
                 target: channel.CommitRebase.Name(),
                 first: 0,
                 offset: editor.CodeEditor.GetSelection().first,
