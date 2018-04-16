@@ -249,7 +249,7 @@ define(function () {
                     let isBreak = this.Decorate.Breaks.IsBreak(channel.CommitRebase.Name(), e.target.position.lineNumber);
                     let doBreak = isBreak ? false : true;
                     let request = {
-                        request: 'break',
+                        command: 'break',
                         //target: channel.CommitRebase.Name,
                         target: channel.CommitRebase.Name(),
                         line: e.target.position.lineNumber,
