@@ -25,7 +25,7 @@ define(function () {
                     let match = true;
                     if (match) {
                         let response = await autoauto.SendAndReceiveAsync(model, position);
-                        return this_._CreateSignatureHelp(response);
+                        return this._CreateSignatureHelp(response);
                     }
                     return undefined;
                 }
