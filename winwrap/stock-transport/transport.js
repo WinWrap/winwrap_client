@@ -35,9 +35,8 @@ define(function () {
 
         async InitializeAsync(remote) {
             this.remote_ = remote;
-            let this_ = this; // closure can't handle this in the lambdas below
             this.longpollTimerId_ = setTimeout(async () => {
-                await this_._LongPollAsync();
+                await this._LongPollAsync();
             }, 10);
             // wait for long poll to start
             while (!this.longpollBusy_) {
