@@ -15,7 +15,6 @@ define(['./renderjson'], function () {
         constructor(ui, channel, element) {
             this.element_ = element;
             renderjson.set_show_to_level(1);
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.SetLogger((label, data) => {
                 element.append(renderjson(data));
             });
