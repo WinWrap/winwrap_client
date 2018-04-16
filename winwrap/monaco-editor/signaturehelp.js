@@ -21,13 +21,9 @@ define(function () {
                 signatureHelpTriggerCharacters: ['(',' ',','],
                 provideSignatureHelp: async function (model, position) {
                     let textUntilPosition = autoauto.TextUntilPosition(model, position);
-                    // 1/15/18 - Tom
-                    // added ' '
-                    // 1/18/18 - Ed
-                    // keep signature displayed until closed
                     //let match = textUntilPosition.match(/[( ][^)]*$/);
                     let match = true;
-                    if (match) { // was [{}]
+                    if (match) {
                         let response = await autoauto.SendAndReceiveAsync(model, position);
                         return this_._CreateSignatureHelp(response);
                     }
@@ -37,24 +33,17 @@ define(function () {
         }
 
         _CreateSignatureHelp(response) {
-            let this_ = this;
-            //console.log("_createSignatureHelp");
+            let this_ = this; // can't pass this through closure to the lambdas below
             if (response === null) {
                 console.log("ww-error: _createSignatureHelp no response"); // xxx
-                //return {};
             }
             if (response === null || !('prototypes' in response)) {
                 return undefined;
             }
-            //console.log(response);
             let result = {
                 signatures: response.prototypes.map(prototype => {
                     return {
                         label: prototype.text,
-                        /*parameters: prototype.params.map(item => {
-                            let parameter = prototype.text.substring(item[0], item[0] + item[1]);
-                            return { label: parameter };
-                        })*/
                         parameters: this_._CreateParameters(prototype)
                     };
                 }),
