@@ -50,10 +50,11 @@ define(function () {
                 signatures: response.prototypes.map(prototype => {
                     return {
                         label: prototype.text,
-                        parameters: prototype.params.map(item => {
+                        /*parameters: prototype.params.map(item => {
                             let parameter = prototype.text.substring(item[0], item[0] + item[1]);
                             return { label: parameter };
-                        })
+                        })*/
+                        parameters: _CreateParameters(prototype);
                     };
                 }),
                 activeSignature: response.prototype_index,
@@ -61,6 +62,14 @@ define(function () {
             };
             return result;
         }
+    }
+
+    _CreateParameters(prototype) {
+        let result = prototype.params.map(item => {
+            let parameter = prototype.text.substring(item[0], item[0] + item[1]);
+            return { label: parameter };
+        });
+        return result;
     }
 
     ww.SignatureHelp = SignatureHelp;
