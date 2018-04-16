@@ -33,9 +33,8 @@ define(function () {
         }
 
         _CreateSignatureHelp(response) {
-            //let this_ = this; // can't pass this through closure to the lambdas below
             if (response === null) {
-                console.log("ww-error: _createSignatureHelp no response"); // xxx
+                console.log("ww-error: _createSignatureHelp no response");
             }
             if (response === null || !('prototypes' in response)) {
                 return undefined;
