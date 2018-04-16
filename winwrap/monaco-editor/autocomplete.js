@@ -28,7 +28,7 @@ define(function () {
                     let match = textUntilPosition.match(this.re_auto); // limits traffic to server
                     if (match) {
                         let response = await autoauto.SendAndReceiveAsync(model, position);
-                        return this_._CreateDependencyProposals(response); // incomplete not used
+                        return this._CreateDependencyProposals(response); // incomplete not used
                     }
                 }
             });
