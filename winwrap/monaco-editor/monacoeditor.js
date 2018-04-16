@@ -42,10 +42,9 @@ define(function () {
             this.monacoEditor_.setValue(`\"${container}\"\r\n`);
             this.CodeEditor = this.ui_.GetItem('ww-item-code');
             ww.MonacoShared.RegisterModel(this.monacoEditor_.getModel(), this);
-            let this_ = this; // closure can't handle this in the lambdas below
             this.Channel.AddResponseHandlers({
                 detach: response => {
-                    this_.Enabled(false);
+                    this.Enabled(false);
                 }
             });
         }
@@ -129,13 +128,11 @@ define(function () {
     class MonacoImmediateEditor extends MonacoEditor {
         constructor(ui, channel, element) {
             super(ui, channel, element)
-            let this_ = this; // closure can't handle this in the lambdas below
-            channel.AddInitHandler(() => this_._Init());
+            channel.AddInitHandler(() => this._Init());
         }
 
         _Init() {
             super._Init('immediate');
-            let this_ = this; // closure can't handle this in the lambdas below
             this.Channel.AddResponseHandlers({
                 debug: response => {
                     let text = undefined;
@@ -146,37 +143,37 @@ define(function () {
                         text = response.value;
                     }
                     if (text !== undefined) {
-                        let index = this_.GetSelection().first;
+                        let index = this.GetSelection().first;
                         let change = new ww.Change(ww.ChangeOp.EditChangeOp, index, 0, text + '\r\n');
                         let changes = new ww.Changes([change]);
-                        this_.ApplyChanges(changes, false);
+                        this.ApplyChanges(changes, false);
                     }
                 },
                 notify_debugclear: response => {
-                    this_.SetText('"immediate"\r\n');
+                    this.SetText('"immediate"\r\n');
                 },
                 notify_debugprint: response => {
                     // https://microsoft.github.io/monaco-editor/api/uis/monaco.editor.icodeeditor.html#executechanges
-                    let value = this_.monacoEditor_.getValue();
-                    this_.monacoEditor_.setValue(value + response.text);
+                    let value = this.monacoEditor_.getValue();
+                    this.monacoEditor_.setValue(value + response.text);
                     let lastLine = this.monacoEditor_.getModel().getLineCount();
                     this.monacoEditor_.revealLine(lastLine);
                 },
                 state: response => {
-                    this_.Enabled(response.is_idle || response.is_stopped);
-                    this_.SetVisible(!response.is_idle);
+                    this.Enabled(response.is_idle || response.is_stopped);
+                    this.SetVisible(!response.is_idle);
                 }
             });
-            this.monacoEditor_.onKeyUp(function (e) {
+            this.monacoEditor_.onKeyUp(e => {
                 if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
-                    let rng = this_.monacoEditor_.getSelection();
-                    let model = this_.monacoEditor_.getModel();
+                    let rng = this.monacoEditor_.getSelection();
+                    let model = this.monacoEditor_.getModel();
                     let text = model.getLineContent(rng.startLineNumber);
                     if (text.trim() === '') {
                         text = model.getLineContent(rng.startLineNumber - 1);
                         let depth = 0;
                         let language = 2;
-                        this_.Channel.PushPendingRequest({ request: '?debug', depth: 0, language: language, text: text });
+                        this.Channel.PushPendingRequest({ request: '?debug', depth: 0, language: language, text: text });
                     }
                 }
             });
@@ -188,35 +185,33 @@ define(function () {
     class MonacoWatchEditor extends MonacoEditor {
         constructor(ui, channel, element) {
             super(ui, channel, element)
-            let this_ = this; // closure can't handle this in the lambdas below
-            channel.AddInitHandler(() => this_._Init());
+            channel.AddInitHandler(() => this._Init());
         }
 
         _Init() {
             super._Init('watch');
-            let this_ = this; // closure can't handle this in the lambdas below
             this.Channel.AddResponseHandlers({
                 notify_pause: response => {
-                    let watches = this_.GetText().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });
+                    let watches = this.GetText().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });
                     if (watches.length >= 1) { // xxx
-                        this_.Channel.PushPendingRequest({ request: '?watch', watches: watches });
+                        this.Channel.PushPendingRequest({ request: '?watch', watches: watches });
                     }
                 },
                 state: response => {
-                    this_.Enabled(response.is_idle || response.is_stopped);
+                    this.Enabled(response.is_idle || response.is_stopped);
                 },
                 watch: response => {
                     let watchResults = response.results.map(item => {
                         let value = item.error !== undefined ? item.error : item.value;
                         return `${item.depth}: ${item.expr} -> ${value}`;
                     }).join('\n');
-                    this_.SetText(watchResults + '\n');
+                    this.SetText(watchResults + '\n');
                 }
             });
-            this.monacoEditor_.onKeyUp(function (e) {
+            this.monacoEditor_.onKeyUp(e => {
                 if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
-                    let watches = this_.GetText().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });
-                    this_.Channel.PushPendingRequest({ request: '?watch', watches: watches });
+                    let watches = this.GetText().trim().split(/[\r]?\n/).filter(el => { return el !== ''; });
+                    this.Channel.PushPendingRequest({ request: '?watch', watches: watches });
                 }
             });
         }
@@ -228,32 +223,30 @@ define(function () {
 
         constructor(ui, channel, element) {
             super(ui, channel, element)
-            let this_ = this; // closure can't handle this in the lambdas below
-            channel.AddInitHandler(() => this_._Init());
+            channel.AddInitHandler(() => this._Init());
         }
 
         _Init() {
             super._Init('code');
-            let this_ = this; // closure can't handle this in the lambdas below
             this.Channel.CommitRebase.SetEditor(this);
             this.Channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(response.is_idle);
+                    this.Enabled(response.is_idle);
                 },
                 notify_pause: response => {
-                    if (this_.Channel.CommitRebase.Name() !== response.file_name) {
-                        this_.Channel.PushPendingRequest({ request: '?read', target: response.file_name });
+                    if (this.Channel.CommitRebase.Name() !== response.file_name) {
+                        this.Channel.PushPendingRequest({ request: '?read', target: response.file_name });
                     }
                     let pauseLine = response.stack[0].linenum;
-                    this_.monacoEditor_.revealLine(pauseLine);
+                    this.monacoEditor_.revealLine(pauseLine);
                 }
             });
             // helpers
             this.Decorate = new ww.Decorate(this.Channel, this.monacoEditor_);
-            this.monacoEditor_.onMouseDown(function (e) {
+            this.monacoEditor_.onMouseDown(e => {
                 if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) { // xxx below
-                    let channel = this_.Channel;
-                    let isBreak = this_.Decorate.Breaks.IsBreak(channel.CommitRebase.Name(), e.target.position.lineNumber);
+                    let channel = this.Channel;
+                    let isBreak = this.Decorate.Breaks.IsBreak(channel.CommitRebase.Name(), e.target.position.lineNumber);
                     let doBreak = isBreak ? false : true;
                     let request = {
                         request: 'break',
@@ -265,9 +258,9 @@ define(function () {
                     channel.PushPendingRequest(request);
                 }
             });
-            this.monacoEditor_.onKeyUp(function (e) {
+            this.monacoEditor_.onKeyUp(e => {
                 if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
-                    let target = this_.Channel.CommitRebase.Name();
+                    let target = this.Channel.CommitRebase.Name();
                     if (target === null) {
                         return;
                     }
@@ -280,8 +273,8 @@ define(function () {
                     //         - only the auto completion text has been inserted
                     //           no cr-lf has been inserted
                     //         - insert the cr-lf
-                    let rng = this_.monacoEditor_.getSelection();
-                    let model = this_.monacoEditor_.getModel();
+                    let rng = this.monacoEditor_.getSelection();
+                    let model = this.monacoEditor_.getModel();
                     let left = model.getValueInRange({
                         startLineNumber: rng.startLineNumber,
                         startColumn: 1,
@@ -296,17 +289,17 @@ define(function () {
                         delete_count = left.length + 2;
                         index -= delete_count;
                     }
-                    else if (!this_.autoEnter_) {
+                    else if (!this.autoEnter_) {
                         return;
                     }
                     let change = new ww.Change(ww.ChangeOp.EditChangeOp, index, delete_count, '\r\n');
                     let changes = new ww.Changes([change]);
-                    this_.ApplyChanges(changes, false);
+                    this.ApplyChanges(changes, false);
                     index += 2; // advance caret
-                    this_.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.EditChangeOp, index);
-                    this_.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.FixupChangeOp, index - 2);
-                    this_.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.EnterChangeOp, index);
-                    this_.Channel.PushPendingCommit();
+                    this.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.EditChangeOp, index);
+                    this.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.FixupChangeOp, index - 2);
+                    this.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.EnterChangeOp, index);
+                    this.Channel.PushPendingCommit();
                 }
             });
         }
