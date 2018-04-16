@@ -25,7 +25,7 @@ define(['./ui'], function () {
                     this.element_.autocomplete('disable');
                 },
                 new: response => {
-                    this_.newmacro = true;
+                    this.newmacro = true;
                     channel.PushPendingRequest({ request: '?read', target: response.name });
                 },
                 opendialog: response => {
