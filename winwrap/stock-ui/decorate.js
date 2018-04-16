@@ -22,31 +22,30 @@ define(function () {
             this.Breaks = new ww.Breaks(channel);
             this.Stack = new ww.Stack(channel);
             this.SyntaxError = new ww.SyntaxError(channel);
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 break: response => {
-                    this_.Breaks.BreakResponseHandler(response);
-                    this_._display();
+                    this.Breaks.BreakResponseHandler(response);
+                    this._display();
                 },
                 breaks: response => {
-                    this_.Breaks.BreaksResponseHandler(response);
-                    this_._display();
+                    this.Breaks.BreaksResponseHandler(response);
+                    this._display();
                 },
                 notify_errors: response => {
-                    this_.SyntaxError.ErrorResponseHandler(response);
-                    this_._display();
+                    this.SyntaxError.ErrorResponseHandler(response);
+                    this._display();
                 },
                 stack: response => {
-                    this_.Stack.StateResponseHandler(response);
-                    this_._display();
+                    this.Stack.StateResponseHandler(response);
+                    this._display();
                 },
                 state: response => {
-                    this_.Stack.StateResponseHandler(response);
-                    this_._display();
+                    this.Stack.StateResponseHandler(response);
+                    this._display();
                 },
                 syntax: response => {
-                    this_.SyntaxError.ErrorResponseHandler(response);
-                    this_._display();
+                    this.SyntaxError.ErrorResponseHandler(response);
+                    this._display();
                 }
             });
         }
@@ -60,10 +59,9 @@ define(function () {
 
         _breaksDecorations(target) {
             let decorations = [];
-            let this_ = this; // closure can't handle this in the lambdas below
             let breaks = this.Breaks.GetBreaks(target);
             breaks.forEach(abreak => {
-                let decoration = this_._breakDecoration(abreak.line);
+                let decoration = this._breakDecoration(abreak.line);
                 decorations.push(decoration);
             });
             return decorations;
