@@ -14,12 +14,12 @@ define(function () {
     class SignatureHelp {
 
         constructor(autoauto) {
-            let this_ = this; // can't pass this through closure to the lambdas below
+            //let this_ = this; // can't pass this through closure to the lambdas below
             monaco.languages.registerSignatureHelpProvider('vb', {
                 // 1/15/18 - Tom
                 // added ' ': WinWrap Basic doesn't require () around parameters
                 signatureHelpTriggerCharacters: ['(',' ',','],
-                provideSignatureHelp: async function (model, position) {
+                provideSignatureHelp: async (model, position) => {
                     let textUntilPosition = autoauto.TextUntilPosition(model, position);
                     //let match = textUntilPosition.match(/[( ][^)]*$/);
                     let match = true;
