@@ -66,7 +66,9 @@ define(function () {
         }
 
         _CreateParameters(prototype) {
-            let result = prototype.params.map(item => {
+            let result = (typeof prototype.params === 'undefined')
+                ? []
+                : prototype.params.map(item => {
                 let parameter = prototype.text.substring(item[0], item[0] + item[1]);
                 return { label: parameter };
             });
