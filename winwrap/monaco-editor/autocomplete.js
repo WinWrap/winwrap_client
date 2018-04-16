@@ -21,10 +21,9 @@ define(function () {
                 /\./        // member
             ].map(r => r.source).join('|'));
             // ? = CallersLine (global)
-            let this_ = this; // can't pass this through closure to the lambdas below
             monaco.languages.registerCompletionItemProvider('vb', {
                 triggerCharacters: [' ', '.', '#', '=', ',', '\t', '\xA0'], // '(', ')'
-                provideCompletionItems: async function (model, position) {
+                provideCompletionItems: async (model, position) => {
                     let textUntilPosition = autoauto.TextUntilPosition(model, position);
                     let match = textUntilPosition.match(this.re_auto); // limits traffic to server
                     if (match) {
