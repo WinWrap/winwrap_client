@@ -33,7 +33,7 @@ define(function () {
         }
 
         _CreateSignatureHelp(response) {
-            let this_ = this; // can't pass this through closure to the lambdas below
+            //let this_ = this; // can't pass this through closure to the lambdas below
             if (response === null) {
                 console.log("ww-error: _createSignatureHelp no response"); // xxx
             }
@@ -44,7 +44,7 @@ define(function () {
                 signatures: response.prototypes.map(prototype => {
                     return {
                         label: prototype.text,
-                        parameters: this_._CreateParameters(prototype)
+                        parameters: this._CreateParameters(prototype)
                     };
                 }),
                 activeSignature: response.prototype_index,
