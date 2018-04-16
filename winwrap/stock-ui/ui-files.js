@@ -18,7 +18,6 @@ define(['./ui'], function () {
             this.macros_ = [];
             this.element_ = element;
             this.newmacro = false;
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 detach: response => {
                     // disable the input box selection list
@@ -29,42 +28,42 @@ define(['./ui'], function () {
                     channel.PushPendingRequest({ request: '?read', target: response.name });
                 },
                 opendialog: response => {
-                    this_._SetFileValues(response.names.map(item => item.name));
+                    this._SetFileValues(response.names.map(item => item.name));
                 },
                 read: response => {
                     // only read the first file
                     let file = response.files[0];
-                    this_._SetFileValue(file.name);
+                    this._SetFileValue(file.name);
                     channel.CommitRebase.Read(file);
                     channel.SetStatusBarText(channel.VersionInfo());
                     channel.PushPendingRequest({ request: '?breaks', target: file.name });
                     channel.PushPendingRequest({ request: '?state', target: file.name });
                 },
                 state: response => {
-                    //this_.Enabled(!response.macro_loaded);
+                    //this.Enabled(!response.macro_loaded);
                 },
                 _save: response => {
                     let name = channel.CommitRebase.Name();
-                    let newname = this_._GetFileValue();
+                    let newname = this._GetFileValue();
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ request: '?write', target: name, new_name: newname });
                     channel.PushPendingRequest({ request: '?opendialog', dir: '\\', exts: 'wwd|bas' });
                 },
                 _saved: response => {
-                    this_.newmacro = false;
-                    this_._SetFileValue(response.name);
+                    this.newmacro = false;
+                    this._SetFileValue(response.name);
                     channel.CommitRebase.HandleSavedResponse(response);
                 }
             });
             this.element_.autocomplete({
                 source: (request, response) => {
-                    if (!this_.newmacro) {
-                        let buttonSave = this_.ui_.items_['ww-item-save'];
+                    if (!this.newmacro) {
+                        let buttonSave = this.ui_.items_['ww-item-save'];
                         buttonSave.Enabled(false);
                     }
                     let term = $.ui.autocomplete.escapeRegex(request.term);
                     let matcher = new RegExp(`^.*${term}.*$`, 'i');
-                    response($.grep(this_.macros_, element => {
+                    response($.grep(this.macros_, element => {
                         return matcher.test(element);
                     }));
                 },
@@ -100,10 +99,9 @@ define(['./ui'], function () {
             super(ui, channel, element, () => {
                 channel.PushPendingRequest({ request: '?new', kind: 'Macro', has_main: true, names: [] });
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(!response.macro_loaded);
+                    this.Enabled(!response.macro_loaded);
                 }
             });
         }
@@ -117,10 +115,9 @@ define(['./ui'], function () {
                 let response = { response: "_save" };
                 channel.ProcessResponse(response);
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(true);
+                    this.Enabled(true);
                 },
                 write: response => {
                     if (response.success) {
