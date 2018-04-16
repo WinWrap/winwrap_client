@@ -59,10 +59,9 @@ define(function () {
             this.element_.button(); // make sure the button is initialized
             this.element_.click(clickhandler);
             this.Enabled(false);
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 detach: response => {
-                    this_.Enabled(false);
+                    this.Enabled(false);
                 }
             });
         }
@@ -80,10 +79,9 @@ define(function () {
                 channel.PushPendingCommit();
                 channel.PushPendingRequest({ request: '?syntax', target: channel.CommitRebase.Name() });
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(!response.macro_loaded);
+                    this.Enabled(!response.macro_loaded);
                 }
             });
         }
@@ -95,10 +93,9 @@ define(function () {
                 channel.PushPendingCommit();
                 channel.PushPendingRequest({ command: 'run', target: channel.CommitRebase.Name() });
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(response.commands.run);
+                    this.Enabled(response.commands.run);
                 }
             });
         }
@@ -109,10 +106,9 @@ define(function () {
             super(ui, channel, element, () => {
                 channel.PushPendingRequest({ command: 'pause', target: channel.CommitRebase.Name() });
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(response.commands.pause);
+                    this.Enabled(response.commands.pause);
                 }
             });
         }
@@ -123,10 +119,9 @@ define(function () {
             super(ui, channel, element, () => {
                 channel.PushPendingRequest({ command: 'end', target: channel.CommitRebase.Name() });
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(response.commands.end);
+                    this.Enabled(response.commands.end);
                 }
             });
         }
@@ -138,10 +133,9 @@ define(function () {
                 channel.PushPendingCommit();
                 channel.PushPendingRequest({ command: 'into', target: channel.CommitRebase.Name() });
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(response.commands.into);
+                    this.Enabled(response.commands.into);
                 }
             });
         }
@@ -153,10 +147,9 @@ define(function () {
                 channel.PushPendingCommit();
                 channel.PushPendingRequest({ command: 'over', target: channel.CommitRebase.Name() });
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(response.commands.over);
+                    this.Enabled(response.commands.over);
                 }
             });
         }
@@ -167,10 +160,9 @@ define(function () {
             super(ui, channel, element, () => {
                 channel.PushPendingRequest({ command: 'out', target: channel.CommitRebase.Name() });
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(response.commands.out);
+                    this.Enabled(response.commands.out);
                 }
             });
         }
@@ -197,10 +189,9 @@ define(function () {
                     editorWatch.SetVisible(false);
                 }
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(!response.edit_only);
+                    this.Enabled(!response.edit_only);
                 }
             });
         }
@@ -211,10 +202,9 @@ define(function () {
             super(ui, channel, element, () => {
                 channel.PushPendingRequest({ command: 'detach' });
             });
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 state: response => {
-                    this_.Enabled(true);
+                    this.Enabled(true);
                 }
             });
         }
@@ -223,10 +213,9 @@ define(function () {
     class StatusBar {
         constructor(ui, channel, element) {
             this.element_ = element;
-            let this_ = this; // closure can't handle this in the lambdas below
             channel.AddResponseHandlers({
                 _statusbar: response => {
-                    this_.element_.text(response.text);
+                    this.element_.text(response.text);
                 }
             });
         }
