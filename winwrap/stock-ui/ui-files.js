@@ -76,7 +76,7 @@ define(['./ui'], function () {
                     channel.PushPendingRequest({ request: '?read', target: value });
                     channel.PushPendingRequest({ request: '?opendialog', dir: this.dir_, exts: 'wwd|bas' });
                 } else {
-                    channel.PushPendingRequest({ request: '?read', target: uvalue });
+                    channel.PushPendingRequest({ request: '?read', target: value });
                 }
             });
         }
