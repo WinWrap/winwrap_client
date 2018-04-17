@@ -71,12 +71,12 @@ define(['./ui'], function () {
             });
             this.element_.on('autocompleteselect', (event, ui) => {
                 let value = ui.item.value;
-                if (value === '\\New folder\\') {
+                if (value.slice(-1) === '\\') {
                     this.dir_ = value;
-                    channel.PushPendingRequest({ request: '?read', target: ui.item.value });
+                    channel.PushPendingRequest({ request: '?read', target: value });
                     channel.PushPendingRequest({ request: '?opendialog', dir: this.dir_, exts: 'wwd|bas' });
                 } else {
-                    channel.PushPendingRequest({ request: '?read', target: ui.item.value });
+                    channel.PushPendingRequest({ request: '?read', target: uvalue });
                 }
             });
         }
