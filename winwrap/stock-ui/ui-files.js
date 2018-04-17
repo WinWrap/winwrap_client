@@ -73,6 +73,7 @@ define(['./ui'], function () {
                 let value = ui.item.value;
                 if (value === '\\New folder\\') {
                     this.dir_ = value;
+                    channel.PushPendingRequest({ request: '?read', target: ui.item.value });
                     channel.PushPendingRequest({ request: '?opendialog', dir: this.dir_, exts: 'wwd|bas' });
                 } else {
                     channel.PushPendingRequest({ request: '?read', target: ui.item.value });
