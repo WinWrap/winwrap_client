@@ -70,7 +70,12 @@ define(['./ui'], function () {
                 },
             });
             this.element_.on('autocompleteselect', (event, ui) => {
-                channel.PushPendingRequest({ request: '?read', target: ui.item.value });
+                let value = ui.item.value;
+                if (value === '\\New folder\\') {
+                    this.dir_ = value;
+                } else {
+                    channel.PushPendingRequest({ request: '?read', target: ui.item.value });
+                }
             });
         }
         _GetFileValue() {
