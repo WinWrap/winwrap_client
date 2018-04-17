@@ -18,6 +18,7 @@ define(['./ui'], function () {
             this.macros_ = [];
             this.element_ = element;
             this.newmacro = false;
+            this.dir_ = '\\';
             channel.AddResponseHandlers({
                 detach: response => {
                     // disable the input box selection list
@@ -47,7 +48,7 @@ define(['./ui'], function () {
                     let newname = this._GetFileValue();
                     channel.PushPendingCommit();
                     channel.PushPendingRequest({ request: '?write', target: name, new_name: newname });
-                    channel.PushPendingRequest({ request: '?opendialog', dir: '\\', exts: 'wwd|bas' });
+                    channel.PushPendingRequest({ request: '?opendialog', dir: this.dir_, exts: 'wwd|bas' });
                 },
                 _saved: response => {
                     this.newmacro = false;
