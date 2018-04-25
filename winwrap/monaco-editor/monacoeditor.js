@@ -56,15 +56,17 @@ define(function () {
 
             let monacoEditor = this.monacoEditor_;
             changes.Changes().forEach(change => {
-                let model = monacoEditor.getModel();
-                let position1 = model.getPositionAt(change.Index());
-                let position2 = model.getPositionAt(change.DeleteIndex());
-                let range = new monaco.Range(position1.lineNumber, position1.column,
-                    position2.lineNumber, position2.column);
-                let edits = [{ range: range, text: change.Insert() }];
-                monacoEditor.executeEdits("rebase", edits);
-                selection.first = change.AdjustCaret(selection.first, is_server);
-                selection.last = change.AdjustCaret(selection.last, is_server);
+                if (change.Op() == ww.ChangeOp.EditChangeOp) {
+                    let model = monacoEditor.getModel();
+                    let position1 = model.getPositionAt(change.Index());
+                    let position2 = model.getPositionAt(change.DeleteIndex());
+                    let range = new monaco.Range(position1.lineNumber, position1.column,
+                        position2.lineNumber, position2.column);
+                    let edits = [{ range: range, text: change.Insert() }];
+                    monacoEditor.executeEdits("rebase", edits);
+                    selection.first = change.AdjustCaret(selection.first, is_server);
+                    selection.last = change.AdjustCaret(selection.last, is_server);
+                }
             });
 
             this.SetSelection(selection);
@@ -264,7 +266,7 @@ define(function () {
                     if (target === null) {
                         return;
                     }
-                    // need to recognize on of two cases:
+                    // need to recognize one of two cases:
                     // case 1: enter pressed without auto completion list visible
                     //         - the cr-lf has already been inserted and
                     //           the leading spaces to auto indent have also been inserted
