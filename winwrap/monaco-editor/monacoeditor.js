@@ -50,20 +50,16 @@ define(function () {
         }
 
         ApplyChanges(changes, is_server) {
-            let changeOperations = [];
-
             let selection = this.GetSelection();
-
-            let monacoEditor = this.monacoEditor_;
             changes.Changes().forEach(change => {
                 if (change.Op() == ww.ChangeOp.EditChangeOp) {
-                    let model = monacoEditor.getModel();
+                    let model = this.monacoEditor_.getModel();
                     let position1 = model.getPositionAt(change.Index());
                     let position2 = model.getPositionAt(change.DeleteIndex());
                     let range = new monaco.Range(position1.lineNumber, position1.column,
                         position2.lineNumber, position2.column);
                     let edits = [{ range: range, text: change.Insert() }];
-                    monacoEditor.executeEdits("rebase", edits);
+                    this.monacoEditor_.executeEdits("rebase", edits);
                     selection.first = change.AdjustCaret(selection.first, is_server);
                     selection.last = change.AdjustCaret(selection.last, is_server);
                 }
