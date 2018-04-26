@@ -90,7 +90,7 @@ define(['./ui'], function () {
             let first = this.macros_.length === 0;
             this.macros_ = values;
             if (this.dir_ !== '\\') {
-                let parent = this.dir_.split('\\').slice(0, -1).join('\\');
+                let parent = this.dir_.split('\\').slice(0, -2).join('\\');
                 this.macros_.push(parent);
             }
             if (first) {
