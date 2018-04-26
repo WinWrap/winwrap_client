@@ -91,7 +91,6 @@ define(['./ui'], function () {
             this.macros_ = values;
             if (this.dir_ !== '\\') {
                 this.macros_.push('\\');
-            } else {
                 this.macros_.push('..');
             }
             if (first) {
