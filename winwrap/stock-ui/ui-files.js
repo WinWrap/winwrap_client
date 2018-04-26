@@ -92,7 +92,7 @@ define(['./ui'], function () {
             if (this.dir_ !== '\\') {
                 this.macros_.push('\\');
             } else {
-
+                this.macros_.push('..');
             }
             if (first) {
                 if (values.find(item => item === '\\Sample1.bas')) {
