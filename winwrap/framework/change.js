@@ -157,8 +157,8 @@ define(function () {
         }
 
         MergeTransform(serverChange) {
-            let beforeChange = new Change(0, 0, '');
-            let afterChange = new Change(0, 0, '');
+            let beforeChange = new Change(ww.ChangeOp.EditChangeOp, 0, 0, '');
+            let afterChange = new Change(ww.ChangeOp.EditChangeOp, 0, 0, '');
             if (this.DeleteIndex() < serverChange.index_) {
                 // entirely before serverChange
                 beforeChange = this.Copy();

@@ -55,7 +55,10 @@ define(function () {
             }
             else if (op === ww.ChangeOp.FixupChangeOp) {
                 let range = this.editor_.GetIndexRangeOfLineAt(caret);
-                commit.AppendChange(new ww.Change(op, range.first, range.last - range.first));
+                let length = range.last - range.first;
+                if (length > 0) {
+                    commit.AppendChange(new ww.Change(op, range.first, length));
+                }
             }
         }
 
@@ -66,7 +69,7 @@ define(function () {
                 }
                 else {
                     this.AppendPendingChange(ww.ChangeOp.EditChangeOp);
-                    this.current_commit_.AppendChange(change);
+                    this.pending_commit_.AppendChange(change);
                 }
             });
         }
@@ -107,6 +110,7 @@ define(function () {
         }
 
         Rebase(serverChanges) {
+            let pending_commit = null;
             if (serverChanges.AnyChanges()) {
                 // make sure all changes have been commited
                 this.AppendPendingChange();
@@ -119,7 +123,7 @@ define(function () {
                 // 3. Re-applies pending operations, transforming each operation against the new operation from the server
 
                 // take the pending commits (ApplyChanges below will add them back)
-                let pending_commit = this.pending_commit_.TakeChangesAsNewCommit();
+                pending_commit = this.pending_commit_.TakeChangesAsNewCommit();
 
                 if (pending_commit) {
                     // revert pending commit and selection using the pending commit
@@ -131,14 +135,9 @@ define(function () {
 
                 // update revision text
                 this.revision_text_ = this.editor_.GetText();
-
-                if (pending_commit) {
-                    // rebase pending commit changes using server commit
-                    let pending_changes = pending_commit.Changes().MergeTransform(serverChanges);
-                    // apply rebased pending changes
-                    this.ApplyChanges(pending_changes, false);
-                }
             }
+
+            return pending_commit;
         }
 
         Revision() {

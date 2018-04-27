@@ -41,13 +41,14 @@ define(function () {
         }
 
         CommitDone(response) {
+            let serverChanges = new ww.Changes();
+            let pendingCommit = null;
             if (response.success) {
                 if (response.target === this.Name()) {
-                    let serverChanges = new ww.Changes();
                     response.visible.forEach(change => {
                         serverChanges.AppendNoCombine(new ww.Change(ww.ChangeOp.EditChangeOp, change.index, change.delete, change.insert));
                     });
-                    this.doc_.Rebase(serverChanges);
+                    pendingCommit = this.doc_.Rebase(serverChanges);
                     this.doc_.SetRevision(response.revision);
                     if (response.caret_index !== undefined) {
                         this.editor_.SetSelection({ first: response.caret_index, last: response.caret_index } );
@@ -57,6 +58,12 @@ define(function () {
                 alert('Commit failed.');
             }
             this.doc_.CommitDone();
+            if (pendingCommit !== null) {
+                // rebase pending commit changes using server commit
+                let pendingChanges = pendingCommit.Changes().MergeTransform(serverChanges);
+                // apply rebased pending changes
+                this.doc_.ApplyChanges(pendingChanges, false);
+            }
         }
 
         GetCommitRequest() {
