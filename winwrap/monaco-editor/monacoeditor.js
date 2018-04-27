@@ -49,22 +49,17 @@ define(function () {
             });
         }
 
-        ApplyChanges(changes, is_server) {
+        ApplyChange(change, is_server) {
             let selection = this.GetSelection();
-            changes.Changes().forEach(change => {
-                if (change.Op() == ww.ChangeOp.EditChangeOp) {
-                    let model = this.monacoEditor_.getModel();
-                    let position1 = model.getPositionAt(change.Index());
-                    let position2 = model.getPositionAt(change.DeleteIndex());
-                    let range = new monaco.Range(position1.lineNumber, position1.column,
-                        position2.lineNumber, position2.column);
-                    let edits = [{ range: range, text: change.Insert() }];
-                    this.monacoEditor_.executeEdits("rebase", edits);
-                    selection.first = change.AdjustCaret(selection.first, is_server);
-                    selection.last = change.AdjustCaret(selection.last, is_server);
-                }
-            });
-
+            let model = this.monacoEditor_.getModel();
+            let position1 = model.getPositionAt(change.Index());
+            let position2 = model.getPositionAt(change.DeleteIndex());
+            let range = new monaco.Range(position1.lineNumber, position1.column,
+                position2.lineNumber, position2.column);
+            let edits = [{ range: range, text: change.Insert() }];
+            this.monacoEditor_.executeEdits("rebase", edits);
+            selection.first = change.AdjustCaret(selection.first, is_server);
+            selection.last = change.AdjustCaret(selection.last, is_server);
             this.SetSelection(selection);
         }
 
@@ -143,8 +138,7 @@ define(function () {
                     if (text !== undefined) {
                         let index = this.GetSelection().first;
                         let change = new ww.Change(ww.ChangeOp.EditChangeOp, index, 0, text + '\r\n');
-                        let changes = new ww.Changes([change]);
-                        this.ApplyChanges(changes, false);
+                        this.ApplyChange(change, false);
                     }
                 },
                 notify_debugclear: response => {
@@ -291,8 +285,7 @@ define(function () {
                         return;
                     }
                     let change = new ww.Change(ww.ChangeOp.EditChangeOp, index, delete_count, '\r\n');
-                    let changes = new ww.Changes([change]);
-                    this.ApplyChanges(changes, false);
+                    this.ApplyChange(change, false);
                     index += 2; // advance caret
                     this.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.EditChangeOp, index);
                     this.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.FixupChangeOp, index - 2);

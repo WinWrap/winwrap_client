@@ -36,7 +36,7 @@ define(function () {
             return this.revert_changes_;
         }
             
-        TakeChanges(need_commit) {
+        TakeChangesAsNewCommit(need_commit) {
             let commit = null;
             if (this.AnyChanges() || need_commit) {
                 commit = new Commit();

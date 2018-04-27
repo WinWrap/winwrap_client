@@ -60,7 +60,15 @@ define(function () {
         }
 
         ApplyChanges(changes, is_server) {
-            this.editor_.ApplyChanges(changes, is_server);
+            changes.Changes().forEach(change => {
+                if (change.Op() === ww.ChangeOp.EditChangeOp) {
+                    this.editor_.ApplyChange(change, is_server);
+                }
+                else {
+                    this.AppendPendingChange(ww.ChangeOp.EditChangeOp);
+                    this.current_commit_.AppendChange(change);
+                }
+            });
         }
 
         Commit() {
@@ -74,7 +82,7 @@ define(function () {
 
             let need_commit = this.need_commit_;
             this.need_commit_ = false;
-            this.current_commit_ = this.pending_commit_.TakeChanges(need_commit);
+            this.current_commit_ = this.pending_commit_.TakeChangesAsNewCommit(need_commit);
             this.current_commit_.Log('Current commit:');
             return this.current_commit_;
         }
@@ -111,7 +119,7 @@ define(function () {
                 // 3. Re-applies pending operations, transforming each operation against the new operation from the server
 
                 // take the pending commits (ApplyChanges below will add them back)
-                let pending_commit = this.pending_commit_.TakeChanges();
+                let pending_commit = this.pending_commit_.TakeChangesAsNewCommit();
 
                 if (pending_commit) {
                     // revert pending commit and selection using the pending commit
