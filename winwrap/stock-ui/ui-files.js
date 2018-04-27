@@ -92,6 +92,9 @@ define(['./ui'], function () {
             if (this.dir_ !== '\\') {
                 let parent = this.dir_.split('\\').slice(0, -2).join('\\').concat('\\');
                 this.macros_.push(parent);
+                if (parent !== '\\') {
+                    this.macros_.push('\\');
+                }
             }
             if (first) {
                 if (values.find(item => item === '\\Sample1.bas')) {
