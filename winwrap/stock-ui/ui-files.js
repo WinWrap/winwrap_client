@@ -89,7 +89,13 @@ define(['./ui'], function () {
         _SetFileValues(values) {
             let first = this.macros_.length === 0;
             this.macros_ = values;
-            this.macros_.push('\\');
+            if (this.dir_ !== '\\') {
+                let parent = this.dir_.split('\\').slice(0, -2).join('\\').concat('\\');
+                this.macros_.push(parent);
+                if (parent !== '\\') {
+                    this.macros_.push('\\');
+                }
+            }
             if (first) {
                 if (values.find(item => item === '\\Sample1.bas')) {
                     this.channel_.PushPendingRequest({ request: '?read', target: '\\Sample1.bas' });
