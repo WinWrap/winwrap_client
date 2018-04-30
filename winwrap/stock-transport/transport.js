@@ -20,6 +20,7 @@ define(function () {
             this.remote_ = undefined;
             this.longpollTimerId_ = null;
             this.longpollBusy_ = false; // not in LongPoll
+            this.longpollFailue_ = null;
             let hash = window.location.hash;
             if (hash) {
                 let match = hash.toLowerCase().match(/\/key=([0-9a-f\-]*)/);
@@ -68,11 +69,34 @@ define(function () {
         async _LongPollAsync() {
             this.longpollBusy_ = true;
             while (this.longpollBusy_) {
-                try {
+                /*try {
                     let responses = await this._ReceiveResponsesAsync();
                     this.remote_.PushPendingResponses(responses);
                 } catch (err) {
                     console.log('Transport._LongPollAsync error: ' + err);
+                }*/
+                let error = null;
+                try {
+                    let responses = await this._ReceiveResponsesAsync();
+                    this.remote_.PushPendingResponses(responses);
+                } catch (err) {
+                    error = err;
+                } finally {
+                    if (error) {
+                        console.log('Transport._LongPollAsync error: ' + error);
+                        let now = (new Date()).getTime();
+                        if (this.longpollFailue_ === null) {
+                            this.longpollFailure_ = now;
+                        }
+                        let timesecs = (now - this.longpollFailue_) / 1000;
+                        if (timesecs >= 60) {
+                            console.log(`Transport._LongPollAsync error for ${timesecs} seconds`);
+                            // statusbar message
+                            // shut off polling (like !detach)
+                        }
+                    } else {
+                        this.longpollFailue_ = null;
+                    }
                 }
             }
         }
@@ -90,7 +114,7 @@ define(function () {
             return await this._SendAsync(url, '');
         }
 
-       _SendAsync(url, requests) {
+        _SendAsync(url, requests) {
             let json = JSON.stringify(requests);
             let options = {
                 type: 'POST',
@@ -111,9 +135,9 @@ define(function () {
             });
         }
 
-       _Wait(ms) {
-           return new Promise(r => setTimeout(r, ms));
-       }
+        _Wait(ms) {
+            return new Promise(r => setTimeout(r, ms));
+        }
     }
 
     ww.Transport = Transport;
