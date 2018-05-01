@@ -20,7 +20,7 @@ define(function () {
             this.remote_ = undefined;
             this.longpollTimerId_ = null;
             this.longpollBusy_ = false; // not in LongPoll
-            this.longpollFailue_ = null;
+            this.longpollFailure_ = null;
             let hash = window.location.hash;
             if (hash) {
                 let match = hash.toLowerCase().match(/\/key=([0-9a-f\-]*)/);
