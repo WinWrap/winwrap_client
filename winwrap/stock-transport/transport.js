@@ -93,6 +93,7 @@ define(function () {
                             console.log(`Transport._LongPollAsync error for ${timesecs} seconds`);
                             // statusbar message
                             // shut off polling (like !detach)
+                            channel.PushPendingRequest({ command: 'detach' });
                         }
                     } else {
                         this.longpollFailue_ = null;
