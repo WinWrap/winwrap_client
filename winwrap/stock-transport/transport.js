@@ -90,9 +90,10 @@ define(function () {
                         }
                         let timesecs = (now - this.longpollFailure_) / 1000;
                         if (timesecs >= 60) {
-                            console.log(`Transport._LongPollAsync error for ${timesecs} seconds`);
-                            // statusbar message
-                            // shut off polling (like !detach)
+                            let timeoutmsg = `Polling has failed for ${timesecs} seconds`;
+                            console.log(`Transport._LongPollAsync ${timeoutmsg}`);
+                            this.remote_.SetStatusBarText(timeoutmsg);
+                            // detach won't get to server, so shutdown client todo
                             this.remote_.PushPendingRequest({ command: 'detach' });
                         }
                     } else {
