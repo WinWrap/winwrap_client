@@ -93,8 +93,9 @@ define(function () {
                             let timeoutmsg = `Polling has failed for ${timesecs} seconds`;
                             console.log(`Transport._LongPollAsync ${timeoutmsg}`);
                             this.remote_.SetStatusBarText(timeoutmsg);
-                            // detach won't get to server, so shutdown client todo
                             this.remote_.PushPendingRequest({ command: 'detach' });
+                            // detach won't get to server, so stop polling
+                            this.remote_.StopPolling();
                         }
                     } else {
                         this.longpollFailue_ = null;
