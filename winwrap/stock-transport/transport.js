@@ -85,10 +85,10 @@ define(function () {
                     if (error) {
                         console.log('Transport._LongPollAsync error: ' + error);
                         let now = (new Date()).getTime();
-                        if (this.longpollFailue_ === null) {
+                        if (this.longpollFailure_ === null) {
                             this.longpollFailure_ = now;
                         }
-                        let timesecs = (now - this.longpollFailue_) / 1000;
+                        let timesecs = (now - this.longpollFailure_) / 1000;
                         if (timesecs >= 60) {
                             console.log(`Transport._LongPollAsync error for ${timesecs} seconds`);
                             // statusbar message
