@@ -84,12 +84,13 @@ define(function () {
                         }
                         let timesecs = (now - this.longpollFailure_) / 1000;
                         if (timesecs >= 60) {
-                            let timeoutmsg = `Polling has failed for ${timesecs} seconds`;
+                            let timeoutmsg = `Polling failed for ${timesecs} seconds.`;
                             console.log(`Transport._LongPollAsync ${timeoutmsg}`);
                             this.remote_.SetStatusBarText(timeoutmsg);
                             this.remote_.PushPendingRequest({ command: 'detach' });
                             // detach won't get to server, so stop polling
                             this.remote_.StopPolling();
+                            this.longpollBusy_ = false;
                         }
                     } else {
                         this.longpollFailure_ = null;
