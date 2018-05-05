@@ -84,7 +84,7 @@ define(function () {
                         }
                         let timesecs = (now - this.longpollFailure_) / 1000;
                         if (timesecs >= 60) {
-                            let timeoutmsg = `Polling failed for ${timesecs} seconds.`;
+                            let timeoutmsg = `Polling failed for ${timesecs} seconds. Try restarting client/server.`;
                             console.log(`Transport._LongPollAsync ${timeoutmsg}`);
                             this.remote_.SetStatusBarText(timeoutmsg);
                             this.remote_.PushPendingRequest({ command: 'detach' });
