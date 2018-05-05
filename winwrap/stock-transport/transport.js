@@ -69,12 +69,6 @@ define(function () {
         async _LongPollAsync() {
             this.longpollBusy_ = true;
             while (this.longpollBusy_) {
-                /*try {
-                    let responses = await this._ReceiveResponsesAsync();
-                    this.remote_.PushPendingResponses(responses);
-                } catch (err) {
-                    console.log('Transport._LongPollAsync error: ' + err);
-                }*/
                 let error = null;
                 try {
                     let responses = await this._ReceiveResponsesAsync();
@@ -98,7 +92,7 @@ define(function () {
                             this.remote_.StopPolling();
                         }
                     } else {
-                        this.longpollFailue_ = null;
+                        this.longpollFailure_ = null;
                     }
                 }
             }
