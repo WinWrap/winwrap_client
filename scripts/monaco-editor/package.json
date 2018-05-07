@@ -1,100 +1,60 @@
 {
-  "_args": [
-    [
-      {
-        "raw": "monaco-editor",
-        "scope": null,
-        "escapedName": "monaco-editor",
-        "name": "monaco-editor",
-        "rawSpec": "",
-        "spec": "latest",
-        "type": "tag"
-      },
-      "c:\\Alex\\src\\monaco-editor-website"
-    ]
-  ],
-  "_from": "monaco-editor@latest",
-  "_id": "monaco-editor@0.7.0",
-  "_inCache": true,
-  "_installable": true,
+  "_from": "monaco-editor",
+  "_id": "monaco-editor@0.12.0",
+  "_inBundle": false,
+  "_integrity": "sha512-mScjXSKwH5LCmx6JCABkVpMnRHhi86IJwEmEXkH5O61dDXadWBdWQdC8N+NLmKT17/ugZYITCajUAWNRyKKZ9g==",
   "_location": "/monaco-editor",
-  "_nodeVersion": "6.6.0",
-  "_npmOperationalInternal": {
-    "host": "packages-16-east.internal.npmjs.com",
-    "tmp": "tmp/monaco-editor-0.7.0.tgz_1475847920471_0.8754699565470219"
-  },
-  "_npmUser": {
-    "name": "alexandrudima",
-    "email": "alexdima@microsoft.com"
-  },
-  "_npmVersion": "3.10.7",
   "_phantomChildren": {},
   "_requested": {
+    "type": "tag",
+    "registry": true,
     "raw": "monaco-editor",
-    "scope": null,
-    "escapedName": "monaco-editor",
     "name": "monaco-editor",
+    "escapedName": "monaco-editor",
     "rawSpec": "",
-    "spec": "latest",
-    "type": "tag"
+    "saveSpec": null,
+    "fetchSpec": "latest"
   },
   "_requiredBy": [
-    "#USER"
+    "#USER",
+    "/"
   ],
-  "_resolved": "https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.7.0.tgz",
-  "_shasum": "db4ae9f9eeb8f419c7922c14e1dcdbfe33c925c4",
-  "_shrinkwrap": null,
+  "_resolved": "https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.12.0.tgz",
+  "_shasum": "cd8621017526b57746245104d764bbf52ad42283",
   "_spec": "monaco-editor",
-  "_where": "c:\\Alex\\src\\monaco-editor-website",
+  "_where": "C:\\Users\\edwbe\\tmp",
   "author": {
     "name": "Microsoft Corporation"
   },
   "bugs": {
     "url": "https://github.com/Microsoft/monaco-editor/issues"
   },
-  "dependencies": {},
+  "bundleDependencies": false,
+  "deprecated": false,
   "description": "A browser based code editor",
   "devDependencies": {
+    "clean-css": "^3.4.20",
     "event-stream": "^3.3.2",
     "gulp": "^3.9.1",
-    "http-server": "^0.9.0",
-    "monaco-css": "1.2.1",
-    "monaco-editor-core": "0.7.3",
-    "monaco-html": "1.1.0",
-    "monaco-json": "1.1.1",
-    "monaco-languages": "0.6.0",
-    "monaco-typescript": "2.0.1",
-    "rimraf": "^2.5.2"
-  },
-  "directories": {},
-  "dist": {
-    "shasum": "db4ae9f9eeb8f419c7922c14e1dcdbfe33c925c4",
-    "tarball": "https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.7.0.tgz"
+    "gulp-typedoc": "^2.0.0",
+    "http-server": "^0.11.1",
+    "monaco-css": "2.1.0",
+    "monaco-editor-core": "0.12.0",
+    "monaco-html": "2.1.0",
+    "monaco-json": "2.1.0",
+    "monaco-languages": "1.2.0",
+    "monaco-typescript": "3.1.0",
+    "rimraf": "^2.5.2",
+    "typedoc": "^0.8.0",
+    "typescript": "^2.7.2",
+    "uncss": "^0.14.1",
+    "vinyl": "^0.5.3"
   },
   "homepage": "https://github.com/Microsoft/monaco-editor#readme",
   "license": "MIT",
-  "maintainers": [
-    {
-      "name": "alexandrudima",
-      "email": "alexdima@microsoft.com"
-    },
-    {
-      "name": "egamma",
-      "email": "egamma@microsoft.com"
-    },
-    {
-      "name": "jrieken",
-      "email": "jrieken@microsoft.com"
-    },
-    {
-      "name": "microsoft",
-      "email": "npmjs@microsoft.com"
-    }
-  ],
+  "module": "./esm/vs/editor/editor.main.js",
   "name": "monaco-editor",
-  "optionalDependencies": {},
   "private": false,
-  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Microsoft/monaco-editor.git"
@@ -104,6 +64,6 @@
     "simpleserver": "gulp simpleserver",
     "website": "gulp website"
   },
-  "typings": "./monaco.d.ts",
-  "version": "0.7.0"
+  "typings": "./esm/vs/editor/editor.api.d.ts",
+  "version": "0.12.0"
 }
