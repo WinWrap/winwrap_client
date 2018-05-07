@@ -34,7 +34,7 @@ define(function () {
                 selectionHighlight: false, // repeats of selected word are not highlighted
                 scrollbar: { vertical: 'visible' } // horizontal defaults auto
             });
-            if(navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+            if(navigator.userAgent.match(/(iPod|iPhone|iPad|Android)/)) {
                 this.monacoEditor_.updateOptions({ fontSize: 24 });
             } else {
                 this.monacoEditor_.updateOptions({ fontSize: 14 });
