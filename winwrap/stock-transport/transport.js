@@ -129,6 +129,7 @@ define(function () {
                 }
             };
             return new Promise((resolve, reject) => {
+                console.log(options);
                 $.ajax(options).done(resolve).fail(reject);
             });
         }
