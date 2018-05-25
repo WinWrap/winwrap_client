@@ -129,7 +129,7 @@ define(function () {
                 }
             };
             return new Promise((resolve, reject) => {
-                console.log(options);
+                //console.log(options);
                 $.ajax(options).done(resolve).fail(reject);
             });
         }
