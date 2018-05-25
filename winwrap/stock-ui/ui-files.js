@@ -97,7 +97,8 @@ define(['./ui'], function () {
                 }
             }
             if (first) {
-                if (values.find(item => item === '\\Sample1.bas')) {
+                if (values.contains('\\Sample1.bas'))
+                //if (values.find(item => item === '\\Sample1.bas')) {
                     this.channel_.PushPendingRequest({ request: '?read', target: '\\Sample1.bas' });
                 }
                 else {
