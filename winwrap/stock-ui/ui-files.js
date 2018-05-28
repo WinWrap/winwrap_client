@@ -88,7 +88,8 @@ define(['./ui'], function () {
         }
         _SetFileValues(values) {
             let first = this.macros_.length === 0;
-            this.macros_ = values;
+            //this.macros_ = values;
+            this.macros_ = values.map(str => str.replace(/^\\/,''));
             if (this.dir_ !== '\\') {
                 let parent = this.dir_.split('\\').slice(0, -2).join('\\').concat('\\');
                 this.macros_.push(parent);
