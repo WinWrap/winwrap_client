@@ -99,7 +99,7 @@ define(['./ui'], function () {
         _SetFileValues(values) {
             let first = this.macros_.length === 0;
             this.macros_ = values.map(str => str.replace(/^\\/, ''));
-            this.macros_.concat(_GetParentDirs());
+            this.macros_.concat(this._GetParentDirs());
             if (first) {
                 if (values.includes('\\Sample1.bas')) {
                     this.channel_.PushPendingRequest({ request: '?read', target: '\\Sample1.bas' });
