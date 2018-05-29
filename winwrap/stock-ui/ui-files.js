@@ -71,12 +71,10 @@ define(['./ui'], function () {
             });
             this.element_.on('autocompleteselect', (event, ui) => {
                 let value = ui.item.value;
+                channel.PushPendingRequest({ request: '?read', target: value });
                 if (value.slice(-1) === '\\') {
                     this.dir_ = value;
-                    channel.PushPendingRequest({ request: '?read', target: value });
                     channel.PushPendingRequest({ request: '?opendialog', dir: this.dir_, exts: 'wwd|bas' });
-                } else {
-                    channel.PushPendingRequest({ request: '?read', target: value });
                 }
             });
         }
@@ -86,17 +84,22 @@ define(['./ui'], function () {
         _SetFileValue(value) {
             this.element_.val(value);
         }
-        _SetFileValues(values) {
-            let first = this.macros_.length === 0;
-            //this.macros_ = values;
-            this.macros_ = values.map(str => str.replace(/^\\/,''));
+        _GetParentDirs() {
+            let dirs = [];
             if (this.dir_ !== '\\') {
+                dirs.push('\\');
                 let parent = this.dir_.split('\\').slice(0, -2).join('\\').concat('\\');
-                this.macros_.push(parent);
                 if (parent !== '\\') {
-                    this.macros_.push('\\');
+                    parent = parent.replace(/^\\/, '');
+                    dirs.push(parent);
                 }
             }
+            return dirs;
+        }
+        _SetFileValues(values) {
+            let first = this.macros_.length === 0;
+            this.macros_ = values.map(str => str.replace(/^\\/, ''));
+            this.macros_.concat(_GetParentDirs());
             if (first) {
                 if (values.includes('\\Sample1.bas')) {
                     this.channel_.PushPendingRequest({ request: '?read', target: '\\Sample1.bas' });
