@@ -104,7 +104,7 @@ define(['./ui'], function () {
             this.macros_ = values.map(str => str.replace(/^\\/, ''));
             this.macros_.concat(this._GetParentDirs());
             if (first) {
-                if (values.includes('Sample1.bas')) {
+                if (values.includes('\\Sample1.bas')) {
                     this.channel_.PushPendingRequest({ request: '?read', target: '\\Sample1.bas' });
                 }
                 else {
