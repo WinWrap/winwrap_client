@@ -71,6 +71,9 @@ define(['./ui'], function () {
             });
             this.element_.on('autocompleteselect', (event, ui) => {
                 let value = ui.item.value;
+                if (value !== '\\') {
+                    value = '\\'.concat(value);
+                }
                 channel.PushPendingRequest({ request: '?read', target: value });
                 if (value.slice(-1) === '\\') {
                     this.dir_ = value;
@@ -101,7 +104,7 @@ define(['./ui'], function () {
             this.macros_ = values.map(str => str.replace(/^\\/, ''));
             this.macros_.concat(this._GetParentDirs());
             if (first) {
-                if (values.includes('\\Sample1.bas')) {
+                if (values.includes('Sample1.bas')) {
                     this.channel_.PushPendingRequest({ request: '?read', target: '\\Sample1.bas' });
                 }
                 else {
