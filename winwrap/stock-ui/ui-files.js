@@ -34,7 +34,7 @@ define(['./ui'], function () {
                 read: response => {
                     // only read the first file
                     let file = response.files[0];
-                    this._SetFileValue(file.name);
+                    this._SetFileValue(file.name.replace(/^\\/, ''));
                     channel.CommitRebase.Read(file);
                     channel.SetStatusBarText(channel.VersionInfo());
                     channel.PushPendingRequest({ request: '?breaks', target: file.name });
@@ -52,7 +52,7 @@ define(['./ui'], function () {
                 },
                 _saved: response => {
                     this.newmacro = false;
-                    this._SetFileValue(response.name);
+                    this._SetFileValue(response.name.replace(/^\\/, ''));
                     channel.CommitRebase.HandleSavedResponse(response);
                 }
             });
