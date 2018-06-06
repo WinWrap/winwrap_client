@@ -288,7 +288,7 @@ define(function () {
                     this.ApplyChange(change, false);
                     index += 2; // advance caret
                     this.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.EditChangeOp, index);
-                    this.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.FixupChangeOp, index - 2);
+                    this.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.FixupChangeOp, index);
                     this.Channel.CommitRebase.AppendPendingChange(ww.ChangeOp.EnterChangeOp, index);
                     this.Channel.PushPendingCommit();
                 }

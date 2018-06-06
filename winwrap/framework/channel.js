@@ -95,6 +95,10 @@ define(function () {
             this.Remote.DetachChannel(this);
         }
 
+        PushPendingCommit() {
+            this.CommitRebase.PushPendingCommit();
+        }
+
         PushPendingRequest(request) {
             if (request) {
                 request.datetime = new Date().toLocaleString();
@@ -113,10 +117,6 @@ define(function () {
             if (handlers !== undefined) {
                 handlers.forEach(handler => handler(response));
             }
-        }
-
-        PushPendingCommit() {
-            this.PushPendingRequest(this.CommitRebase.GetCommitRequest());
         }
 
         async SendRequestAndGetResponseAsync(request) {

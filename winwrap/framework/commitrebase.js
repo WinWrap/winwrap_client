@@ -66,22 +66,33 @@ define(function () {
             }
         }
 
-        GetCommitRequest() {
-            let request = null;
+        HandleSavedResponse(response) {
+            this.doc_ = new ww.Doc(this.Channel.AllocatedID, response.name, response.revision, this.editor_);
+        }
+
+        Name() {
+            return this.doc_ !== null ? this.doc_.Name() : null;
+        }
+
+        PushPendingCommit() {
             let commit = this.doc_ !== null ? this.doc_.Commit() : null;
             if (commit !== null) {
                 //console.log("Send ?commit request");
                 let visibleChanges = [];
                 if (commit.AnyChanges()) {
                     commit.Changes().Changes().forEach(change => {
-                        if (change.Op() === ww.ChangeOp.EditChangeOp) {
-                            visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'delete': change.DeleteCount(), 'insert': change.Insert() });
-                        } else if (change.Op() === ww.ChangeOp.EnterChangeOp || change.Op() === ww.ChangeOp.FixupChangeOp) {
-                            visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'length': change.DeleteCount() });
+                        switch (change.Op()) {
+                            case ww.ChangeOp.EditChangeOp:
+                                visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'delete': change.DeleteCount(), 'insert': change.Insert() });
+                                break;
+                            case ww.ChangeOp.EnterChangeOp:
+                            case ww.ChangeOp.FixupChangeOp:
+                                visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'length': change.DeleteCount() });
+                                break;
                         }
                     });
                 }
-                request = {
+                let request = {
                     request: '?commit',
                     target: this.Name(),
                     revision: this.doc_.Revision(),
@@ -89,16 +100,8 @@ define(function () {
                     tab_as_space: true,
                     visible: visibleChanges
                 };
+                this.Channel.PushPendingRequest(request);
             }
-            return request;
-        }
-
-        HandleSavedResponse(response) {
-            this.doc_ = new ww.Doc(this.Channel.AllocatedID, response.name, response.revision, this.editor_);
-        }
-
-        Name() {
-            return this.doc_ !== null ? this.doc_.Name() : null;
         }
 
         Read(file) {

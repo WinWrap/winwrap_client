@@ -37,28 +37,23 @@ define(function () {
 
             let commit = this.pending_commit_;
 
-            if (op === ww.ChangeOp.EditChangeOp) {
-                // calculate change
-                let text = this.editor_.GetText();
-                let change = ww.Diff(this.revision_text_, text, caret);
-                if (change !== null) {
-                    change = ww.Diff(this.revision_text_, text, caret);
-                    commit.AppendChange(change);
-                    let revertChange = change.RevertChange(this.revision_text_);
-                    commit.PrependRevertChange(revertChange);
-                    this.revision_text_ = text;
-                }
-            }
-            else if (op === ww.ChangeOp.EnterChangeOp) {
-                let range = this.editor_.GetIndexRangeOfLineAt(caret);
-                commit.AppendChange(new ww.Change(op, range.first - 2, 2));
-            }
-            else if (op === ww.ChangeOp.FixupChangeOp) {
-                let range = this.editor_.GetIndexRangeOfLineAt(caret);
-                let length = range.last - range.first;
-                if (length > 0) {
-                    commit.AppendChange(new ww.Change(op, range.first, length));
-                }
+            switch (op) {
+                case ww.ChangeOp.EditChangeOp:
+                    // calculate change
+                    let text = this.editor_.GetText();
+                    let change = ww.Diff(this.revision_text_, text, caret);
+                    if (change !== null) {
+                        change = ww.Diff(this.revision_text_, text, caret);
+                        commit.AppendChange(change);
+                        let revertChange = change.RevertChange(this.revision_text_);
+                        commit.PrependRevertChange(revertChange);
+                        this.revision_text_ = text;
+                    }
+                    break;
+                case ww.ChangeOp.EnterChangeOp:
+                case ww.ChangeOp.FixupChangeOp:
+                    let range = this.editor_.GetIndexRangeOfLineAt(caret);
+                    commit.AppendChange(new ww.Change(op, range.first - 2, 2));
             }
         }
 
@@ -98,7 +93,7 @@ define(function () {
         }
 
         InCommit(name) {
-            return name === this.name_ && this.current_commit_ != null;
+            return name === this.name_ && this.current_commit_ !== null;
         }
 
         Name() {
