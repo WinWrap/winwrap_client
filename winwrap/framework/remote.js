@@ -143,6 +143,13 @@ define(function () {
         async _PollAsync() {
             if (this.polling_ && !this.pollBusy_ && this.transport_.Attached()) {
                 this.pollBusy_ = true;
+                if (++this.refreshcounter_ === 600) {
+                    // push any pending commits (approx once every 60 seconds)
+                    this._Channels().forEach(channel => {
+                        channel.PushPendingRequest({ command: 'refresh', target: channel.CommitRebase.Name() });
+                    });
+                    this.refreshcounter_ = 0;
+                }
                 if (++this.commitcounter_ === 20) {
                     // push any pending commits (approx once every 2 seconds)
                     this._Channels().forEach(channel => channel.PushPendingCommit());

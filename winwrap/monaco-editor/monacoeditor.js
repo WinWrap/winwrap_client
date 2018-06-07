@@ -242,7 +242,7 @@ define(function () {
                     let doBreak = isBreak ? false : true;
                     let request = {
                         command: 'break',
-                        //target: channel.CommitRebase.Name,
+                        ///target: channel.CommitRebase.Name,
                         target: channel.CommitRebase.Name(),
                         line: e.target.position.lineNumber,
                         on: doBreak
