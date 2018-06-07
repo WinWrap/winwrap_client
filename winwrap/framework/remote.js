@@ -145,7 +145,7 @@ define(function () {
             if (this.polling_ && !this.pollBusy_ && this.transport_.Attached()) {
                 this.pollBusy_ = true;
                 if (++this.refreshcounter_ === 600) {
-                    // push any pending commits (approx once every 60 seconds)
+                    // refresh approx once every 60 seconds
                     this._Channels().forEach(channel => {
                         channel.PushPendingRequest({ command: 'refresh', target: channel.CommitRebase.Name() });
                     });
