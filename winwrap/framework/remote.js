@@ -21,6 +21,7 @@ define(function () {
             this.transport_ = transport;
             this.channels_ = {};
             this.commitcounter_ = 0;
+            this.refreshcounter_ = 0;
             this.polling_ = false; // not waiting to poll
             this.pollTimerId_ = null;
             this.pollBusy_ = false; // not in Poll
