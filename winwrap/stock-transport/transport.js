@@ -77,10 +77,10 @@ define(function () {
                     error = err;
                 } finally {
                     if (error) {
-                        console.log('Transport._LongPollAsync error: ' + error);
                         let now = (new Date()).getTime();
                         if (this.longpollFailure_ === null) {
                             this.longpollFailure_ = now;
+                            console.log('Transport._LongPollAsync error: ' + error.statusText);
                         }
                         let timesecs = (now - this.longpollFailure_) / 1000;
                         if (timesecs >= 60) {
