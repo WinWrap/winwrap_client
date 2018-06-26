@@ -19,6 +19,7 @@ define(function () {
             this.Container = '';
             this.CodeEditor = this;
             this.autoEnter_ = true; // false: prevent enter insertion during auto completion
+            this.enabled_ = true;
         }
 
         _Init(container) {
@@ -64,6 +65,7 @@ define(function () {
         }
 
         Enabled(enable) {
+            this.enabled_ = enable;
             this.monacoEditor_.updateOptions({ readOnly: !enable });
         }
 
@@ -250,7 +252,7 @@ define(function () {
                 }
             });
             this.monacoEditor_.onKeyUp(e => {
-                if (e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
+                if (this.enabled_ && e.keyCode === monaco.KeyCode.Enter) { // 3 not 13
                     let target = this.Channel.CommitRebase.Name();
                     if (target === null) {
                         return;
