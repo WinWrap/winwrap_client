@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html>
+﻿<?php
+function loghit($key) {
+  $log_file = getcwd() . '/../../log/visitors.log';
+  if (file_exists($log_file)) {
+    $line = "$key\t" . date('Y-m-d H:i:s') . "\t$_SERVER[REMOTE_ADDR]";
+    file_put_contents($log_file, $line . PHP_EOL, FILE_APPEND);
+  }
+}
+loghit('index');
+?>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
