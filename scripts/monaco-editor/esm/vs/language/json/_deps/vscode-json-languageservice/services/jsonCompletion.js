@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-import * as Json from '../../jsonc-parser/main.js';
+import * as Parser from '../parser/jsonParser.js';
+import * as Json from './../../jsonc-parser/main.js';
 import { stringifyObject } from '../utils/json.js';
 import { endsWith } from '../utils/strings.js';
-import { CompletionItem, CompletionItemKind, Range, TextEdit, InsertTextFormat } from '../../vscode-languageserver-types/main.js';
-import * as nls from '../../../fillers/vscode-nls.js';
+import { CompletionItem, CompletionItemKind, Range, TextEdit, InsertTextFormat } from './../../vscode-languageserver-types/main.js';
+import * as nls from './../../../fillers/vscode-nls.js';
 var localize = nls.loadMessageBundle();
 var JSONCompletion = /** @class */ (function () {
     function JSONCompletion(schemaService, contributions, promiseConstructor) {
@@ -35,14 +36,14 @@ var JSONCompletion = /** @class */ (function () {
             isIncomplete: false
         };
         var offset = document.offsetAt(position);
-        var node = doc.getNodeFromOffsetEndInclusive(offset);
-        if (this.isInComment(document, node ? node.start : 0, offset)) {
+        var node = doc.getNodeFromOffset(offset, true);
+        if (this.isInComment(document, node ? node.offset : 0, offset)) {
             return Promise.resolve(result);
         }
         var currentWord = this.getCurrentWord(document, offset);
         var overwriteRange = null;
         if (node && (node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
-            overwriteRange = Range.create(document.positionAt(node.start), document.positionAt(node.end));
+            overwriteRange = Range.create(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
         }
         else {
             var overwriteStart = offset - currentWord.length;
@@ -86,13 +87,13 @@ var JSONCompletion = /** @class */ (function () {
             var currentProperty = null;
             if (node) {
                 if (node.type === 'string') {
-                    var stringNode = node;
-                    if (stringNode.isKey) {
-                        addValue = !(node.parent && (node.parent.value));
-                        currentProperty = node.parent ? node.parent : null;
-                        currentKey = document.getText().substring(node.start + 1, node.end - 1);
-                        if (node.parent) {
-                            node = node.parent.parent;
+                    var parent = node.parent;
+                    if (parent && parent.type === 'property' && parent.keyNode === node) {
+                        addValue = !parent.valueNode;
+                        currentProperty = parent;
+                        currentKey = document.getText().substr(node.offset + 1, node.length - 2);
+                        if (parent) {
+                            node = parent.parent;
                         }
                     }
                 }
@@ -100,14 +101,14 @@ var JSONCompletion = /** @class */ (function () {
             // proposals for properties
             if (node && node.type === 'object') {
                 // don't suggest keys when the cursor is just before the opening curly brace
-                if (node.start === offset) {
+                if (node.offset === offset) {
                     return result;
                 }
                 // don't suggest properties that are already present
                 var properties = node.properties;
                 properties.forEach(function (p) {
                     if (!currentProperty || currentProperty !== p) {
-                        proposed[p.key.value] = CompletionItem.create('__');
+                        proposed[p.keyNode.value] = CompletionItem.create('__');
                     }
                 });
                 var separatorAfter_1 = '';
@@ -122,7 +123,7 @@ var JSONCompletion = /** @class */ (function () {
                     // property proposals without schema
                     _this.getSchemaLessPropertyCompletions(doc, node, currentKey, collector);
                 }
-                var location_1 = node.getPath();
+                var location_1 = Parser.getNodePath(node);
                 _this.contributions.forEach(function (contribution) {
                     var collectPromise = contribution.collectPropertyCompletions(document.uri, location_1, currentWord, addValue, separatorAfter_1 === '', collector);
                     if (collectPromise) {
@@ -155,7 +156,7 @@ var JSONCompletion = /** @class */ (function () {
                 if (collector.getNumberOfProposals() === 0) {
                     var offsetForSeparator = offset;
                     if (node && (node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
-                        offsetForSeparator = node.end;
+                        offsetForSeparator = node.offset + node.length;
                     }
                     var separatorAfter = _this.evaluateSeparatorAfter(document, offsetForSeparator);
                     _this.addFillerValueCompletions(types, separatorAfter, collector);
@@ -166,7 +167,7 @@ var JSONCompletion = /** @class */ (function () {
     };
     JSONCompletion.prototype.getPropertyCompletions = function (schema, doc, node, addValue, separatorAfter, collector) {
         var _this = this;
-        var matchingSchemas = doc.getMatchingSchemas(schema.schema, node.start);
+        var matchingSchemas = doc.getMatchingSchemas(schema.schema, node.offset);
         matchingSchemas.forEach(function (s) {
             if (s.node === node && !s.inverted) {
                 var schemaProperties_1 = s.schema.properties;
@@ -199,7 +200,7 @@ var JSONCompletion = /** @class */ (function () {
         var _this = this;
         var collectCompletionsForSimilarObject = function (obj) {
             obj.properties.forEach(function (p) {
-                var key = p.key.value;
+                var key = p.keyNode.value;
                 collector.add({
                     kind: CompletionItemKind.Property,
                     label: key,
@@ -213,11 +214,10 @@ var JSONCompletion = /** @class */ (function () {
         if (node.parent) {
             if (node.parent.type === 'property') {
                 // if the object is a property value, check the tree for other objects that hang under a property of the same name
-                var parentKey_1 = node.parent.key.value;
+                var parentKey_1 = node.parent.keyNode.value;
                 doc.visit(function (n) {
-                    var p = n;
-                    if (n.type === 'property' && n !== node.parent && p.key.value === parentKey_1 && p.value && p.value.type === 'object') {
-                        collectCompletionsForSimilarObject(p.value);
+                    if (n.type === 'property' && n !== node.parent && n.keyNode.value === parentKey_1 && n.valueNode && n.valueNode.type === 'object') {
+                        collectCompletionsForSimilarObject(n.valueNode);
                     }
                     return true;
                 });
@@ -245,7 +245,7 @@ var JSONCompletion = /** @class */ (function () {
         var _this = this;
         var offsetForSeparator = offset;
         if (node && (node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
-            offsetForSeparator = node.end;
+            offsetForSeparator = node.offset + node.length;
             node = node.parent;
         }
         if (!node) {
@@ -267,7 +267,7 @@ var JSONCompletion = /** @class */ (function () {
         }
         var separatorAfter = this.evaluateSeparatorAfter(document, offsetForSeparator);
         var collectSuggestionsForValues = function (value) {
-            if (!value.parent.contains(offset, true)) {
+            if (!Parser.contains(value.parent, offset, true)) {
                 collector.add({
                     kind: _this.getSuggestionKind(value.type),
                     label: _this.getLabelTextForMatchingNode(value, document),
@@ -276,22 +276,20 @@ var JSONCompletion = /** @class */ (function () {
                 });
             }
             if (value.type === 'boolean') {
-                _this.addBooleanValueCompletion(!value.getValue(), separatorAfter, collector);
+                _this.addBooleanValueCompletion(!value.value, separatorAfter, collector);
             }
         };
         if (node.type === 'property') {
-            var propertyNode = node;
-            if (offset > propertyNode.colonOffset) {
-                var valueNode = propertyNode.value;
-                if (valueNode && (offset > valueNode.end || valueNode.type === 'object' || valueNode.type === 'array')) {
+            if (offset > node.colonOffset) {
+                var valueNode = node.valueNode;
+                if (valueNode && (offset > (valueNode.offset + valueNode.length) || valueNode.type === 'object' || valueNode.type === 'array')) {
                     return;
                 }
                 // suggest values at the same key
-                var parentKey_2 = propertyNode.key.value;
+                var parentKey_2 = node.keyNode.value;
                 doc.visit(function (n) {
-                    var p = n;
-                    if (n.type === 'property' && p.key.value === parentKey_2 && p.value) {
-                        collectSuggestionsForValues(p.value);
+                    if (n.type === 'property' && n.keyNode.value === parentKey_2 && n.valueNode) {
+                        collectSuggestionsForValues(n.valueNode);
                     }
                     return true;
                 });
@@ -303,22 +301,17 @@ var JSONCompletion = /** @class */ (function () {
         if (node.type === 'array') {
             if (node.parent && node.parent.type === 'property') {
                 // suggest items of an array at the same key
-                var parentKey_3 = node.parent.key.value;
+                var parentKey_3 = node.parent.keyNode.value;
                 doc.visit(function (n) {
-                    var p = n;
-                    if (n.type === 'property' && p.key.value === parentKey_3 && p.value && p.value.type === 'array') {
-                        (p.value.items).forEach(function (n) {
-                            collectSuggestionsForValues(n);
-                        });
+                    if (n.type === 'property' && n.keyNode.value === parentKey_3 && n.valueNode && n.valueNode.type === 'array') {
+                        n.valueNode.items.forEach(collectSuggestionsForValues);
                     }
                     return true;
                 });
             }
             else {
                 // suggest items in the same array
-                node.items.forEach(function (n) {
-                    collectSuggestionsForValues(n);
-                });
+                node.items.forEach(collectSuggestionsForValues);
             }
         }
     };
@@ -328,7 +321,7 @@ var JSONCompletion = /** @class */ (function () {
         var parentKey = null;
         var valueNode = null;
         if (node && (node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
-            offsetForSeparator = node.end;
+            offsetForSeparator = node.offset + node.length;
             valueNode = node;
             node = node.parent;
         }
@@ -337,20 +330,19 @@ var JSONCompletion = /** @class */ (function () {
             return;
         }
         if ((node.type === 'property') && offset > node.colonOffset) {
-            var propertyNode = node;
-            var valueNode_1 = propertyNode.value;
-            if (valueNode_1 && offset > valueNode_1.end) {
+            var valueNode_1 = node.valueNode;
+            if (valueNode_1 && offset > (valueNode_1.offset + valueNode_1.length)) {
                 return; // we are past the value node
             }
-            parentKey = propertyNode.key.value;
+            parentKey = node.keyNode.value;
             node = node.parent;
         }
         if (node && (parentKey !== null || node.type === 'array')) {
             var separatorAfter_2 = this.evaluateSeparatorAfter(document, offsetForSeparator);
-            var matchingSchemas = doc.getMatchingSchemas(schema.schema, node.start, valueNode);
+            var matchingSchemas = doc.getMatchingSchemas(schema.schema, node.offset, valueNode);
             matchingSchemas.forEach(function (s) {
                 if (s.node === node && !s.inverted && s.schema) {
-                    if (s.schema.items) {
+                    if (node.type === 'array' && s.schema.items) {
                         if (Array.isArray(s.schema.items)) {
                             var index = _this.findItemAtOffset(node, document, offset);
                             if (index < s.schema.items.length) {
@@ -395,10 +387,10 @@ var JSONCompletion = /** @class */ (function () {
                 node = node.parent;
             }
             if ((node.type === 'property') && offset > node.colonOffset) {
-                var parentKey_4 = node.key.value;
-                var valueNode = node.value;
-                if (!valueNode || offset <= valueNode.end) {
-                    var location_2 = node.parent.getPath();
+                var parentKey_4 = node.keyNode.value;
+                var valueNode = node.valueNode;
+                if (!valueNode || offset <= (valueNode.offset + valueNode.length)) {
+                    var location_2 = Parser.getNodePath(node.parent);
                     this.contributions.forEach(function (contribution) {
                         var collectPromise = contribution.collectValueCompletions(document.uri, location_2, parentKey_4, collector);
                         if (collectPromise) {
@@ -412,8 +404,8 @@ var JSONCompletion = /** @class */ (function () {
     JSONCompletion.prototype.addSchemaValueCompletions = function (schema, separatorAfter, collector, types) {
         var _this = this;
         if (typeof schema === 'object') {
-            this.addDefaultValueCompletions(schema, separatorAfter, collector);
             this.addEnumValueCompletions(schema, separatorAfter, collector);
+            this.addDefaultValueCompletions(schema, separatorAfter, collector);
             this.collectTypes(schema, types);
             if (Array.isArray(schema.allOf)) {
                 schema.allOf.forEach(function (s) { return _this.addSchemaValueCompletions(s, separatorAfter, collector, types); });
@@ -430,7 +422,7 @@ var JSONCompletion = /** @class */ (function () {
         var _this = this;
         if (arrayDepth === void 0) { arrayDepth = 0; }
         var hasProposals = false;
-        if (schema.default) {
+        if (isDefined(schema.default)) {
             var type = schema.type;
             var value = schema.default;
             for (var i = arrayDepth; i > 0; i--) {
@@ -453,7 +445,7 @@ var JSONCompletion = /** @class */ (function () {
                 var label = s.label;
                 var insertText;
                 var filterText;
-                if (typeof value !== 'undefined') {
+                if (isDefined(value)) {
                     var type_1 = schema.type;
                     for (var i = arrayDepth; i > 0; i--) {
                         value = [value];
@@ -491,6 +483,15 @@ var JSONCompletion = /** @class */ (function () {
         }
     };
     JSONCompletion.prototype.addEnumValueCompletions = function (schema, separatorAfter, collector) {
+        if (isDefined(schema.const)) {
+            collector.add({
+                kind: this.getSuggestionKind(schema.type),
+                label: this.getLabelForValue(schema.const),
+                insertText: this.getInsertTextForValue(schema.const, separatorAfter),
+                insertTextFormat: InsertTextFormat.Snippet,
+                documentation: schema.description
+            });
+        }
         if (Array.isArray(schema.enum)) {
             for (var i = 0, length = schema.enum.length; i < length; i++) {
                 var enm = schema.enum[i];
@@ -509,6 +510,9 @@ var JSONCompletion = /** @class */ (function () {
         }
     };
     JSONCompletion.prototype.collectTypes = function (schema, types) {
+        if (Array.isArray(schema.enum) || isDefined(schema.const)) {
+            return;
+        }
         var type = schema.type;
         if (Array.isArray(type)) {
             type.forEach(function (t) { return types[t] = true; });
@@ -653,7 +657,7 @@ var JSONCompletion = /** @class */ (function () {
             case 'object':
                 return '{}';
             default:
-                var content = document.getText().substr(node.start, node.end - node.start);
+                var content = document.getText().substr(node.offset, node.length);
                 return content;
         }
     };
@@ -664,7 +668,7 @@ var JSONCompletion = /** @class */ (function () {
             case 'object':
                 return this.getInsertTextForValue({}, separatorAfter);
             default:
-                var content = document.getText().substr(node.start, node.end - node.start) + separatorAfter;
+                var content = document.getText().substr(node.offset, node.length) + separatorAfter;
                 return this.getInsertTextForPlainText(content);
         }
     };
@@ -680,7 +684,7 @@ var JSONCompletion = /** @class */ (function () {
             if (Array.isArray(propertySchema.defaultSnippets)) {
                 if (propertySchema.defaultSnippets.length === 1) {
                     var body = propertySchema.defaultSnippets[0].body;
-                    if (typeof body !== 'undefined') {
+                    if (isDefined(body)) {
                         value = this.getInsertTextForSnippetValue(body, '');
                     }
                 }
@@ -692,7 +696,7 @@ var JSONCompletion = /** @class */ (function () {
                 }
                 nValueProposals += propertySchema.enum.length;
             }
-            if (typeof propertySchema.default !== 'undefined') {
+            if (isDefined(propertySchema.default)) {
                 if (!value) {
                     value = this.getInsertTextForGuessedValue(propertySchema.default, '');
                 }
@@ -762,18 +766,18 @@ var JSONCompletion = /** @class */ (function () {
     };
     JSONCompletion.prototype.findItemAtOffset = function (node, document, offset) {
         var scanner = Json.createScanner(document.getText(), true);
-        var children = node.getChildNodes();
+        var children = node.items;
         for (var i = children.length - 1; i >= 0; i--) {
             var child = children[i];
-            if (offset > child.end) {
-                scanner.setPosition(child.end);
+            if (offset > child.offset + child.length) {
+                scanner.setPosition(child.offset + child.length);
                 var token = scanner.scan();
                 if (token === 5 /* CommaToken */ && offset >= scanner.getTokenOffset() + scanner.getTokenLength()) {
                     return i + 1;
                 }
                 return i;
             }
-            else if (offset >= child.start) {
+            else if (offset >= child.offset) {
                 return i;
             }
         }
@@ -791,4 +795,7 @@ var JSONCompletion = /** @class */ (function () {
     return JSONCompletion;
 }());
 export { JSONCompletion };
+function isDefined(val) {
+    return typeof val !== 'undefined';
+}
 //# sourceMappingURL=jsonCompletion.js.map

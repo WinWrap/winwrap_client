@@ -78,11 +78,22 @@ var CSSWorker = /** @class */ (function () {
         var actions = this._languageService.doCodeActions(document, range, context, stylesheet);
         return Promise.as(actions);
     };
-    CSSWorker.prototype.findColorSymbols = function (uri) {
+    CSSWorker.prototype.findDocumentColors = function (uri) {
         var document = this._getTextDocument(uri);
         var stylesheet = this._languageService.parseStylesheet(document);
-        var colorSymbols = this._languageService.findColorSymbols(document, stylesheet);
+        var colorSymbols = this._languageService.findDocumentColors(document, stylesheet);
         return Promise.as(colorSymbols);
+    };
+    CSSWorker.prototype.getColorPresentations = function (uri, color, range) {
+        var document = this._getTextDocument(uri);
+        var stylesheet = this._languageService.parseStylesheet(document);
+        var colorPresentations = this._languageService.getColorPresentations(document, stylesheet, color, range);
+        return Promise.as(colorPresentations);
+    };
+    CSSWorker.prototype.provideFoldingRanges = function (uri, context) {
+        var document = this._getTextDocument(uri);
+        var ranges = this._languageService.getFoldingRanges(document, context);
+        return Promise.as(ranges);
     };
     CSSWorker.prototype.doRename = function (uri, position, newName) {
         var document = this._getTextDocument(uri);

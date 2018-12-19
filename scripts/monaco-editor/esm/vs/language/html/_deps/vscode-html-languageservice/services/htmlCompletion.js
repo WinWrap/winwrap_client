@@ -3,12 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-import { Position, CompletionItemKind, Range, TextEdit, InsertTextFormat } from '../../vscode-languageserver-types/main.js';
-import { TokenType, createScanner, ScannerState } from '../parser/htmlScanner.js';
+import { Position, CompletionItemKind, Range, TextEdit, InsertTextFormat } from './../../vscode-languageserver-types/main.js';
+import { createScanner } from '../parser/htmlScanner.js';
 import { isEmptyElement } from '../parser/htmlTags.js';
 import { allTagProviders } from './tagProviders.js';
+import { ScannerState, TokenType } from '../htmlLanguageTypes.js';
 import { entities } from '../parser/htmlEntities.js';
-import * as nls from '../../../fillers/vscode-nls.js';
+import * as nls from './../../../fillers/vscode-nls.js';
 import { isLetterOrDigit, endsWith, startsWith } from '../utils/strings.js';
 var localize = nls.loadMessageBundle();
 var HTMLCompletion = /** @class */ (function () {
@@ -141,14 +142,19 @@ var HTMLCompletion = /** @class */ (function () {
         function collectAttributeNameSuggestions(nameStart, nameEnd) {
             if (nameEnd === void 0) { nameEnd = offset; }
             var replaceEnd = offset;
-            while (replaceEnd < nameEnd && text[replaceEnd] !== '<') {
+            while (replaceEnd < nameEnd && text[replaceEnd] !== '<') { // < is a valid attribute name character, but we rather assume the attribute name ends. See #23236.
                 replaceEnd++;
             }
             var range = getReplaceRange(nameStart, replaceEnd);
             var value = isFollowedBy(text, nameEnd, ScannerState.AfterAttributeName, TokenType.DelimiterAssign) ? '' : '="$1"';
             var tag = currentTag.toLowerCase();
+            var seenAttributes = Object.create(null);
             tagProviders.forEach(function (provider) {
                 provider.collectAttributes(tag, function (attribute, type) {
+                    if (seenAttributes[attribute]) {
+                        return;
+                    }
+                    seenAttributes[attribute] = true;
                     var codeSnippet = attribute;
                     var command;
                     if (type !== 'v' && value.length) {
@@ -169,16 +175,16 @@ var HTMLCompletion = /** @class */ (function () {
                     });
                 });
             });
-            collectDataAttributesSuggestions(range);
+            collectDataAttributesSuggestions(range, seenAttributes);
             return result;
         }
-        function collectDataAttributesSuggestions(range) {
+        function collectDataAttributesSuggestions(range, seenAttributes) {
             var dataAttr = 'data-';
             var dataAttributes = {};
             dataAttributes[dataAttr] = dataAttr + "$1=\"$2\"";
             function addNodeDataAttributes(node) {
                 node.attributeNames.forEach(function (attr) {
-                    if (startsWith(attr, dataAttr) && !dataAttributes[attr]) {
+                    if (startsWith(attr, dataAttr) && !dataAttributes[attr] && !seenAttributes[attr]) {
                         dataAttributes[attr] = attr + '="$1"';
                     }
                 });

@@ -2,11 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -22,13 +24,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import * as strings from '../../../base/common/strings.js';
-import URI from '../../../base/common/uri.js';
 import * as dom from '../../../base/browser/dom.js';
+import { dispose as disposeAll } from '../../../base/common/lifecycle.js';
+import * as strings from '../../../base/common/strings.js';
+import { URI } from '../../../base/common/uri.js';
+import { AbstractCodeEditorService } from './abstractCodeEditorService.js';
 import { isThemeColor } from '../../common/editorCommon.js';
 import { OverviewRulerLane } from '../../common/model.js';
-import { AbstractCodeEditorService } from './abstractCodeEditorService.js';
-import { dispose as disposeAll } from '../../../base/common/lifecycle.js';
 import { IThemeService } from '../../../platform/theme/common/themeService.js';
 var CodeEditorServiceImpl = /** @class */ (function (_super) {
     __extends(CodeEditorServiceImpl, _super);
@@ -125,8 +127,20 @@ var DecorationTypeOptionsProvider = /** @class */ (function () {
             }
             return void 0;
         };
+        var createInlineCSSRules = function (type) {
+            var rules = new DecorationCSSRules(type, providerArgs, themeService);
+            if (rules.hasContent) {
+                _this._disposables.push(rules);
+                return { className: rules.className, hasLetterSpacing: rules.hasLetterSpacing };
+            }
+            return null;
+        };
         this.className = createCSSRules(0 /* ClassName */);
-        this.inlineClassName = createCSSRules(1 /* InlineClassName */);
+        var inlineData = createInlineCSSRules(1 /* InlineClassName */);
+        if (inlineData) {
+            this.inlineClassName = inlineData.className;
+            this.inlineClassNameAffectsLetterSpacing = inlineData.hasLetterSpacing;
+        }
         this.beforeContentClassName = createCSSRules(3 /* BeforeContentClassName */);
         this.afterContentClassName = createCSSRules(4 /* AfterContentClassName */);
         this.glyphMarginClassName = createCSSRules(2 /* GlyphMarginClassName */);
@@ -166,6 +180,7 @@ var DecorationTypeOptionsProvider = /** @class */ (function () {
 }());
 var _CSS_MAP = {
     color: 'color:{0} !important;',
+    opacity: 'opacity:{0}; will-change: opacity;',
     backgroundColor: 'background-color:{0};',
     outline: 'outline:{0};',
     outlineColor: 'outline-color:{0};',
@@ -198,6 +213,7 @@ var DecorationCSSRules = /** @class */ (function () {
         this._providerArgs = providerArgs;
         this._usesThemeColors = false;
         this._hasContent = false;
+        this._hasLetterSpacing = false;
         var className = CSSNameHelper.getClassName(this._providerArgs.key, ruleType);
         if (this._providerArgs.parentTypeKey) {
             className = className + ' ' + CSSNameHelper.getClassName(this._providerArgs.parentTypeKey, ruleType);
@@ -211,6 +227,9 @@ var DecorationCSSRules = /** @class */ (function () {
                 _this._removeCSS();
                 _this._buildCSS();
             });
+        }
+        else {
+            this._themeListener = null;
         }
     }
     DecorationCSSRules.prototype.dispose = function () {
@@ -226,6 +245,13 @@ var DecorationCSSRules = /** @class */ (function () {
     Object.defineProperty(DecorationCSSRules.prototype, "hasContent", {
         get: function () {
             return this._hasContent;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(DecorationCSSRules.prototype, "hasLetterSpacing", {
+        get: function () {
+            return this._hasLetterSpacing;
         },
         enumerable: true,
         configurable: true
@@ -309,7 +335,10 @@ var DecorationCSSRules = /** @class */ (function () {
             return '';
         }
         var cssTextArr = [];
-        this.collectCSSText(opts, ['fontStyle', 'fontWeight', 'textDecoration', 'cursor', 'color', 'letterSpacing'], cssTextArr);
+        this.collectCSSText(opts, ['fontStyle', 'fontWeight', 'textDecoration', 'cursor', 'color', 'opacity', 'letterSpacing'], cssTextArr);
+        if (opts.letterSpacing) {
+            this._hasLetterSpacing = true;
+        }
         return cssTextArr.join('');
     };
     /**
@@ -335,7 +364,7 @@ var DecorationCSSRules = /** @class */ (function () {
                 var escaped = truncated.replace(/['\\]/g, '\\$&');
                 cssTextArr.push(strings.format(_CSS_MAP.contentText, escaped));
             }
-            this.collectCSSText(opts, ['fontStyle', 'fontWeight', 'textDecoration', 'color', 'backgroundColor', 'margin'], cssTextArr);
+            this.collectCSSText(opts, ['fontStyle', 'fontWeight', 'textDecoration', 'color', 'opacity', 'backgroundColor', 'margin'], cssTextArr);
             if (this.collectCSSText(opts, ['width', 'height'], cssTextArr)) {
                 cssTextArr.push('display:inline-block;');
             }

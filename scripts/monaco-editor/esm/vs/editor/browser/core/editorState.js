@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
 import * as strings from '../../../base/common/strings.js';
 var EditorState = /** @class */ (function () {
     function EditorState(editor, flags) {
@@ -47,3 +46,30 @@ var EditorState = /** @class */ (function () {
     return EditorState;
 }());
 export { EditorState };
+var StableEditorScrollState = /** @class */ (function () {
+    function StableEditorScrollState(_visiblePosition, _visiblePositionScrollDelta) {
+        this._visiblePosition = _visiblePosition;
+        this._visiblePositionScrollDelta = _visiblePositionScrollDelta;
+    }
+    StableEditorScrollState.capture = function (editor) {
+        var visiblePosition = null;
+        var visiblePositionScrollDelta = 0;
+        if (editor.getScrollTop() !== 0) {
+            var visibleRanges = editor.getVisibleRanges();
+            if (visibleRanges.length > 0) {
+                visiblePosition = visibleRanges[0].getStartPosition();
+                var visiblePositionScrollTop = editor.getTopForPosition(visiblePosition.lineNumber, visiblePosition.column);
+                visiblePositionScrollDelta = editor.getScrollTop() - visiblePositionScrollTop;
+            }
+        }
+        return new StableEditorScrollState(visiblePosition, visiblePositionScrollDelta);
+    };
+    StableEditorScrollState.prototype.restore = function (editor) {
+        if (this._visiblePosition) {
+            var visiblePositionScrollTop = editor.getTopForPosition(this._visiblePosition.lineNumber, this._visiblePosition.column);
+            editor.setScrollTop(visiblePositionScrollTop + this._visiblePositionScrollDelta);
+        }
+    };
+    return StableEditorScrollState;
+}());
+export { StableEditorScrollState };
