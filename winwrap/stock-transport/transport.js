@@ -51,7 +51,7 @@ define(function () {
                 if (this.serverip_) {
                     url = 'http://' + this.serverip_ + '/winwrap/route/requests/' + this.key_ + '/';
                 } else {
-                    url = 'http://www.winwrap.com/web/webedit/requests.asp?key=' + this.key_ + '/';
+                    url = 'http://www.winwrap.com/web/webedit/requests.php?key=' + this.key_ + '/';
                 }
             }
 
@@ -105,7 +105,7 @@ define(function () {
                 if (this.serverip_) {
                     url = 'http://' + this.serverip_ + '/winwrap/route/responses/' + this.key_ + '/' + this.ids_;
                 } else {
-                    url = 'http://www.winwrap.com/web/webedit/responses.asp?key=' + this.key_ + '&ids=' + this.ids_;
+                    url = 'http://www.winwrap.com/web/webedit/responses.php?key=' + this.key_ + '&ids=' + this.ids_;
                 }
             }
 
