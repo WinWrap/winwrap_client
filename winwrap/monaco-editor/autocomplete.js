@@ -36,7 +36,7 @@ define(function () {
 
         _CreateDependencyProposals(response) {
             //console.log("_createDependencyProposals");
-            let deps = [];
+            let suggestions = [];
             if (response === null) {
                 console.log("ww-error: _createDependencyProposals no response"); // xxx
                 return;
@@ -47,14 +47,14 @@ define(function () {
             let autoComplete = response.members;
             for (let key in autoComplete) {
                 let itemKind = this.autoTypes_[autoComplete[key]];
-                let dep = {
+                let suggestion = {
                     label: key,
                     kind: monaco.languages.CompletionItemKind[itemKind],
                     insertText: key
                 };
-                deps.push(dep);
+                suggestions.push(suggestion);
             }
-            return { isIncomplete: false, items: deps };
+            return { isIncomplete: false, suggestions: suggestions };
         }
     }
 
