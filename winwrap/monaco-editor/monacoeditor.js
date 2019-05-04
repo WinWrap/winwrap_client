@@ -231,7 +231,7 @@ define(function () {
                     if (this.Channel.CommitRebase.Name() !== response.file_name) {
                         this.Channel.PushPendingRequest({ request: '?read', target: response.file_name });
                     }
-                    let pauseLine = response.stack[0].linenum;
+                    let pauseLine = response.stack[0].line_num;
                     this.monacoEditor_.revealLine(pauseLine);
                 }
             });

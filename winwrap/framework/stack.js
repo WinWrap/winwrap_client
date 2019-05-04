@@ -23,7 +23,7 @@ define(function () {
             if (this.stack.length > 0) {
                 let stack0 = this.stack[0];
                 if (stack0.name === name) {
-                    line = stack0.linenum;
+                    line = stack0.line_num;
                 }
             }
             return line;
