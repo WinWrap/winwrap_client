@@ -30,7 +30,7 @@ define(function () {
 
         async InitializeAsync() {
             while (this.busy_)
-                this.Remote._Wait(100);
+                await this.Remote._Wait(100);
 
             this.busy_ = true;
             this.CommitRebase = new ww.CommitRebase(this);
