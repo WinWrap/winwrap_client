@@ -43,7 +43,7 @@ define(function () {
             if (item !== undefined) {
                 this.items_[name] = item;
             }
-        };
+        }
 
         GetItem(name) {
             return this.items_[name];
