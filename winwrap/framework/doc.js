@@ -142,6 +142,16 @@ define(function () {
         SetRevision(revision) {
             this.revision_ = revision;
         }
+
+        async WaitForCommit() {
+            for (var i = 0; i < 10 && this.current_commit_ !== null; ++i) {
+                await _Wait(100);
+            }
+        }
+
+        _Wait(ms) {
+            return new Promise(r => setTimeout(r, ms));
+        }
     }
 
     ww.Doc = Doc;

@@ -33,6 +33,11 @@ define(function () {
             // wait for Channel.Poll to finish
             while (remote.PollBusy())
                 await remote._Wait(10);
+            // wait for pending commit to finish (one second max)
+            await channel.CommitRebase.WaitForCommit();
+            // push pending commit
+            channel.PushPendingCommit();
+            //
             if (this.busy2_ || this.ready1_) {
                 // two SendAndReceiveAsync calls are busy, give up
                 return null;
@@ -42,7 +47,6 @@ define(function () {
             }
             this.busy1_ = true; // first SendAndReceiveAsync call is busy
             remote.StopPolling();
-            channel.PushPendingCommit();
             let rule = '';
             let fragment = '';
             if (editor.Container !== 'code') {
