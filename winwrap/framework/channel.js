@@ -18,9 +18,9 @@ define(function () {
             this.Name = name;
             this.UI = undefined; // set Basic async _InitializeAsync(factory)
             this.CommitRebase = undefined;
-            this.ClientID = ('0000000000' + Math.floor(Math.random() * 2147483647)).slice(-10).toString();
             this.AllocatedID = 0; // explicitly set in ?attach
-            this.Version = undefined;
+            this.version_ = undefined;
+            this.unique_name_ = ('0000000000' + Math.floor(Math.random() * 2147483647)).slice(-10).toString();
             this.generation_ = 0;
             this.busy_ = false;
             this.initHandlers_ = [];
@@ -38,7 +38,7 @@ define(function () {
             // complete initialization
             this.initHandlers_.forEach(handler => handler());
 
-            let request = { request: '?attach', version: '10.40.001', unique_name: this.ClientID };
+            let request = { request: '?attach', version: '10.40.001', unique_name: this.unique_name_ };
             let attach = undefined;
             try {
                 attach = await this.SendRequestAndGetResponseAsync(request);
@@ -50,12 +50,12 @@ define(function () {
                 return;
             }
             this.busy_ = false;
-            if (attach.unique_name !== this.ClientID) {
-                alert(`${this.Name} ${request.request} failed ${attach.unique_name} !== ${this.ClientID}`);
+            if (attach.unique_name !== this.unique_name_) {
+                alert(`${this.Name} ${request.request} failed ${attach.unique_name} !== ${this.unique_name_}`);
                 return;
             }
             this.AllocatedID = attach.allocated_id;
-            this.Version = attach.version;
+            this.version_ = attach.version;
             this.SetStatusBarText(this.VersionInfo());
             this.PushPendingRequest({ request: '?opendialog', dir: '\\', exts: 'wwd|bas' });
             this.PushPendingRequest({ request: '?stack' });
@@ -139,7 +139,7 @@ define(function () {
         }
 
         VersionInfo() {
-            let versionInfo = `WinWrap Version = ${this.Version}`;
+            let versionInfo = `WinWrap Version = ${this.version_}`;
             let channelInfo = `${this.Name} AllocatedID = ${this.AllocatedID}`;
             return `${versionInfo}, ${channelInfo}`;
         }
