@@ -43,28 +43,28 @@ define(function () {
             return x;
         }
 
-        CanCombine(nextchange) {
-            if (this.op_ !== ww.ChangeOp.EditChangeOp || nextchange.op_ !== ww.ChangeOp.EditChangeOp) {
-                return this.op_ === nextchange.op_ && this.Equals(nextchange);
+        CanCombine(nextChange) {
+            if (this.op_ !== ww.ChangeOp.EditChangeOp || nextChange.op_ !== ww.ChangeOp.EditChangeOp) {
+                return this.op_ === nextChange.op_ && this.Equals(nextChange);
             }
-            return this.index_ <= nextchange.DeleteIndex() && nextchange.index_ <= this.InsertIndex();
+            return this.index_ <= nextChange.DeleteIndex() && nextChange.index_ <= this.InsertIndex();
         }
 
-        Combine(nextchange) {
-            if (!this.CanCombine(nextchange))
+        Combine(nextChange) {
+            if (!this.CanCombine(nextChange))
                 return false;
 
             let iIndex = 0;
-            let iDelete = nextchange.delete_count_;
+            let iDelete = nextChange.delete_count_;
             let sInsert = '';
             let iThisInsertLength = this.InsertLength();
 
             // this is the prior change
             let iPriorInsertHeadCount = 0;
             let iPriorInsertTailCount = 0;
-            if (nextchange.index_ < this.index_) {
+            if (nextChange.index_ < this.index_) {
                 // next change is left of this (prior) change
-                iIndex = nextchange.index_;
+                iIndex = nextChange.index_;
                 iPriorInsertHeadCount = 0;
                 let iKeepDelete = this.index_ - iIndex;
                 let iPriorInsertDelete = iDelete - iKeepDelete;
@@ -77,7 +77,7 @@ define(function () {
             else {
                 // next change is at or right of this (prior) change
                 iIndex = this.index_;
-                iPriorInsertHeadCount = nextchange.index_ - iIndex;
+                iPriorInsertHeadCount = nextChange.index_ - iIndex;
                 if (iPriorInsertHeadCount > iThisInsertLength)
                     iPriorInsertHeadCount = iThisInsertLength;
 
@@ -101,7 +101,7 @@ define(function () {
                 sInsert += this.insert_.substring(0, iPriorInsertHeadCount);
 
             // all of next change's insert
-            sInsert += nextchange.insert_;
+            sInsert += nextChange.insert_;
 
             // right portion of this (prior) change's insert
             if (iPriorInsertTailCount > 0)
@@ -223,10 +223,10 @@ define(function () {
             let s = this.index_ + '-' + this.delete_count_;
             if (this.insert_ !== undefined) {
                 if (typeof this.insert_ === 'string') {
-                    s += '"' + this.insert_ + '"'
+                    s += '"' + this.insert_ + '"';
                 }
                 else
-                    s += JSON.stringify(this.insert_)
+                    s += JSON.stringify(this.insert_);
             }
 
             return s;
@@ -307,19 +307,19 @@ define(function () {
             return this.changes_.length !== 0;
         }
 
-        Append(nextchange) {
-            if (Array.isArray(nextchange)) // ??? is an object
-                nextchange.forEach(change => { this.Append(change); });
-            else if (this.changes_.length === 0 || !this.changes_[this.changes_.length - 1].Combine(nextchange))
+        Append(nextChange) {
+            if (Array.isArray(nextChange)) // ??? is an object
+                nextChange.forEach(change => { this.Append(change); });
+            else if (this.changes_.length === 0 || !this.changes_[this.changes_.length - 1].Combine(nextChange))
                 // don't overlap (successfully combined)
-                this.changes_.push(nextchange);
+                this.changes_.push(nextChange);
         }
 
-        AppendNoCombine(nextchange) {
-            if (Array.isArray(nextchange))
-                this.changes_ = this.changes_.concat(nextchange);
+        AppendNoCombine(nextChange) {
+            if (Array.isArray(nextChange))
+                this.changes_ = this.changes_.concat(nextChange);
             else
-                this.changes_.push(nextchange);
+                this.changes_.push(nextChange);
         }
 
         Changes() {

@@ -15,20 +15,18 @@ define(function () {
 
         constructor(autoauto) {
             this.autoTypes_ = autotypes;
-            this.re_auto = new RegExp([
-                /\s/,       // space, or /Imports\s|As\s|Of\s/ etc.
-                /^\'#/,     // '#
-                /\./        // member
-            ].map(r => r.source).join('|'));
-            // ? = CallersLine (global)
             monaco.languages.registerCompletionItemProvider('vb', {
-                triggerCharacters: [' ', '.', '#', '=', ',', '\t', '\xA0'], // '(', ')'
+                triggerCharacters: triggerCharacters,
                 provideCompletionItems: async (model, position) => {
                     let textUntilPosition = autoauto.TextUntilPosition(model, position);
-                    let match = textUntilPosition.match(this.re_auto); // limits traffic to server
-                    if (match) {
-                        let response = await autoauto.SendAndReceiveAsync(model, position);
-                        return this._CreateDependencyProposals(response); // incomplete not used
+                    let temp = textUntilPosition.replace(/[ \t\xA0]/, '');
+                    if (temp !== '') {
+                        let ch = textUntilPosition.substr(-1);
+                        let index = triggerCharacters.indexOf(ch);
+                        if (index !== -1) {
+                            let response = await autoauto.SendAndReceiveAsync(model, position);
+                            return this._CreateDependencyProposals(response); // incomplete not used
+                        }
                     }
                 }
             });
@@ -57,6 +55,8 @@ define(function () {
             return { isIncomplete: false, suggestions: suggestions };
         }
     }
+
+    let triggerCharacters = [' ', '.', '#', '=', ',', '\t', '\xA0'];
 
     // no vaiables in class
     let autotypes = [ // xxx match documentation, MonacoTypes or such

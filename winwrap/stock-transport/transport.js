@@ -23,9 +23,9 @@ define(function () {
             this.longpollFailure_ = null;
             let hash = window.location.hash;
             if (hash) {
-                let match = hash.toLowerCase().match(/\/key=([0-9a-f\-]*)/);
-                if (match !== undefined && match.length === 2) {
-                    this.key_ = match[1];
+                let res = hash.toLowerCase().match(/\/key=([0-9a-f\-]*)/);
+                if (Array.isArray(res) && res.length === 2) {
+                    this.key_ = res[1];
                 }
             }
         }

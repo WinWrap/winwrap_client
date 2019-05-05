@@ -16,6 +16,7 @@ define(function () {
         constructor(channel) {
             this.Channel = channel;
             this.doc_ = null;
+            this.editor_ = undefined;
             channel.AddResponseHandlers({
                 commit: response => {
                     this.CommitDone(response);
@@ -30,10 +31,6 @@ define(function () {
                     this.doc_.NeedCommit();
                 }
             });
-        }
-
-        SetEditor(editor) {
-            this.editor_ = editor;
         }
 
         AppendPendingChange(op, caret) {
@@ -102,11 +99,18 @@ define(function () {
                 };
                 this.Channel.PushPendingRequest(request);
             }
+            else if (this.doc_ !== null) {
+                console.log("Can't commit.");
+            }
         }
 
         Read(file) {
             this.editor_.SetText(file.visible_code);
             this.doc_ = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, this.editor_);
+        }
+
+        SetEditor(editor) {
+            this.editor_ = editor;
         }
 
         async WaitForCommit() {
