@@ -67,7 +67,7 @@ var module, window, define, renderjson = (function () {
     var append = function (/* el, ... */) {
         var el = Array.prototype.shift.call(arguments);
         for (var a = 0; a < arguments.length; a++)
-            if (arguments[a].constructor == Array)
+            if (arguments[a].constructor === Array)
                 append.apply(this, [el].concat(arguments[a]));
             else
                 el.appendChild(arguments[a]);
@@ -76,14 +76,14 @@ var module, window, define, renderjson = (function () {
     var prepend = function (el, child) {
         el.insertBefore(child, el.firstChild);
         return el;
-    }
+    };
     var isempty = function (obj, pl) {
         var keys = pl || Object.keys(obj);
         for (var i in keys) if (Object.hasOwnProperty.call(obj, keys[i])) return false;
         return true;
-    }
-    var text = function (txt) { return document.createTextNode(txt) };
-    var div = function () { return document.createElement("div") };
+    };
+    var text = function (txt) { return document.createTextNode(txt); };
+    var div = function () { return document.createElement("div"); };
     var span = function (classname) {
         var s = document.createElement("span");
         if (classname) s.className = classname;
@@ -122,7 +122,7 @@ var module, window, define, renderjson = (function () {
                 themetext(type + " syntax", close));
 
             var el = append(span(), text(my_indent.slice(0, -1)), empty);
-            if (show_level > 0 && type != "string")
+            if (show_level > 0 && type !== "string")
                 show();
             return el;
         };
@@ -130,23 +130,23 @@ var module, window, define, renderjson = (function () {
         if (json === null) return themetext(null, my_indent, "keyword", "null");
         if (json === void 0) return themetext(null, my_indent, "keyword", "undefined");
 
-        if (typeof (json) == "string" && json.length > options.max_string_length)
+        if (typeof (json) === "string" && json.length > options.max_string_length)
             return disclosure('"', json.substr(0, options.max_string_length) + " ...", '"', "string", function () {
                 return append(span("string"), themetext(null, my_indent, "string", JSON.stringify(json)));
             });
 
-        if (typeof (json) != "object" || [Number, String, Boolean, Date].indexOf(json.constructor) >= 0) // Strings, numbers and bools
+        if (typeof (json) !== "object" || [Number, String, Boolean, Date].indexOf(json.constructor) >= 0) // Strings, numbers and bools
             return themetext(null, my_indent, typeof (json), JSON.stringify(json));
 
-        if (json.constructor == Array) {
-            if (json.length == 0) return themetext(null, my_indent, "array syntax", "[]");
+        if (json.constructor === Array) {
+            if (json.length === 0) return themetext(null, my_indent, "array syntax", "[]");
 
             return disclosure("[", " ... ", "]", "array", function () {
                 var as = append(span("array"), themetext("array syntax", "[", null, "\n"));
                 for (var i = 0; i < json.length; i++)
                     append(as,
                         _renderjson(options.replacer.call(json, i, json[i]), indent + "    ", false, show_level - 1, options),
-                        i != json.length - 1 ? themetext("syntax", ",") : [],
+                        i !== json.length - 1 ? themetext("syntax", ",") : [],
                         text("\n"));
                 append(as, themetext(null, indent, "array syntax", "]"));
                 return as;
@@ -159,7 +159,7 @@ var module, window, define, renderjson = (function () {
 
         return disclosure("{", "...", "}", "object", function () {
             var os = append(span("object"), themetext("object syntax", "{", null, "\n"));
-            for (var k in json) var last = k;
+            for (var j in json) var last = j;
             var keys = options.property_list || Object.keys(json);
             if (options.sort_objects)
                 keys = keys.sort();
@@ -168,7 +168,7 @@ var module, window, define, renderjson = (function () {
                 if (!(k in json)) continue;
                 append(os, themetext(null, indent + "    ", "key", '"' + k + '"', "object syntax", ': '),
                     _renderjson(options.replacer.call(json, k, json[k]), indent + "    ", true, show_level - 1, options),
-                    k != last ? themetext("syntax", ",") : [],
+                    k !== last ? themetext("syntax", ",") : [],
                     text("\n"));
             }
             append(os, themetext(null, indent, "object syntax", "}"));
@@ -178,24 +178,24 @@ var module, window, define, renderjson = (function () {
 
     var renderjson = function renderjson(json) {
         var options = Object.assign({}, renderjson.options);
-        options.replacer = typeof (options.replacer) == "function" ? options.replacer : function (k, v) { return v; };
+        options.replacer = typeof (options.replacer) === "function" ? options.replacer : function (k, v) { return v; };
         var pre = append(document.createElement("pre"), _renderjson(json, "", false, options.show_to_level, options));
         pre.className = "renderjson";
         return pre;
-    }
+    };
     renderjson.set_icons = function (show, hide) {
         renderjson.options.show = show;
         renderjson.options.hide = hide;
         return renderjson;
     };
     renderjson.set_show_to_level = function (level) {
-        renderjson.options.show_to_level = typeof level == "string" &&
+        renderjson.options.show_to_level = typeof level === "string" &&
             level.toLowerCase() === "all" ? Number.MAX_VALUE
             : level;
         return renderjson;
     };
     renderjson.set_max_string_length = function (length) {
-        renderjson.options.max_string_length = typeof length == "string" &&
+        renderjson.options.max_string_length = typeof length === "string" &&
             length.toLowerCase() === "none" ? Number.MAX_VALUE
             : length;
         return renderjson;

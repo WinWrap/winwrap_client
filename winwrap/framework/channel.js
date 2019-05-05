@@ -73,7 +73,7 @@ define(function () {
 
         AddResponseHandlers(handlers) {
             Object.keys(handlers).forEach(key => {
-                let response = key[0] == '_' ? key : '!' + key;
+                let response = key[0] === '_' ? key : '!' + key;
                 if (this.responseHandlers_[response] === undefined) {
                     this.responseHandlers_[response] = [];
                 }
@@ -103,7 +103,7 @@ define(function () {
             if (request) {
                 request.datetime = new Date().toLocaleString();
                 request.id = this.AllocatedID;
-                if (request.request != undefined) {
+                if (request.request !== undefined) {
                     request.gen = this._NextGeneration(false);
                 }
                 this._Log('=>', request);

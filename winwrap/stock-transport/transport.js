@@ -125,7 +125,7 @@ define(function () {
                     jqXHR.setRequestHeader('Accept', 'application/winwrap');
                 },
                 dataFilter: data => {
-                    return data != '' ? JSON.parse(data) : [];
+                    return data !== '' ? JSON.parse(data) : [];
                 }
             };
             return new Promise((resolve, reject) => {

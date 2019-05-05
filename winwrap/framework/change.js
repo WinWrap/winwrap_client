@@ -254,8 +254,8 @@ define(function () {
         else if (delta < 0 && hint >= 0 && hint <= len0) {
             // detect simple deletion after hint (caret)
             let right = hint - delta; // delta is negative
-            if (s0.substring(0, hint) == s1.substring(0, hint) &&
-                s0.substring(right) == s1.substring(hint)) {
+            if (s0.substring(0, hint) === s1.substring(0, hint) &&
+                s0.substring(right) === s1.substring(hint)) {
                 let deletecount = -delta;
                 return new ww.Change(ww.ChangeOp.EditChangeOp, hint, deletecount, '');
             }
