@@ -122,7 +122,7 @@ define(function () {
 
     class MonacoImmediateEditor extends MonacoEditor {
         constructor(ui, channel, element) {
-            super(ui, channel, element)
+            super(ui, channel, element);
             channel.AddInitHandler(() => this._Init());
         }
 
@@ -178,7 +178,7 @@ define(function () {
 
     class MonacoWatchEditor extends MonacoEditor {
         constructor(ui, channel, element) {
-            super(ui, channel, element)
+            super(ui, channel, element);
             channel.AddInitHandler(() => this._Init());
         }
 
@@ -216,7 +216,7 @@ define(function () {
     class MonacoCodeEditor extends MonacoEditor {
 
         constructor(ui, channel, element) {
-            super(ui, channel, element)
+            super(ui, channel, element);
             channel.AddInitHandler(() => this._Init());
         }
 
