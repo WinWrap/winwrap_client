@@ -14,7 +14,7 @@ define(function () {
     class Transport {
 
         constructor(serverip) {
-            this.serverip_ = serverip;
+            this.serverip_ = serverip ? serverip : 'webedit.winwrap.com';
             this.key_ = undefined;
             this.ids_ = '0';
             this.remote_ = undefined;
@@ -48,11 +48,7 @@ define(function () {
         async SendRequestsAsync(requests) {
             let url = 'http://' + this.serverip_ + '/winwrap/requests/';
             if (this.key_) {
-                if (this.serverip_) {
-                    url = 'http://' + this.serverip_ + '/winwrap/route/requests/' + this.key_ + '/';
-                } else {
-                    url = 'http://www.winwrap.com/web/webedit/requests.php?key=' + this.key_ + '/';
-                }
+                url = 'http://' + this.serverip_ + '/winwrap/route/requests/' + this.key_ + '/';
             }
 
             return await this._SendAsync(url, requests);
@@ -103,11 +99,7 @@ define(function () {
         async _ReceiveResponsesAsync() {
             let url = 'http://' + this.serverip_ + '/winwrap/responses/' + this.ids_;
             if (this.key_) {
-                if (this.serverip_) {
-                    url = 'http://' + this.serverip_ + '/winwrap/route/responses/' + this.key_ + '/' + this.ids_;
-                } else {
-                    url = 'http://www.winwrap.com/web/webedit/responses.php?key=' + this.key_ + '&ids=' + this.ids_;
-                }
+                url = 'http://' + this.serverip_ + '/winwrap/route/responses/' + this.key_ + '/' + this.ids_;
             }
 
             return await this._SendAsync(url, '');
