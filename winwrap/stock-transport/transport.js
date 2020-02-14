@@ -113,7 +113,7 @@ define(function () {
             return await this._SendAsync(url, '');
         }
 
-        _SendAsync(url, requests) {
+        async _SendAsync(url, requests) {
             let json = JSON.stringify(requests);
             let options = {
                 type: 'POST',
@@ -129,10 +129,7 @@ define(function () {
                     return data !== '' ? JSON.parse(data) : [];
                 }
             };
-            return new Promise((resolve, reject) => {
-                //console.log(options);
-                $.ajax(options).done(resolve).fail(reject);
-            });
+            return await $.ajax(options);
         }
 
         _Wait(ms) {
