@@ -95,7 +95,7 @@ define(function () {
             requests.push(request);
             console.log('Remote.SendRequestAndGetResponseAsync>>> ' + this._ValueMsg(requests, 'request'));
             try {
-                await this._SendRequestsAsync(requests);
+                await this.transport_.SendRequestsAsync(requests);
             } catch(err) {
                 console.log('Remote.SendRequestAndGetResponseAsync error: ' + err);
                 let pollErrMsg = `${this.Name} send error at ${new Date().toLocaleString()}`;
@@ -160,7 +160,16 @@ define(function () {
                     // send pending requests
                     let requests = this.pendingRequests_;
                     this.pendingRequests_ = [];
-                    await this._SendRequestsAsync(requests);
+                    try {
+                        await this.transport_.SendRequestsAsync(requests);
+                    }
+                    catch (err) {
+                        console.log('Remote._PollAsync error: ' + err.statusText);
+                        console.log(err);
+                        let pollErrMsg = `${this.Name} send error at ${new Date().toLocaleString()}`;
+                        this.SetStatusBarText(pollErrMsg);
+                        this.pendingRequests_ = [...requests, ...this.pendingRequests_];
+                    }
                 }
                 if (this.pendingResponses_.length > 0) {
                     // process pending responses
@@ -178,19 +187,6 @@ define(function () {
                     });
                 }
                 this.pollBusy_ = false;
-            }
-        }
-
-        async _SendRequestsAsync(requests) {
-            if (requests.length > 0) {
-                try {
-                    await this.transport_.SendRequestsAsync(requests);
-                } catch (err) {
-                    console.log('Remote._SendRequestsAsync error: ' + err.statusText);
-                    console.log(err);
-                    let pollErrMsg = `${this.Name} send error at ${new Date().toLocaleString()}`;
-                    this.SetStatusBarText(pollErrMsg);
-                }
             }
         }
 
