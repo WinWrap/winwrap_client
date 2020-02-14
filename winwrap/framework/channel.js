@@ -43,7 +43,8 @@ define(function () {
             try {
                 attach = await this.SendRequestAndGetResponseAsync(request);
             } catch (err) {
-                console.log('ERROR channel.js InitializeAsync ', err);
+                console.log('ERROR channel.js InitializeAsync: ', err.statusText);
+                console.log(err);
                 let attachErrMsg = `${this.Name} is not connected to the server`;
                 this.SetStatusBarText(attachErrMsg);
                 this.busy_ = false;

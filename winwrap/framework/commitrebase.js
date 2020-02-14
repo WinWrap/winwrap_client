@@ -76,19 +76,17 @@ define(function () {
             if (commit !== null) {
                 //console.log("Send ?commit request");
                 let visibleChanges = [];
-                if (commit.AnyChanges()) {
-                    commit.Changes().Changes().forEach(change => {
-                        switch (change.Op()) {
-                            case ww.ChangeOp.EditChangeOp:
-                                visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'delete': change.DeleteCount(), 'insert': change.Insert() });
-                                break;
-                            case ww.ChangeOp.EnterChangeOp:
-                            case ww.ChangeOp.FixupChangeOp:
-                                visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'length': change.DeleteCount() });
-                                break;
-                        }
-                    });
-                }
+                commit.Changes().Changes().forEach(change => {
+                    switch (change.Op()) {
+                        case ww.ChangeOp.EditChangeOp:
+                            visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'delete': change.DeleteCount(), 'insert': change.Insert() });
+                            break;
+                        case ww.ChangeOp.EnterChangeOp:
+                        case ww.ChangeOp.FixupChangeOp:
+                            visibleChanges.push({ 'op': change.Op(), 'index': change.Index(), 'length': change.DeleteCount() });
+                            break;
+                    }
+                });
                 let request = {
                     request: '?commit',
                     target: this.Name(),
@@ -98,9 +96,6 @@ define(function () {
                     visible: visibleChanges
                 };
                 this.Channel.PushPendingRequest(request);
-            }
-            else if (this.doc_ !== null) {
-                console.log("Can't commit.");
             }
         }
 

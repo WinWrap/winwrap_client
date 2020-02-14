@@ -186,7 +186,8 @@ define(function () {
                 try {
                     await this.transport_.SendRequestsAsync(requests);
                 } catch (err) {
-                    console.log('Remote._SendRequestsAsync error: ' + err);
+                    console.log('Remote._SendRequestsAsync error: ' + err.statusText);
+                    console.log(err);
                     let pollErrMsg = `${this.Name} send error at ${new Date().toLocaleString()}`;
                     this.SetStatusBarText(pollErrMsg);
                 }
