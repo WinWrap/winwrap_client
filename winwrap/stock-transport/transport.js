@@ -113,6 +113,7 @@ define(function () {
                 dataType: 'text',
                 data: json,
                 contentType: 'application/winwrap; charset=utf-8',
+                timeout: 3000, //3 second timeout
                 beforeSend: jqXHR => {
                     // set request headers here rather than in the ajax 'headers' object
                     jqXHR.setRequestHeader('Accept', 'application/winwrap');
