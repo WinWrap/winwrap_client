@@ -6,7 +6,7 @@
 //
 // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL // CONFIDENTIAL
 
-// Copyright 2017-2018 Polar Engineering, Inc.
+// Copyright 2017-2020 Polar Engineering, Inc.
 // All rights reserved.
 
 var ww = ww || {};
