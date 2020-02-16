@@ -46,11 +46,9 @@ define(function () {
         }
 
         async SendRequestsAsync(requests) {
-            let url = 'http://' + this.serverip_ + '/winwrap/requests/';
-            if (this.key_) {
-                url = 'http://' + this.serverip_ + '/winwrap/route/requests/' + this.key_ + '/';
-            }
-
+            let url = this.key_ === null ?
+                'http://' + this.serverip_ + '/winwrap/requests/' :
+                'http://' + this.serverip_ + '/winwrap/route/requests/' + this.key_ + '/';
             return await this._SendAsync(url, requests);
         }
 
@@ -65,43 +63,36 @@ define(function () {
         async _LongPollAsync() {
             this.longpollBusy_ = true;
             while (this.longpollBusy_) {
-                let error = null;
                 try {
                     let responses = await this._ReceiveResponsesAsync();
                     this.remote_.PushPendingResponses(responses);
+                    this.longpollFailure_ = null;
                 } catch (err) {
-                    error = err;
-                } finally {
-                    if (error) {
-                        let now = (new Date()).getTime();
-                        if (this.longpollFailure_ === null) {
-                            this.longpollFailure_ = now;
-                            console.log('Transport._LongPollAsync error:' + error.statusText);
-                            console.log(error);
-                        }
-                        let timesecs = (now - this.longpollFailure_) / 1000;
-                        if (timesecs >= 60) {
-                            let timeoutmsg = `Polling failed for ${timesecs} seconds. Try restarting client/server.`;
-                            console.log(`Transport._LongPollAsync ${timeoutmsg}`);
-                            this.remote_.SetStatusBarText(timeoutmsg);
-                            this.remote_.PushPendingRequest({ command: 'detach' });
-                            // detach won't get to server, so stop polling
-                            this.remote_.StopPolling();
-                            this.longpollBusy_ = false;
-                        }
-                    } else {
-                        this.longpollFailure_ = null;
+                    console.log('Transport._LongPollAsync error:' + err.statusText);
+                    console.log(err);
+                    let now = (new Date()).getTime();
+                    if (this.longpollFailure_ === null) {
+                        this.longpollFailure_ = now;
                     }
+                    let timesecs = (now - this.longpollFailure_) / 1000;
+                    if (timesecs >= 60) {
+                        let timeoutmsg = `Polling failed for ${timesecs} seconds. Try restarting client/server.`;
+                        console.log(`Transport._LongPollAsync ${timeoutmsg}`);
+                        this.remote_.SetStatusBarText(timeoutmsg);
+                        this.remote_.PushPendingRequest({ command: 'detach' });
+                        // detach won't get to server, so stop polling
+                        this.remote_.StopPolling();
+                        this.longpollBusy_ = false;
+                    }
+                    await this._Wait(1000);
                 }
             }
         }
 
         async _ReceiveResponsesAsync() {
-            let url = 'http://' + this.serverip_ + '/winwrap/responses/' + this.ids_;
-            if (this.key_) {
-                url = 'http://' + this.serverip_ + '/winwrap/route/responses/' + this.key_ + '/' + this.ids_;
-            }
-
+            let url = this.key_ === null ?
+                'http://' + this.serverip_ + '/winwrap/responses/' + this.ids_ :
+                'http://' + this.serverip_ + '/winwrap/route/responses/' + this.key_ + '/' + this.ids_;
             return await this._SendAsync(url, '');
         }
 
