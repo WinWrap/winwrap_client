@@ -72,7 +72,7 @@ loghit('debug');
         <div class="ww-remote-1 ww-item-code" style="border:1px solid grey"></div>
         <div style="font-size:smaller"><span class="ww-remote-1 ww-item-statusbar">WinWrap Version = </span></div>
         <pre><span id="jsondata"></span></pre>
-        <div class="ww-remote-1 ww-item-log"></div>
+        <div class="ww-remote-1 ww-item-log" style="overflow:scroll; height:350px;"></div>
     </div>
 </body>
 </html>
