@@ -35,6 +35,12 @@ define(function () {
                     this.SyntaxError.ErrorResponseHandler(response);
                     this._display();
                 },
+                notify_end: response => {
+                    this.SyntaxError.ClearError();
+                },
+                notify_resume: response => {
+                    this.SyntaxError.ClearError();
+                },
                 stack: response => {
                     this.Stack.StateResponseHandler(response);
                     this._display();
@@ -70,7 +76,8 @@ define(function () {
         _pauseDecoration(target) {
             let decorations = [];
             let line = this.Stack.GetPauseLine(target);
-            if (line !== null) {
+            let theError = this.SyntaxError.GetError();
+            if (line !== null && (theError === null || theError === undefined || theError.line_num !== line)) {
                 let decoration = {};
                 decoration.range = new monaco.Range(line, 1, line, 1);
                 decoration.options = { isWholeLine: true, 'className': 'myDebugPauseClass' };
@@ -90,14 +97,15 @@ define(function () {
                     decoration.range = new monaco.Range(line, 1, line, 1);
                     decoration.options = { isWholeLine: true, className: 'myErrorClass' };
                     decorations.push(decoration);
-                    let position = { lineNumber: line, column: theError.offset+1 };
+                    let position = { lineNumber: line, column: theError.offset + 1 };
                     this.monacoEditor_.setPosition(position);
                     this.monacoEditor_.focus();
                 }
                 let syntaxMsg = syntaxError.GetMessage();
                 this.channel_.SetStatusBarText(syntaxMsg);
+            } else {
+                syntaxError.ClearError();
             }
-            syntaxError.ClearError();
             return decorations;
         }
 
