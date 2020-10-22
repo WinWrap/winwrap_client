@@ -36,6 +36,9 @@ loghit('phone');
         .ww-remote-1 {
             height: 100%;
         }
+        .ww-item-menu {
+            height: auto;
+        }
         .ww-item-immediate {
             height: 15%;
             width: 100%;
@@ -52,6 +55,7 @@ loghit('phone');
 </head>
 <body>
     <div class="ww-remote-1">
+        <div class="ww-item-menu">
         <fieldset id="ww-remote-1-menu">
             <a class="ui-button ui-widget ui-corner-all" href="https://www.winwrap.com/web2/news/web-based-editing" target="_blank">WinWrap&reg;</a>
             <button class="ww-remote-1 ww-item-new ui-button ui-widget ui-corner-all"><i class="fas fa-file"></i></button>
@@ -66,6 +70,7 @@ loghit('phone');
             <button class="ww-remote-1 ww-item-out ui-button ui-widget ui-corner-all"><i class="fas fa-angle-double-left fa-lg"></i></button>
             <button class="ww-remote-1 ww-item-cycle ui-button ui-widget ui-corner-all"><i class="fas fa-window-restore"></i></button>
         </fieldset>
+        </div>
         <div class="ww-remote-1 ww-item-immediate" style="border:1px solid grey; display:none"></div>
         <div class="ww-remote-1 ww-item-watch" style="border:1px solid grey; display:none"></div>
         <div class="ww-remote-1 ww-item-code" style="border:1px solid grey"></div>
