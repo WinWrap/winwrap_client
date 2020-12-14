@@ -38,7 +38,7 @@ define(function () {
             // complete initialization
             this.initHandlers_.forEach(handler => handler());
 
-            let request = { request: '?attach', version: '10.40.001', unique_name: this.unique_name_ };
+            let request = { request: '?attach', version: '10.50.001', unique_name: this.unique_name_ };
             let attach = undefined;
             try {
                 attach = await this.SendRequestAndGetResponseAsync(request);
