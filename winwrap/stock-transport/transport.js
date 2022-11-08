@@ -15,7 +15,7 @@ define(function () {
 
         constructor(serverip) {
             this.serverip_ = serverip ? serverip : 'webedit.winwrap.com';
-            this.key_ = undefined;
+            this.key_ = null;
             this.ids_ = '0';
             this.remote_ = undefined;
             this.longpollTimerId_ = null;
