@@ -22,9 +22,6 @@ define(function () {
                     this.CommitDone(response);
                 },
                 rebase: response => {
-                    if (!response.visible) {
-                        return; // hidden code is manipulated by this implementation
-                    }
                     if (this.doc_.InCommit(response.target)) {
                         return; // rebasing self commit - no extra work required
                     }
@@ -48,11 +45,12 @@ define(function () {
                     pendingCommit = this.doc_.Rebase(serverChanges);
                     this.doc_.SetRevision(response.revision);
                     if (response.caret_index !== undefined) {
-                        this.editor_.SetSelection({ first: response.caret_index, last: response.caret_index } );
+                        this.editor_.SetSelection({ first: response.caret_index, last: response.caret_index });
                     }
                 }
             } else {
-                alert('Commit failed.');
+                //alert('Commit failed.');
+                this.PushUpdate(); // make server match client (might affect colaborative editing)
             }
             this.doc_.CommitDone();
             if (pendingCommit !== null) {
@@ -64,7 +62,7 @@ define(function () {
         }
 
         HandleSavedResponse(response) {
-            this.doc_ = new ww.Doc(this.Channel.AllocatedID, response.name, response.revision, this.editor_);
+            this.doc_ = new ww.Doc(this.Channel.AllocatedID, response.name, response.revision, this.doc_.GetHiddenCode(), this.editor_);
         }
 
         Name() {
@@ -93,15 +91,26 @@ define(function () {
                     revision: this.doc_.Revision(),
                     tab_width: 4,
                     tab_as_space: true,
+                    md5_hash: this.doc_.GetSourceMD5Hash(),
                     visible: visibleChanges
                 };
                 this.Channel.PushPendingRequest(request);
             }
         }
 
+        PushUpdate() {
+            let request = {
+                request: '?update',
+                target: this.Name(),
+                hidden_code: this.doc._GetHiddenCode(),
+                visible_code: this.editor_.GetText()
+            };
+            this.Channel.PushPendingRequest(request);
+        }
+
         Read(file) {
             this.editor_.SetText(file.visible_code);
-            this.doc_ = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, this.editor_);
+            this.doc_ = new ww.Doc(this.Channel.AllocatedID, file.name, file.revision, file.hidden_code, this.editor_);
         }
 
         SetEditor(editor) {

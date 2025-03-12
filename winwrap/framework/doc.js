@@ -13,10 +13,11 @@ define(function () {
 
     class Doc {
 
-        constructor(sync_id, name, revision, editor) {
+        constructor(sync_id, name, revision, hidden_code, editor) {
             this.sync_id_ = sync_id;
             this.name_ = name;
             this.revision_ = revision;
+            this.hidden_code_ = hidden_code;
             this.editor_ = editor;
             // editor object support this methods:
             // applyChange, getText, getSelection and scrollToSelection
@@ -92,6 +93,16 @@ define(function () {
             }
         }
 
+        GetHiddenCode() {
+            return this.hidden_code_;
+        }
+
+        GetSourceMD5Hash() {
+            let hidden_code = this.hidden_code_;
+            let visible_code = this.editor_.GetText();
+            return CryptoApi.hash('md5', hidden_code + visible_code);
+        }
+
         InCommit(name) {
             return name === this.name_ && this.current_commit_ !== null;
         }
@@ -137,6 +148,10 @@ define(function () {
 
         Revision() {
             return this.revision_;
+        }
+
+        SetHiddenCode(hidden_code) {
+            this.hidden_code_ = hidden_code;
         }
 
         SetRevision(revision) {
