@@ -20,6 +20,7 @@ loghit('phone');
     <script src="scripts/jquery-ui.min.js"></script>
     <script src="scripts/monaco-editor/min/vs/loader.js"></script>
     <script src="winwrap/stock-ui/index.js"></script>
+    <script src="https://nf404.github.io/crypto-api/crypto-api.min.js"></script>
     <script src="tests/test.js"></script>
     <script src="tests/test001.js"></script>
     <script>

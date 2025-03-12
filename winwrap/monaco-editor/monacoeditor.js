@@ -92,7 +92,7 @@ define(function () {
             return this.monacoEditor_.getValue();
         }
 
-        GetVisibile() {
+        GetVisible() {
             return this.element_.css('display') !== 'none';
         }
 

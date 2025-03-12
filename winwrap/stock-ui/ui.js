@@ -173,8 +173,8 @@ define(function () {
             super(ui, channel, element, () => {
                 let editorImmediate = ui.GetItem('ww-item-immediate');
                 let editorWatch = ui.GetItem('ww-item-watch');
-                let immediateShowing = editorImmediate.GetVisibile();
-                let watchShowing = editorWatch.GetVisibile();
+                let immediateShowing = editorImmediate.GetVisible();
+                let watchShowing = editorWatch.GetVisible();
                 if (!immediateShowing && !watchShowing) {
                     editorImmediate.SetVisible(false);
                     editorWatch.SetVisible(true);
