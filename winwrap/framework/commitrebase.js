@@ -102,7 +102,7 @@ define(function () {
             let request = {
                 request: '?update',
                 target: this.Name(),
-                hidden_code: this.doc._GetHiddenCode(),
+                hidden_code: this.doc_.GetHiddenCode(),
                 visible_code: this.editor_.GetText()
             };
             this.Channel.PushPendingRequest(request);
