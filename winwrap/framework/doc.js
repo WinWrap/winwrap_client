@@ -160,7 +160,7 @@ define(function () {
 
         async WaitForCommit() {
             for (var i = 0; i < 20 && this.current_commit_ !== null; ++i) {
-                await _Wait(100);
+                await this._Wait(100);
             }
         }
 
