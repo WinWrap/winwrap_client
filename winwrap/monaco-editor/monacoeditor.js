@@ -146,6 +146,7 @@ define(function () {
                 },
                 notify_debugclear: response => {
                     this.SetText('"immediate"\r\n');
+                    this.SetVisible(true);
                 },
                 notify_debugprint: response => {
                     // https://microsoft.github.io/monaco-editor/api/uis/monaco.editor.icodeeditor.html#executechanges
@@ -153,10 +154,10 @@ define(function () {
                     this.monacoEditor_.setValue(value + response.text);
                     let lastLine = this.monacoEditor_.getModel().getLineCount();
                     this.monacoEditor_.revealLine(lastLine);
+                    this.SetVisible(true);
                 },
                 state: response => {
                     this.Enabled(response.is_idle || response.is_stopped);
-                    this.SetVisible(!response.is_idle);
                 }
             });
             this.monacoEditor_.onKeyUp(e => {

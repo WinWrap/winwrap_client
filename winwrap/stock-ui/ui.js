@@ -214,6 +214,20 @@ define(function () {
         constructor(ui, channel, element) {
             this.element_ = element;
             channel.AddResponseHandlers({
+                notify_begin: response => {
+                    this.element_.text('');
+                },
+                notify_resume: response => {
+                    this.element_.text('');
+                },
+                write: response => {
+                    if (response.success) {
+                        this.element_.text(response.name + ' saved.');
+                    }
+                    else {
+                        this.element_.text(response.name + ' not saved. error: ' + response.error);
+                    }
+                },
                 _statusbar: response => {
                     this.element_.text(response.text);
                 }
