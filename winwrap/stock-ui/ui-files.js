@@ -70,6 +70,7 @@ define(['./ui'], function () {
                         return matcher.test(element);
                     }));
                 },
+                minLength: 0
             });
             this.element_.on('autocompleteselect', (event, ui) => {
                 let value = ui.item.value;
@@ -81,6 +82,9 @@ define(['./ui'], function () {
                     this.dir_ = value;
                     channel.PushPendingRequest({ request: '?opendialog', dir: this.dir_, exts: 'wwd|bas' });
                 }
+            });
+            this.element_.on('focus', (event, ui) => {
+                this.element_.autocomplete('search', '');
             });
         }
         _GetFileValue() {
