@@ -52,6 +52,9 @@ define(function () {
                 syntax: response => {
                     this.SyntaxError.ErrorResponseHandler(response);
                     this._display();
+                },
+                _clear_error: response => {
+                    this.SyntaxError.ClearError();
                 }
             });
         }

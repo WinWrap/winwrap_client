@@ -39,6 +39,8 @@ define(['./ui'], function () {
                     channel.SetStatusBarText(channel.VersionInfo());
                     channel.PushPendingRequest({ request: '?breaks', target: file.name });
                     channel.PushPendingRequest({ request: '?state', target: file.name });
+                    let response2 = { response: '_clear_error' };
+                    channel.ProcessResponse(response2);
                 },
                 state: response => {
                     //this.Enabled(!response.macro_loaded);
