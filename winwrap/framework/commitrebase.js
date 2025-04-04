@@ -59,6 +59,8 @@ define(function () {
                 // apply rebased pending changes
                 this.doc_.ApplyChanges(pendingChanges, false);
             }
+            let response2 = { response: '_clear_error' };
+            this.Channel.ProcessResponse(response2);
         }
 
         HandleSavedResponse(response) {

@@ -55,6 +55,7 @@ define(function () {
                 },
                 _clear_error: response => {
                     this.SyntaxError.ClearError();
+                    this._display();
                 }
             });
         }
